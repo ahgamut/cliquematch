@@ -1,7 +1,9 @@
 # Byte-compiled / optimized / DLL files
+src/cliquematch/cm_deprecated/
 __pycache__/
 *.py[cod]
 *$py.class
+*.pdf
 
 # C extensions
 *.so
@@ -102,3 +104,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+
+*.bash
+.*.s[a-z][a-z]
+.tmuxp.yaml
+*.mtx
