@@ -150,7 +150,7 @@ class cm_build(_build):
 
 setup(
     name="cliquematch",
-    version="0.6.0",
+    version="0.7.0",
     author="Gautham Venkatasubramanian",
     author_email="ahgamut@gmail.com",
     description="Matching using cliques in large sparse graphs",
