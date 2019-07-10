@@ -1,1 +1,2 @@
 recursive-include src/cliquematch/cm_base/ *.h
+graft src

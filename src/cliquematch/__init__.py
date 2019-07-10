@@ -10,16 +10,13 @@ __init__.py used for:
 Setting up the cliquematch package
 """
 
-name = "cliquematch_v0.6.0"
+VERSION = "0.7.0"
 
-from .cm_base import Graph
+from cliquematch.core import Graph
 
-try:
-    from .cm_base import psgraph
-except Exception as e:
-    from .psgraph import psgraph
-from .A2AGraph import A2AGraph
-from .A2LGraph import A2LGraph
-from .L2LGraph import L2LGraph
-from .L2AGraph import L2AGraph
-from .IsoGraph import IsoGraph
+from cliquematch.psgraph import psgraph
+from cliquematch.A2AGraph import A2AGraph
+from cliquematch.A2LGraph import A2LGraph
+from cliquematch.L2LGraph import L2LGraph
+from cliquematch.L2AGraph import L2AGraph
+from cliquematch.IsoGraph import IsoGraph

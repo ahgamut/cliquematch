@@ -3,7 +3,7 @@
     cliquematch.tests.graph_test
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Testcases for cliquematch.cm_base.Graph
+    Testcases for cliquematch.Graph
 """
 
 import pytest
@@ -16,7 +16,7 @@ class TestGraph(object):
 
     """
     Uses pytest to:
-    test basic properties of cliquematch.cm_base.Graph
+    test basic properties of cliquematch.Graph
 
     * various methods of initialization
     * setting and accessing attributes

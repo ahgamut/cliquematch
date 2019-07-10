@@ -40,13 +40,13 @@ class get_pybind_include(object):
         return pybind11.get_include(self.user)
 
 
-def get_src_cpps():
+def get_src_cpps(path):
     """
     Go through src/cliquematch/cm_base recursively, 
     and return all cpp file paths
     """
     cpps = []
-    for root, dirnames, filenames in os.walk("src/cliquematch/cm_base/"):
+    for root, dirnames, filenames in os.walk(path):
         for filename in filenames:
             if os.path.splitext(filename)[-1] == ".cpp":
                 cpps.append(os.path.join(root, filename))
@@ -58,15 +58,16 @@ def get_src_cpps():
 # 2) the copying from build/ to dist/
 ext_modules = [
     Extension(
-        name="cliquematch.cm_base",
-        sources=get_src_cpps(),
+        name="cliquematch.core",
+        sources=get_src_cpps("src/cliquematch/core/")
+        + get_src_cpps("src/cliquematch/ext/"),
         include_dirs=[
             str(get_pybind_include(True)),
             str(get_pybind_include(False)),
             "src/cliquematch/",
             os.environ.get("EIGEN_DIR", os.path.expanduser("~/Downloads/")),
         ],
-        define_macros=[("WRAPPY", "1"), ("WRAPR", "0"), ("NDEBUG", "1")],
+        define_macros=[("WRAPPY", "1"), ("WRAPR", "0")],
         language="c++",
     )
 ]
@@ -105,7 +106,7 @@ class BuildExt(_build_ext):
 
     c_opts = {
         "msvc": ["/EHsc"],  # msvc has c++11 by default
-        "unix": ["-std=c++11", "-Wall", "-Wno-unused-result"],
+        "unix": ["-Wall", "-Wno-unused-result"],
     }
 
     if platform.system() == "Windows":
@@ -118,10 +119,12 @@ class BuildExt(_build_ext):
     def build_extensions(self):
         ct = self.compiler.compiler_type
         opts = self.c_opts.get(ct)
+        opts.append(cpp_flag(self.compiler))
         if ct == "unix":
             opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
-            # if has_flag(self.compiler, "-fvisibility=hidden"):
-            opts.append("-fvisibility=hidden")
+            if has_flag(self.compiler, "-fvisibility=hidden"):
+                opts.append("-fvisibility=hidden")
+
         elif ct == "msvc":
             opts.append('-DVERSION_INFO=\\"%s\\"' % self.distribution.get_version())
         elif ct == "mingw32":
@@ -132,7 +135,7 @@ class BuildExt(_build_ext):
 
         for ext in self.extensions:
             ext.extra_compile_args = opts
-            if ct == "mingw32":
+            if "mingw" in ct:
                 ext.extra_link_args = [
                     "-Wl,-Bstatic,--whole-archive",
                     "-lwinpthread",
@@ -140,7 +143,7 @@ class BuildExt(_build_ext):
                     "-static-libgcc",
                     "-static-libstdc++",
                 ]
-            _build_ext.build_extensions(self)
+        _build_ext.build_extensions(self)
 
 
 class cm_build(_build):
@@ -150,7 +153,7 @@ class cm_build(_build):
 
 setup(
     name="cliquematch",
-    version="0.6.0",
+    version="0.7.0",
     author="Gautham Venkatasubramanian",
     author_email="ahgamut@gmail.com",
     description="Matching using cliques in large sparse graphs",
