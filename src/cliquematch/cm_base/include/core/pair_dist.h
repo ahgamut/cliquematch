@@ -1,16 +1,22 @@
-#ifndef TRIPLE_H
-#define TRIPLE_H
+#ifndef PAIR_DIST_H
+#define PAIR_DIST_H
 
-typedef unsigned int u32;
-
+// A structure to contain the indices of two elements and the distance between
+// them. Given an array of items X, where the distance between two elements is
+// measured in T A pair_dist instance with first=0, second=1, has
+// dist=distance(X[0], X[1])
 template <class T>
-struct triple {
-    u32 first, second;
+struct pair_dist {
+    unsigned int first, second;
     T dist;
 
-    bool operator>(const triple<T> &BB) const { return (this->dist > BB.dist); }
-    bool operator<(const triple<T> &BB) const { return (this->dist < BB.dist); }
-    bool operator==(const triple<T> &BB) const {
+    bool operator>(const pair_dist<T> &BB) const {
+        return (this->dist > BB.dist);
+    }
+    bool operator<(const pair_dist<T> &BB) const {
+        return (this->dist < BB.dist);
+    }
+    bool operator==(const pair_dist<T> &BB) const {
         return (this->dist == BB.dist);
     }
 
@@ -24,7 +30,7 @@ struct triple {
 };
 
 template <class T>
-short binary_find2(triple<T> *a, u32 N, T val, u32 &loc) {
+short binary_find2(pair_dist<T> *a, unsigned int N, T val, unsigned int &loc) {
     int beg = 0, end = N - 1, mid = (beg + end / 2);
     if (a[end] < val) {
         loc = end;
@@ -43,6 +49,4 @@ short binary_find2(triple<T> *a, u32 N, T val, u32 &loc) {
     return 0;
 }
 
-typedef triple<double> dist_2d;
-
-#endif /* TRIPLE_H */
+#endif /* PAIR_DIST_H */

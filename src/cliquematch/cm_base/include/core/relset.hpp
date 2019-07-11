@@ -15,9 +15,9 @@ relset<List, Delta>::relset(u32 N, std::function<Delta(List&, u32, u32)> dfunc,
     this->delfunc = dfunc;
     this->symmetric = symmetric;
     if (symmetric)
-        this->dists = std::vector<triple<Delta> >(N * (N - 1) / 2);
+        this->dists = std::vector<pair_dist<Delta> >(N * (N - 1) / 2);
     else
-        this->dists = std::vector<triple<Delta> >(N * (N - 1));
+        this->dists = std::vector<pair_dist<Delta> >(N * (N - 1));
 }
 
 template <typename List, typename Delta>

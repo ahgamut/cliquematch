@@ -1,4 +1,4 @@
-#include <cm_base/include/core/triples.h>
+#include <cm_base/include/core/pair_dist.h>
 #include <functional>
 #include <set>
 #include <vector>
@@ -6,7 +6,7 @@
 template <typename List, typename Delta>
 struct relset {
     u32 N;
-    std::vector<triple<Delta> > dists;
+    std::vector<pair_dist<Delta> > dists;
     std::function<Delta(List&, u32, u32)> delfunc;
     // so delfunc will do the accessing of List,
     // and return the distance value

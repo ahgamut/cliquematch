@@ -4,7 +4,7 @@
 #include <cm_base/include/wrappy/graph2.h>
 #include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
-#include <cm_base/include/core/relset.cpp>  //this contains only templates
+#include <cm_base/include/core/relset.hpp>  //this contains only templates
 
 template <typename List, typename Delta>
 Delta dummy_comparison(List& ll, u32 i, u32 j) {
