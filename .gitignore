@@ -110,3 +110,4 @@ venv.bak/
 .*.s[a-z][a-z]
 .tmuxp.yaml
 *.mtx
+.vimrc

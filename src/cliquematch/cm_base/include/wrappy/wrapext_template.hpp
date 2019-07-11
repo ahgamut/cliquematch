@@ -1,4 +1,4 @@
-#include <cm_base/include/wrappy/gtpl.h>
+#include <cm_base/include/wrappy/ext_template.h>
 
 namespace py = pybind11;
 using namespace pybind11;

@@ -1,5 +1,5 @@
-#include <cm_base/include/wrappy/gtpl.cpp>       // contains only templates
-#include <cm_base/include/wrappy/wrap_gtpl.cpp>  // contains only templates
+#include <cm_base/include/wrappy/ext_template.hpp>  // contains only templates
+#include <cm_base/include/wrappy/wrapext_template.hpp>  // contains only templates
 
 namespace py = pybind11;
 

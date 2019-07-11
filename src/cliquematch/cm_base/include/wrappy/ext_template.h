@@ -1,5 +1,5 @@
-#ifndef GTPL_H
-#define GTPL_H
+#ifndef EXT_TEMPLATE_H
+#define EXT_TEMPLATE_H
 
 #include <cm_base/include/wrappy/graph2.h>
 #include <pybind11/functional.h>
@@ -50,5 +50,5 @@ struct GraphTemplate : public graph2 {
     pybind11::list get_correspondence2(std::vector<u32>& clique);
 };
 
-#endif /* GTPL_H */
+#endif /* EXT_TEMPLATE_H */
 

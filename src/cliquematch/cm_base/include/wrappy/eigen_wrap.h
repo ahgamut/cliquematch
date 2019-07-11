@@ -1,10 +1,11 @@
 // just to define the relationship between Eigen and wrapping library
+// and the main types to be used
 
-#ifndef EIGREL_H
-#define EIGREL_H
+#ifndef EIGEN_WRAP_H
+#define EIGEN_WRAP_H
 
 #if WRAPPY == 1
-#pragma message("Using pybind11+Eigen")
+#pragma message("Using pybind11+Eigen, include Eigen directory location")
 #include <Eigen/Dense>
 using matrix =
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
@@ -23,15 +24,5 @@ using matmask = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>;
 #pragma message("Error: no pybind11 or Rcpp")
 #endif
 
-template <typename DerivedMat>
-double eucdist0(const Eigen::MatrixBase<DerivedMat>& p,
-                const Eigen::MatrixBase<DerivedMat>& q) {
-    // auto t = (p - q).array();
-    // double answer = t.pow(2).sum().sqrt();
-    return (p - q).norm();
-}
-
-double eucdist(Eigen::Ref<matrix>&, unsigned int, unsigned int);
-
-#endif /* EIGREL_H */
+#endif /* EIGEN_WRAP_H */
 

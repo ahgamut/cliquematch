@@ -1,10 +1,11 @@
-#include <cm_base/include/wrappy/eigrel.h>
 #include <pybind11/eigen.h>
-#include <cm_base/include/wrappy/gtpl.cpp>       // contains only templates
-#include <cm_base/include/wrappy/wrap_gtpl.cpp>  // contains only templates
+#include <cm_base/cpp/wrappy/eigen_distance.hpp>
+#include <cm_base/include/wrappy/ext_template.hpp>  // contains only templates
+#include <cm_base/include/wrappy/wrapext_template.hpp>  // contains only templates
+
 // required for relset to instantiate
-extern template struct relset<Eigen::Ref<matrix>, double>;
-extern template struct relset<py::list, double>;
+extern template struct relset<Eigen::Ref<matrix>, double>;  // in A2AGraph.cpp
+extern template struct relset<py::list, double>;            // in L2LGraph.cpp
 
 template std::vector<std::set<u32> >
 edges_from_relsets<Eigen::Ref<matrix>, double, py::list, double, double>(
@@ -21,7 +22,7 @@ GraphTemplate<Eigen::Ref<matrix>, double, py::list, double,
               double>::GraphTemplate(Eigen::Ref<matrix>& pts1, u32 pts1_len,
                                      py::list& pts2, u32 pts2_len)
     : GraphTemplate<Eigen::Ref<matrix>, double, py::list, double, double>(
-          pts1, pts1_len, pts2, pts2_len, eucdist, true,
+          pts1, pts1_len, pts2, pts2_len, euclidean, true,
           dummy_comparison<py::list, double>, true) {}
 
 template struct GraphTemplate<Eigen::Ref<matrix>, double, py::list, double,
