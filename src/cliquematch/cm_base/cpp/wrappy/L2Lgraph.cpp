@@ -1,7 +1,4 @@
-#include <cm_base/include/wrappy/ext_template.hpp>  // contains only templates
-#include <cm_base/include/wrappy/wrapext_template.hpp>  // contains only templates
-
-namespace py = pybind11;
+#include <cm_base/include/wrappy/L2Lgraph.h>
 
 template struct relset<py::list, double>;
 

@@ -1,3 +1,6 @@
+#ifndef RELSET_H
+#define RELSET_H
+
 #include <cm_base/include/core/pair_dist.h>
 #include <functional>
 #include <set>
@@ -60,4 +63,6 @@ std::vector<std::set<u32> > efr_condition(
     u32& nvert, u32& nedges, relset<List1, Delta1>&, relset<List2, Delta2>&,
     const EpsType epsilon, std::function<bool(u32, u32, u32, u32)> cfunc,
     bool use_cfunc_only);
+
+#endif /* RELSET_H */
 

@@ -1,11 +1,14 @@
+#ifndef WRAP_TEMPLATE_HPP
+#define WRAP_TEMPLATE_HPP
+
 #include <cm_base/include/wrappy/ext_template.h>
 
 namespace py = pybind11;
-using namespace pybind11;
 
 template <typename List1, typename Delta1, typename List2, typename Delta2,
           typename EpsType>
 void init_GraphTemplate(py::module& m, std::string classname) {
+    using namespace pybind11;
     using GClass = GraphTemplate<List1, Delta1, List2, Delta2, EpsType>;
     class_<GClass, graph2>(m, classname.c_str(),
                            R"cmbase(
@@ -81,4 +84,6 @@ void init_GraphTemplate(py::module& m, std::string classname) {
         .def("__repr__", [](GClass& zz) { return zz.showdata(); })
         .def("__str__", [](GClass& zz) { return zz.showdata(); });
 }
+
+#endif /* WRAP_TEMPLATE_HPP */
 

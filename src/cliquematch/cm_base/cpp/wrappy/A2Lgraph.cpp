@@ -1,11 +1,4 @@
-#include <pybind11/eigen.h>
-#include <cm_base/cpp/wrappy/eigen_distance.hpp>
-#include <cm_base/include/wrappy/ext_template.hpp>  // contains only templates
-#include <cm_base/include/wrappy/wrapext_template.hpp>  // contains only templates
-
-// required for relset to instantiate
-extern template struct relset<Eigen::Ref<matrix>, double>;  // in A2AGraph.cpp
-extern template struct relset<py::list, double>;            // in L2LGraph.cpp
+#include <cm_base/include/wrappy/A2Lgraph.h>
 
 template std::vector<std::set<u32> >
 edges_from_relsets<Eigen::Ref<matrix>, double, py::list, double, double>(

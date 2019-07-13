@@ -1,7 +1,4 @@
-#include <pybind11/eigen.h>
-#include <cm_base/cpp/wrappy/eigen_distance.hpp>
-#include <cm_base/include/wrappy/ext_template.hpp>  // contains only templates
-#include <cm_base/include/wrappy/wrapext_template.hpp>  // contains only templates
+#include <cm_base/include/wrappy/A2Agraph.h>
 
 // required for relset to instantiate
 template struct relset<Eigen::Ref<matrix>, double>;

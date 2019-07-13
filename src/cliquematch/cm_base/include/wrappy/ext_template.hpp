@@ -1,3 +1,9 @@
+// this hpp contains templates included in multiple files
+// keep a ifndef guard to prevent excesses
+
+#ifndef EXT_TEMPLATE_HPP
+#define EXT_TEMPLATE_HPP
+
 #include <cm_base/include/wrappy/ext_template.h>
 #include <cstdlib>
 #include <cstring>
@@ -146,3 +152,6 @@ std::string GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::showdata() {
     }
     return ss.str();
 }
+
+#endif /* EXT_TEMPLATE_HPP */
+

@@ -1,3 +1,6 @@
+#ifndef RELSET_HPP
+#define RELSET_HPP
+
 #include <cm_base/include/core/relset.h>
 #include <algorithm>
 #include <cmath>
@@ -231,3 +234,6 @@ std::vector<std::set<u32> > efr_condition(
 
     return Edges;
 }
+
+#endif /* RELSET_HPP */
+
