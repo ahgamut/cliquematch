@@ -14,7 +14,7 @@ using ndarray = pybind11::array_t<dtype, pybind11::array::c_style |
 
 //' The basic data structure used to store a sparse graph
 //' and share info with python
-struct graph2 {
+struct pygraph {
     graph G;
     std::vector<std::set<u32>> EDGES;
     u32 nvert, nedges;
@@ -31,11 +31,11 @@ struct graph2 {
     bool finished_heur;
     bool finished_all;
 
-    graph2();
-    graph2(ndarray<bool> adjmat);
-    // graph2(std::vector<std::set<u32> > adjlist, unsigned int no_of_vertices);
-    graph2(ndarray<unsigned int> edge_list, unsigned int no_of_vertices);
-    graph2(std::string filename, unsigned int reader_choice);
+    pygraph();
+    pygraph(ndarray<bool> adjmat);
+    // pygraph(std::vector<std::set<u32> > adjlist, unsigned int no_of_vertices);
+    pygraph(ndarray<unsigned int> edge_list, unsigned int no_of_vertices);
+    pygraph(std::string filename, unsigned int reader_choice);
     void find_max_clique();
     void continue_search();
     std::vector<u32> get_max_clique();

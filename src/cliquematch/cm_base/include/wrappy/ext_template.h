@@ -1,7 +1,7 @@
 #ifndef EXT_TEMPLATE_H
 #define EXT_TEMPLATE_H
 
-#include <cm_base/include/wrappy/graph2.h>
+#include <cm_base/include/wrappy/pygraph.h>
 #include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
 #include <cm_base/include/core/relset.hpp>  //this contains only templates
@@ -16,7 +16,7 @@ Delta dummy_comparison(List& ll, u32 i, u32 j) {
 
 template <typename List1, typename Delta1, typename List2, typename Delta2,
           typename EpsType>
-struct GraphTemplate : public graph2 {
+struct GraphTemplate : public pygraph {
     relset<List1, Delta1> ps1;
     relset<List2, Delta2> ps2;
     EpsType pts_epsilon;

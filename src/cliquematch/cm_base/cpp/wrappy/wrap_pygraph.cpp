@@ -1,12 +1,12 @@
-#include <cm_base/include/wrappy/graph2.h>
+#include <cm_base/include/wrappy/pygraph.h>
 #include <pybind11/iostream.h>
 #include <pybind11/stl.h>
 
 namespace p = pybind11;
 using namespace pybind11;
 
-void init_graph2(p::module& m) {
-    class_<graph2>(m, "Graph",
+void init_pygraph(p::module& m) {
+    class_<pygraph>(m, "Graph",
                    R"cmbase(
         Class to load/operate on/store a large sparse graph.
 
@@ -71,25 +71,25 @@ void init_graph2(p::module& m) {
             n_vertices : int
                 The total number of vertices in the graph
             )cmbase")
-        .def_readwrite("use_heuristic", &graph2::use_heur,
+        .def_readwrite("use_heuristic", &pygraph::use_heur,
                        "Search using the heuristic if true")
-        .def_readwrite("use_dfs", &graph2::use_dfs,
+        .def_readwrite("use_dfs", &pygraph::use_dfs,
                        "Perform the depth-first search if true")
-        .def_readwrite("size_limit", &graph2::clique_lim,
+        .def_readwrite("size_limit", &pygraph::clique_lim,
                        "Set the limit on the size of clique to find")
-        .def_readwrite("time_limit", &graph2::time_lim,
+        .def_readwrite("time_limit", &pygraph::time_lim,
                        "Set the time limit on the search")
-        .def_readonly("current_vertex", &graph2::current_vertex,
+        .def_readonly("current_vertex", &pygraph::current_vertex,
                       "The vertex which is about to be searched (Readonly)")
-        .def_readonly("search_done", &graph2::finished_all,
+        .def_readonly("search_done", &pygraph::finished_all,
                       "Whether the search has been completed (Readonly)")
-        .def_readonly("n_vertices", &graph2::nvert,
+        .def_readonly("n_vertices", &pygraph::nvert,
                       "Number of vertices in the graph (Readonly)")
-        .def_readonly("n_edges", &graph2::nedges,
+        .def_readonly("n_edges", &pygraph::nedges,
                       "Number of edges in the graph (Readonly)")
-        .def_readonly("adjacency_list", &graph2::EDGES,
+        .def_readonly("adjacency_list", &pygraph::EDGES,
                       "The adjacency list of the graph (Readonly)")
-        .def("get_max_clique", &graph2::get_max_clique,
+        .def("get_max_clique", &pygraph::get_max_clique,
              p::call_guard<p::scoped_ostream_redirect,
                            p::scoped_estream_redirect>(),
              return_value_policy::copy,
@@ -102,12 +102,12 @@ void init_graph2(p::module& m) {
             Returns the vertices of the largest clique found so far.
 
 	    )cmbase")
-        .def("continue_search", &graph2::continue_search,
+        .def("continue_search", &pygraph::continue_search,
              R"cmbase(
 	    Resume the search for a maximum clique at `current_vertex`.
 	    Does nothing if all the vertices have been searched.
 
 	    )cmbase")
-        .def("__repr__", [](graph2& zz) { return zz.showdata(); })
-        .def("__str__", [](graph2& zz) { return zz.showdata(); });
+        .def("__repr__", [](pygraph& zz) { return zz.showdata(); })
+        .def("__str__", [](pygraph& zz) { return zz.showdata(); });
 }

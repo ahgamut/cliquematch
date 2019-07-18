@@ -40,13 +40,13 @@ class get_pybind_include(object):
         return pybind11.get_include(self.user)
 
 
-def get_src_cpps():
+def get_src_cpps(path="src/cliquematch/cm_base/"):
     """
     Go through src/cliquematch/cm_base recursively, 
     and return all cpp file paths
     """
     cpps = []
-    for root, dirnames, filenames in os.walk("src/cliquematch/cm_base/"):
+    for root, dirnames, filenames in os.walk(path):
         for filename in filenames:
             if os.path.splitext(filename)[-1] == ".cpp":
                 cpps.append(os.path.join(root, filename))
@@ -105,7 +105,7 @@ class BuildExt(_build_ext):
 
     c_opts = {
         "msvc": ["/EHsc"],  # msvc has c++11 by default
-        "unix": ["-std=c++11", "-Wall", "-Wno-unused-result"],
+        "unix": ["-Wall", "-Wno-unused-result"],
     }
 
     if platform.system() == "Windows":
@@ -120,8 +120,10 @@ class BuildExt(_build_ext):
         opts = self.c_opts.get(ct)
         if ct == "unix":
             opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
-            # if has_flag(self.compiler, "-fvisibility=hidden"):
-            opts.append("-fvisibility=hidden")
+            opts.append(cpp_flag(self.compiler)
+            if has_flag(self.compiler, "-fvisibility=hidden"):
+                opts.append("-fvisibility=hidden")
+
         elif ct == "msvc":
             opts.append('-DVERSION_INFO=\\"%s\\"' % self.distribution.get_version())
         elif ct == "mingw32":

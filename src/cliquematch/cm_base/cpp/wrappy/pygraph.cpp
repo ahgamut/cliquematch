@@ -1,4 +1,4 @@
-#include <cm_base/include/wrappy/graph2.h>
+#include <cm_base/include/wrappy/pygraph.h>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
@@ -6,7 +6,7 @@
 namespace py = pybind11;
 
 //' Default constructor, use only for debugging purposes
-graph2::graph2() {
+pygraph::pygraph() {
     nvert = 0;
     nedges = 0;
     use_heur = false;
@@ -42,7 +42,7 @@ graph2::graph2() {
 //' and so on.
 //' Note that weight will not be considered in clique computation (not even
 // recorded anywhere)
-graph2::graph2(std::string filename, unsigned int reader_choice) {
+pygraph::pygraph(std::string filename, unsigned int reader_choice) {
     //	std::cout<<"Constructing graph from a file\n";
     std::string fname = filename;
     std::cerr << "Loading graph from: " << fname << "\n";
@@ -81,7 +81,7 @@ graph2::graph2(std::string filename, unsigned int reader_choice) {
 //' Graph from adjacency list
 //' Vertices must be numbered 1 to N
 //' No self loops, no weights, only undirected
-graph2::graph2(ndarray<unsigned int> edge_list1, unsigned int no_of_vertices) {
+pygraph::pygraph(ndarray<unsigned int> edge_list1, unsigned int no_of_vertices) {
     //	std::cout<<"Constructing graph from the list of edges (Nx2 matrix)\n";
     nvert = no_of_vertices;
     u32 no_of_edges = 0;
@@ -141,7 +141,7 @@ graph2::graph2(ndarray<unsigned int> edge_list1, unsigned int no_of_vertices) {
 //' Graph from adjacency matrix (square matrix of booleans)
 //' Vertices assumed numbered 1 to N
 //' No self loops, no weights, only undirected
-graph2::graph2(ndarray<bool> adjmat1) {
+pygraph::pygraph(ndarray<bool> adjmat1) {
     //	std::cout<<"Constructing graph from the adjacency matrix\n";
     std::vector<std::set<u32>>().swap(this->EDGES);
     auto adjmat = adjmat1.unchecked<2>();
@@ -191,7 +191,7 @@ graph2::graph2(ndarray<bool> adjmat1) {
 }
 
 //' Helper function to find maximum clique, does not return anything
-void graph2::find_max_clique() {
+void pygraph::find_max_clique() {
     G.CLIQUE_LIMIT = clique_lim;
     if (G.n_vert == 0) {
         throw std::runtime_error("Graph is not initialized!!\n" +
@@ -209,14 +209,14 @@ void graph2::find_max_clique() {
 }
 
 // Finds the maximum clique and returns it as a std::vector
-std::vector<u32> graph2::get_max_clique() {
+std::vector<u32> pygraph::get_max_clique() {
     if (!ans_found) find_max_clique();
     return this->ans_clique;
 }
 
 //' The clique search can be reset in case the current set of parameters were
 // not optimal
-void graph2::continue_search() {
+void pygraph::continue_search() {
     if (!finished_all) {
         ans_found = false;
         find_max_clique();
@@ -225,9 +225,9 @@ void graph2::continue_search() {
     }
 }
 
-std::string graph2::showdata() {
+std::string pygraph::showdata() {
     std::stringstream ss;
-    ss << "cliquematch.cm_base.graph2 object at " << this << "\n";
+    ss << "cliquematch.cm_base.pygraph object at " << this << "\n";
     ss << this->nvert << " vertices, " << this->nedges << " edges\n";
     ss << "Search Parameters : \n";
     ss << "Size Limit: " << this->clique_lim
