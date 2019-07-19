@@ -21,7 +21,7 @@ using matmask = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>;
 #pragma message("Error: no pybind11 or Rcpp")
 #endif
 
-#include <cm_base/triples/triples.h>
+#include <triples/triples.h>
 #include <set>
 #include <vector>
 

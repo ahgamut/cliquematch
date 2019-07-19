@@ -1,8 +1,8 @@
 #ifndef PSGRAPH_H
 #define PSGRAPH_H
 
-#include <cm_base/pointset/pointset.h>
-#include <cm_base/wrappy/graph2/graph2.h>
+#include <pointset/pointset.h>
+#include <wrappy/graph2/graph2.h>
 #include <pybind11/eigen.h>
 
 //' Data structure for storing the pairs of point-sets and their correspondence

@@ -3,13 +3,13 @@
     cliquematch.psgraph
     ~~~~~~~~~~~~~~~~~~~
 
-    Wrapper over cliquematch.cm_base.A2AGraph 
+    Wrapper over cliquematch.core.A2AGraph 
     for aligning images using marked points
 
     :license: see LICENSE for more details.
 """
 
-from .cm_base import A2AGraph as _A2AGraph
+from .core import A2AGraph as _A2AGraph
 import numpy as np
 from warnings import warn
 
@@ -79,7 +79,7 @@ class MaskFilter(object):
 
 class psgraph(_A2AGraph):
     """
-    A convenience wrapper over `cliquematch.cm_base.A2AGraph`
+    A convenience wrapper over `cliquematch.core.A2AGraph`
     for the specific case of aligning corner points on an image
     """
 

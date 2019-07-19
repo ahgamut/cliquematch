@@ -1,4 +1,4 @@
-#include <cm_base/relset/eigrel.h>
+#include <relset/eigrel.h>
 #include <cmath>
 
 template <typename DerivedMat>

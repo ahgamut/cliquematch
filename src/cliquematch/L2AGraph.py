@@ -3,12 +3,12 @@
     cliquematch.L2AGraph
     ~~~~~~~~~~~~~~~~~~~~
 
-    A convenience wrapper over cliquematch.cm_base.L2AGraph
+    A convenience wrapper over cliquematch.core.L2AGraph
 
     :copyright: (c) 2019 by gnv3.
     :license: see LICENSE for more details.
 """
-from .cm_base import L2AGraph as _L2AGraph
+from .core import L2AGraph as _L2AGraph
 import numpy as np
 from warnings import warn
 

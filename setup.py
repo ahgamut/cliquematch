@@ -40,7 +40,7 @@ class get_pybind_include(object):
         return pybind11.get_include(self.user)
 
 
-def get_src_cpps(path="src/cliquematch/cm_base/"):
+def get_src_cpps(path):
     """
     Go through src/cliquematch/cm_base recursively, 
     and return all cpp file paths
@@ -58,8 +58,9 @@ def get_src_cpps(path="src/cliquematch/cm_base/"):
 # 2) the copying from build/ to dist/
 ext_modules = [
     Extension(
-        name="cliquematch.cm_base",
-        sources=get_src_cpps(),
+        name="cliquematch.core",
+        sources=get_src_cpps("src/cliquematch/core/")
+        + get_src_cpps("src/cliquematch/ext/"),
         include_dirs=[
             str(get_pybind_include(True)),
             str(get_pybind_include(False)),
@@ -118,9 +119,9 @@ class BuildExt(_build_ext):
     def build_extensions(self):
         ct = self.compiler.compiler_type
         opts = self.c_opts.get(ct)
+        opts.append(cpp_flag(self.compiler))
         if ct == "unix":
             opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
-            opts.append(cpp_flag(self.compiler))
             if has_flag(self.compiler, "-fvisibility=hidden"):
                 opts.append("-fvisibility=hidden")
 
@@ -134,7 +135,7 @@ class BuildExt(_build_ext):
 
         for ext in self.extensions:
             ext.extra_compile_args = opts
-            if ct == "mingw32":
+            if "mingw" in ct:
                 ext.extra_link_args = [
                     "-Wl,-Bstatic,--whole-archive",
                     "-lwinpthread",
@@ -142,7 +143,7 @@ class BuildExt(_build_ext):
                     "-static-libgcc",
                     "-static-libstdc++",
                 ]
-            _build_ext.build_extensions(self)
+        _build_ext.build_extensions(self)
 
 
 class cm_build(_build):

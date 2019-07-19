@@ -1,4 +1,4 @@
-#include <cm_base/wrappy/egraph/egraph.h>
+#include <wrappy/egraph/egraph.h>
 
 namespace py = pybind11;
 using namespace pybind11;

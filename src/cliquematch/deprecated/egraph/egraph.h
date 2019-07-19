@@ -1,8 +1,8 @@
 #ifndef EGRAPH_H
 #define EGRAPH_H
 
-#include <cm_base/relset/eigrel.h>
-#include <cm_base/wrappy/graph2/graph2.h>
+#include <relset/eigrel.h>
+#include <wrappy/graph2/graph2.h>
 #include <pybind11/eigen.h>
 #include <pybind11/functional.h>
 #include <pybind11/numpy.h>

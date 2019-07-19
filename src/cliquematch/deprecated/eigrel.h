@@ -21,7 +21,7 @@ using matmask = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>;
 #pragma message("Error: no pybind11 or Rcpp")
 #endif
 
-#include <cm_base/relset/relset.cpp>
+#include <relset/relset.cpp>
 using namespace std;
 using pset = relset<Eigen::Ref<matrix>, double>;
 double eucdist(Eigen::Ref<matrix> mat, u32 i, u32 j);

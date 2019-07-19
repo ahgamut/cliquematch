@@ -12,10 +12,10 @@ Setting up the cliquematch package
 
 name = "cliquematch_v0.6.0"
 
-from .cm_base import Graph
+from .core import Graph
 
 try:
-    from .cm_base import psgraph
+    from .core import psgraph
 except Exception as e:
     from .psgraph import psgraph
 from .A2AGraph import A2AGraph

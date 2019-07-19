@@ -1,4 +1,4 @@
-#include <cm_base/pointset/pointset.h>
+#include <pointset/pointset.h>
 #include <algorithm>
 #include <cmath>
 #include <exception>

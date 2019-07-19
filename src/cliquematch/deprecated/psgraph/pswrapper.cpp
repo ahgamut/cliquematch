@@ -1,4 +1,4 @@
-#include <cm_base/wrappy/psgraph/psgraph.h>
+#include <wrappy/psgraph/psgraph.h>
 
 namespace py = pybind11;
 using namespace pybind11;
