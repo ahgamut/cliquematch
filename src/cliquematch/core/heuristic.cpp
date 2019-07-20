@@ -44,7 +44,8 @@ void graph::heur_one_clique(u32 cur) {
 
         // should neib be considered as a candidate?
         neib_loc = 0;
-        f = binary_find(el_base + V[cur].elo, V[cur].N, neib, neib_loc);
+
+        f = this->find_if_neighbors(V[cur], neib, neib_loc);
         if (!cand[neib_loc]) continue;
 
         // how good of a candidate is neib ?
@@ -54,8 +55,7 @@ void graph::heur_one_clique(u32 cur) {
         count = 0;
         for (k = 0; this->V[neib].N; k++) {
             ans = 0;
-            f = binary_find(el_base + V[cur].elo, V[cur].N,
-                            el_base[V[neib].elo + k], ans);
+            f = this->find_if_neighbors(V[cur], el_base[V[neib].elo + k], ans);
             if (f == -1)
                 break;
             else if (f == 1) {

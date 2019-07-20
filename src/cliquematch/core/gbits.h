@@ -27,7 +27,7 @@ class graphBits {
     void reset(u32 i);
     void toggle(u32 i);
     void clear(u32 N = 0);
-    u32 count();
+    u32 count() const;
 
     bool block_empty(u32 i) const;
     bool operator[](u32 i) const;
@@ -45,10 +45,10 @@ class graphBits {
     graphBits& operator-(const graphBits& other) const;
 
     void show();
-    void show(std::vector<u32>);
+    void show(const std::vector<u32>&);
     void show(u32*, u32);
 
-    std::vector<u32> get_subset(std::vector<u32>);
+    std::vector<u32> get_subset(const std::vector<u32>&);
     std::vector<u32> get_subset(u32*, u32);
 };
 

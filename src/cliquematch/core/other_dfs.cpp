@@ -8,8 +8,8 @@ using namespace std;
 // A version of dfs_one_search that
 // finds A maximum clique
 // containing the vertex cur
-void graph::dfs_other_search(u32 cur, graphBits& prev_cand,
-                             graphBits& prev_res) {
+void graph::dfs_other_search(u32 cur, const graphBits& prev_cand,
+                             const graphBits& prev_res) {
     if (this->V[cur].mcs >= CLIQUE_LIMIT) return;
     u32 candidates_left = prev_cand.count();
     u32 mcs_potential = candidates_left + prev_res.count();
@@ -44,9 +44,9 @@ void graph::dfs_other_search(u32 cur, graphBits& prev_cand,
                 res.set(i);
 
                 for (k = 0; k < this->V[vert].N; k++) {
-                    f = binary_find(el_base + V[cur].elo, V[cur].N,
-                                    el_base[V[vert].elo + k], ans);
-
+                    f = this->find_if_neighbors(
+                        this->V[cur], this->el_base[this->V[vert].elo + k],
+                        ans);
                     if (f == -1)
                         break;
                     else if (f == 1 && cand[ans]) {

@@ -5,7 +5,8 @@
 
 using namespace std;
 
-void graph::dfs_one_search(u32 cur, graphBits& prev_cand, graphBits& prev_res) {
+void graph::dfs_one_search(u32 cur, const graphBits& prev_cand,
+                           const graphBits& prev_res) {
     if (CUR_MAX_CLIQUE_SIZE > CLIQUE_LIMIT) return;
     if ((clock() - duration) / CLOCKS_PER_SEC > TIME_LIMIT) return;
 
@@ -65,9 +66,8 @@ void graph::dfs_one_search(u32 cur, graphBits& prev_cand, graphBits& prev_res) {
                 // Check if vert has any common neighbors to cur
                 // (apart from each other)
                 for (k = 0; k < this->V[vert].N; k++) {
-                    f = binary_find(el_base + V[cur].elo, V[cur].N,
-                                    el_base[V[vert].elo + k], ans);
-
+                    f = this->find_if_neighbors(
+                        this->V[cur], el_base[this->V[vert].elo + k], ans);
                     // break if no more common neighbors
                     if (f == -1) break;
 
@@ -85,7 +85,7 @@ void graph::dfs_one_search(u32 cur, graphBits& prev_cand, graphBits& prev_res) {
 
                 // you also want to avoid checking cur itself in the recursive
                 // call
-                future_cand.reset(V[cur].spos);
+                future_cand.reset(this->V[cur].spos);
 
                 dfs_one_search(cur, future_cand, res);
 
