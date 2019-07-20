@@ -37,7 +37,6 @@ struct graph {
           u32 clique_lim = 1000);
     void set_vertices();
     void disp();
-    void disp(std::stringstream&);
     void find_max_cliques(u32& start_vert, bool& heur_done,
                           bool use_heur = false, bool use_dfs = true,
                           double time_limit = 10000);

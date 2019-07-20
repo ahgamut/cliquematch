@@ -5,7 +5,6 @@
 
 namespace py = pybind11;
 
-//' Default constructor, use only for debugging purposes
 pygraph::pygraph() {
     nvert = 0;
     nedges = 0;
@@ -67,7 +66,7 @@ pygraph::pygraph(std::string filename, unsigned int reader_choice) {
                                  std::to_string(__LINE__) + "\n");
     }
 
-    this->G = graph(nvert, nedges, EDGES);
+    this->load_graph();
 
     use_heur = false;
     use_dfs = true;
@@ -81,7 +80,8 @@ pygraph::pygraph(std::string filename, unsigned int reader_choice) {
 //' Graph from adjacency list
 //' Vertices must be numbered 1 to N
 //' No self loops, no weights, only undirected
-pygraph::pygraph(ndarray<unsigned int> edge_list1, unsigned int no_of_vertices) {
+pygraph::pygraph(ndarray<unsigned int> edge_list1,
+                 unsigned int no_of_vertices) {
     //	std::cout<<"Constructing graph from the list of edges (Nx2 matrix)\n";
     nvert = no_of_vertices;
     u32 no_of_edges = 0;
@@ -124,10 +124,7 @@ pygraph::pygraph(ndarray<unsigned int> edge_list1, unsigned int no_of_vertices) 
     nvert = no_of_vertices;
     nedges = no_of_edges;
 
-    //	std::cerr<<"Extracted edges successfully, initializing graph\n";
-    this->G = graph(nvert, nedges, EDGES);
-    // std::cerr << "Graph initialized successfully:: " << G.n_vert << " " <<
-    // G.el_size << "\n";
+    this->load_graph();
 
     use_heur = false;
     use_dfs = true;
@@ -174,12 +171,7 @@ pygraph::pygraph(ndarray<bool> adjmat1) {
 
         nedges = no_of_edges;
 
-        //		std::cerr<<"Extracted edges successfully, initializing
-        // graph\n";
-        this->G = graph(nvert, nedges, EDGES);
-        //		std::cerr<<"Graph initialized successfully::
-        //"<<G.n_vert<<" "<<G.el_size<<"\n";
-
+        this->load_graph();
         use_heur = false;
         use_dfs = true;
         clique_lim = 32;
@@ -188,6 +180,15 @@ pygraph::pygraph(ndarray<bool> adjmat1) {
         finished_heur = false;
         finished_all = false;
     }
+}
+
+// Separate method to make exporting pygraph easier
+void pygraph::load_graph() {
+    //		std::cerr<<"Extracted edges successfully, initializing
+    // graph\n";
+    this->G = graph(this->nvert, this->nedges, EDGES);
+    //		std::cerr<<"Graph initialized successfully::
+    //"<<G.n_vert<<" "<<G.el_size<<"\n";
 }
 
 //' Helper function to find maximum clique, does not return anything

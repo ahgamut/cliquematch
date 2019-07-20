@@ -61,7 +61,7 @@ bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::build_edges(
                                  std::to_string(__LINE__) + "\n");
     }
 
-    this->G = graph(this->nvert, this->nedges, this->EDGES);
+    this->load_graph();
     return true;
 }
 
@@ -88,7 +88,8 @@ bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::
                                  std::string(__FILE__) + "  " +
                                  std::to_string(__LINE__) + "\n");
     }
-    this->G = graph(this->nvert, this->nedges, this->EDGES);
+
+    this->load_graph();
     return true;
 }
 

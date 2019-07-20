@@ -23,7 +23,6 @@ struct vertex {
 
     void set_spos(u32*, u32*);
     void disp(u32*);
-    void disp(u32*, std::stringstream&);
     void clique_disp(u32*);
     std::vector<u32> give_clique(u32*);
 };

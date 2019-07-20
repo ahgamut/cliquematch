@@ -4,12 +4,35 @@
 #include <string>
 #include <utility>
 
+/* Using Intrinsics:
+ *
+ * To count the number of set bits in an unsigned int, gcc and msvc offer a
+ * compiler intrinsic (__builtin_popcount and __popcnt respectively). The
+ * intrinsics are slightly faster, but may cause compatibility issues, so there
+ * is a C version also provided, to count the number of set bits.
+ * <20-07-19>
+ * */
+#ifdef INTRINSIC_BITCOUNT
+
 #ifdef _MSC_VER
 #include <intrin.h>
-#define __builtin_popcount __popcnt
+#define bitcount __popcnt
+#else
+#define bitcount __builtin_popcount
 #endif
 
-/* Can I have a version that doesn't use __popcnt:  <05-06-19, gautham> */
+#else
+inline unsigned int arith_bcount(unsigned int n) {
+    n = n - ((n >> 1) & 0x55555555);
+    n = (n & 0x33333333) + ((n >> 2) & 0x33333333);
+    n = (n + (n >> 4)) & 0x0F0F0F0F;
+    n = n + (n >> 8);
+    n = n + (n >> 16);
+    return (n & 0x0000003F);
+}
+
+#define bitcount arith_bcount
+#endif
 
 graphBits::graphBits() {
     this->valid_len = 0;
@@ -84,8 +107,7 @@ void graphBits::clear(u32 N) {
 u32 graphBits::count() {
     this->data[this->dlen - 1] &= this->pad_cover;
     u32 sum = 0;
-    for (u32 i = 0; i < this->dlen; i++)
-        sum += __builtin_popcount(this->data[i]);
+    for (u32 i = 0; i < this->dlen; i++) sum += bitcount(this->data[i]);
     return sum;
 }
 

@@ -71,11 +71,6 @@ void graph::disp() {
         this->vertices[i].disp(this->el_base);
 }
 
-void graph::disp(std::stringstream& gs) {
-    for (u32 i = 0; i < this->n_vert; i++)
-        this->vertices[i].disp(this->el_base, gs);
-}
-
 void graph::find_max_cliques(u32& start_vert, bool& heur_done, bool use_heur,
                              bool use_dfs, double time_limit) {
     if (start_vert != 0) {

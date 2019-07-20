@@ -67,7 +67,7 @@ ext_modules = [
             "src/cliquematch/",
             os.environ.get("EIGEN_DIR", os.path.expanduser("~/Downloads/")),
         ],
-        define_macros=[("WRAPPY", "1"), ("WRAPR", "0"), ("NDEBUG", "1")],
+        define_macros=[("WRAPPY", "1"), ("WRAPR", "0")],
         language="c++",
     )
 ]

@@ -47,15 +47,6 @@ void vertex::set_spos(u32* el_base, u32* eb_base) {
     this->bits.set(this->spos);
 }
 
-void vertex::disp(u32* el_base, std::stringstream& sj) {
-    if (this->N <= 1) return;
-    sj << "Vertex " << this->id << " has " << this->N - 1 << " neighbors\n( ";
-    for (u32 i = 0; i < this->N; i++) {
-        if (i != this->spos) sj << *(el_base + this->elo + i) << " ";
-    }
-    sj << ")\n";
-}
-
 void vertex::disp(u32* el_base) {
     if (this->N <= 1 || this->mcs <= 1) return;
     std::cout << "Vertex " << this->id << " has " << this->N << " edges\n";

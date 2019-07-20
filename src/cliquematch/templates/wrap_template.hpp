@@ -11,7 +11,7 @@ void init_GraphTemplate(py::module& m, std::string classname) {
     using namespace pybind11;
     using GClass = GraphTemplate<List1, Delta1, List2, Delta2, EpsType>;
     class_<GClass, pygraph>(m, classname.c_str(),
-                           R"cmbase(
+                            R"cmbase(
             Correspondence graph class for two sets S1 and S2.
             (cpp_subclass) elements of the sets are not accessible
 
