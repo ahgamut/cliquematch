@@ -19,7 +19,8 @@ GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::GraphTemplate() {
     this->nedges = 0;
     this->use_heur = false;
     this->use_dfs = false;
-    this->clique_lim = 32;
+    this->lower_bound = 0;
+    this->upper_bound = 32;
     this->time_lim = 100;
     this->finished_heur = false;
     this->finished_all = false;
@@ -31,17 +32,8 @@ template <typename List1, typename Delta1, typename List2, typename Delta2,
 GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::GraphTemplate(
     List1& pts1, u32 pts1_len, List2& pts2, u32 pts2_len,
     std::function<Delta1(List1&, u32, u32)> d1, bool is_d1_symmetric,
-    std::function<Delta2(List2&, u32, u32)> d2, bool is_d2_symmetric) {
-    this->nvert = 0;
-    this->nedges = 0;
-    this->use_heur = false;
-    this->use_dfs = false;
-    this->clique_lim = 32;
-    this->time_lim = 100;
-    this->finished_heur = false;
-    this->finished_all = false;
-    this->current_vertex = 0;
-
+    std::function<Delta2(List2&, u32, u32)> d2, bool is_d2_symmetric)
+    : GraphTemplate<List1, Delta1, List2, Delta2, EpsType>() {
     this->ps1 = relset<List1, Delta1>(pts1_len, d1, is_d1_symmetric);
     this->ps2 = relset<List2, Delta2>(pts2_len, d2, is_d2_symmetric);
 }
@@ -97,9 +89,6 @@ template <typename List1, typename Delta1, typename List2, typename Delta2,
           typename EpsType>
 py::list GraphTemplate<List1, Delta1, List2, Delta2,
                        EpsType>::get_correspondence2(std::vector<u32>& clique) {
-    //    auto S1mat = this->attr("__dict__")["S1"].unchecked<2>();
-    //    auto S2mat = this->attr("__dict__")["S2"].unchecked<2>();
-
     py::list a1;
     py::list a2;
 
@@ -143,8 +132,9 @@ std::string GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::showdata() {
         ss << "Correspondence graph has " << this->nvert << " vertices, "
            << this->nedges << " edges\n";
         ss << "Search Parameters : \n";
-        ss << "Size Limit : " << this->clique_lim
-           << " Time limit: " << this->time_lim << "s\n";
+        ss << "Bounds: [" << this->lower_bound << "," << this->upper_bound
+           << "]"
+           << "\nTime limit: " << this->time_lim << "s\n";
         ss << "Using Heuristic : " << (this->use_heur ? "True" : "False");
         ss << " Using DFS: " << (this->use_dfs ? "True" : "False");
         ss << "\n";

@@ -19,15 +19,14 @@ void graph::heur_one_clique(u32 cur) {
     graphBits res(this->V[cur].N);
     res.set(this->V[cur].spos);
     graphBits cand = ~(res);
-    graphBits poss_cand(this->V[cur].N);
 
     vector<pair<u32, u32> > neib_degs(V[cur].N);
 
     u32 neib, neib_loc;
-    u32 i, k;
+    u32 i, j;
 
-    short f, f1, f2;
-    u32 ans, count;
+    short f1, f2;
+    u32 ans1, ans2;
     u32 mcs_potential, candidates_left, cur_clique_size = 1;
 
     // find all neighbors of cur and sort by decreasing degree
@@ -44,59 +43,35 @@ void graph::heur_one_clique(u32 cur) {
 
         // should neib be considered as a candidate?
         neib_loc = 0;
+        f1 = this->find_if_neighbors(V[cur], neib, neib_loc);
+        if (this->V[neib].N < this->CUR_MAX_CLIQUE_SIZE || !cand[neib_loc])
+            continue;
 
-        f = this->find_if_neighbors(V[cur], neib, neib_loc);
-        if (!cand[neib_loc]) continue;
-
-        // how good of a candidate is neib ?
-        // let's count how many possible candidates it can add;
-        // (the number of common neighbors between cur and neib)
-        poss_cand.clear();
-        count = 0;
-        for (k = 0; this->V[neib].N; k++) {
-            ans = 0;
-            f = this->find_if_neighbors(V[cur], el_base[V[neib].elo + k], ans);
-            if (f == -1)
-                break;
-            else if (f == 1) {
-                poss_cand.set(ans);
-                count++;
-                f = 0;
-            }
-        }
-
+        // it can be part of the current clique
+        res.set(neib_loc);
         cand.reset(neib_loc);
-        // is neib a worthwhile candidate? (part 1)
-        // is the number of edges between neib and cur greater than
-        // the current clique size?
-        if (count < this->CUR_MAX_CLIQUE_SIZE) {
-            res.clear();
-            res.set(this->V[cur].spos);
-            cand = ~res;
-            cur_clique_size = 0;
-            break;
-        } else {
-            if (!res[neib_loc]) cur_clique_size++;
-            res.set(neib_loc);
+        cur_clique_size++;
+
+        // assume neib is a worthwhile candidate
+        // modify candidate list using neib's neighbors
+        for (j = i + 1; j < this->V[cur].N; j++) {
+            f1 = this->find_if_neighbors(V[cur], neib_degs[j].first, ans1);
+            f2 = this->find_if_neighbors(V[neib], neib_degs[j].first, ans2);
+            if (f2 != 1) cand.reset(ans1);
         }
 
-        // I assume neib is a worthwhile candidate
-        // will modify candidate list using neib's neighbors
-        poss_cand.reset(this->V[cur].spos);
-        poss_cand.reset(neib_loc);
-        cand = poss_cand;
         candidates_left = cand.count();
         mcs_potential = cur_clique_size + candidates_left;
 
         if (mcs_potential <= this->CUR_MAX_CLIQUE_SIZE) {
             // heuristic assumption was not useful, because
             // potential clique with neib cannot beat the maximum
-            // this vertex is a lost cause. bail
-            break;
-
-            // alternatively, I can reset the list of candidates
+            // Reset the list of candidates
             // and try with the remaining neighbors
-            // (maybe some other time)
+            cand = ~res;
+            res.clear();
+            res.set(this->V[cur].spos);
+            cur_clique_size = 1;
         } else if (candidates_left == 0) {
             // there are no candidates left =>
             // potential has been realized and beaten the current maximum
@@ -109,7 +84,13 @@ void graph::heur_one_clique(u32 cur) {
             cerr << "Heuristic in " << cur << " updated max_clique to "
                  << this->V[cur].mcs << "\n";
             this->CUR_MAX_CLIQUE_SIZE = this->V[cur].mcs;
-            break;
+
+            // this vertex might have a different set of neighbors who may form
+            // a bigger clique
+            cand = ~res;
+            res.clear();
+            res.set(this->V[cur].spos);
+            cur_clique_size = 1;
         }
         // else, this clique still has potential to beat the maximum, and
         // some candidates left to try, so continue on with the loop

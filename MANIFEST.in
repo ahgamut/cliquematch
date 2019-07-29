@@ -1,2 +1,2 @@
-recursive-include src/cliquematch/cm_base/ *.h
+recursive-include src/cliquematch/*.h
 graft src

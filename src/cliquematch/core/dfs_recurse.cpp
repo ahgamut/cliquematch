@@ -105,25 +105,12 @@ void graph::dfs_one_search(u32 cur, const graphBits& prev_cand,
     }
 }
 
+#ifndef STACK_DFS
+#pragma message("Using recursion for DFS")
 void graph::dfs_one_clique(u32 cur) {
     graphBits res(this->V[cur].bits);
     graphBits cand = ~(this->V[cur].bits);
     dfs_one_search(cur, cand, res);
 }
+#endif
 
-u32 graph::dfs_all_cliques(u32 start_vertex, double time_limit) {
-    u32 i = start_vertex;
-    TIME_LIMIT = time_limit;
-    for (; i < vertices.size(); i++) {
-        if ((clock() - duration) / CLOCKS_PER_SEC > TIME_LIMIT) {
-            cerr << "DFS: Exceeded time limit of " << TIME_LIMIT
-                 << " seconds\n";
-            break;
-        }
-        if (V[i].N <= CUR_MAX_CLIQUE_SIZE || CUR_MAX_CLIQUE_SIZE > CLIQUE_LIMIT)
-            continue;
-        dfs_one_clique(i);
-    }
-    // If we pause midway, I want to know where we stopped
-    return i;
-}

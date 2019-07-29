@@ -41,7 +41,7 @@ class TestIsoGraph(object):
         G.S1[0] = set()
         G.use_dfs = True
         G.use_heuristic = False
-        G.size_limit = 100
+        G.upper_bound = 100
         G.time_limit = 200
         full_inf = repr(G)
         temp_inf = str(G)

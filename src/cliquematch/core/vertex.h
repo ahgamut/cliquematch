@@ -19,15 +19,15 @@ struct vertex {
     bool operator<(const vertex& BB) const { return (this->mcs < BB.mcs); }
 
     vertex();
-    vertex(u32 id, u32 N, u32 elo, u32 ebo);
+    void load_external(u32 id, u32 N, u32 elo, u32 ebo);
 
     void set_spos(u32*, u32*);
-    void disp(u32*);
-    void clique_disp(u32*);
-    std::vector<u32> give_clique(u32*);
+    void disp(const u32*);
+    void clique_disp(const u32*);
+    std::vector<u32> give_clique(const u32*);
 };
 
-short binary_find(u32* a, u32 N, u32 val, u32& loc);
+short binary_find(const u32* a, u32 N, u32 val, u32& loc);
 
 #endif /* VERTEX_H */
 
