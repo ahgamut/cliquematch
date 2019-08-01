@@ -242,16 +242,14 @@ void graphBits::show(const std::vector<u32>& elements) {
     for (u32 i = 0; i < this->valid_len; i++) {
         if ((*this)[i]) std::cout << elements[i] << " ";
     }
-    // std::cout<<" ("<<this->count()<<" "<<this->pad_cover<<")\n";
     std::cout << " (" << this->count() << "/" << this->valid_len << ")\n";
 }
 
-void graphBits::show(u32* elements, u32 len) {
+void graphBits::show(const u32* elements, u32 len) {
     // assert(this->valid_len <= len);
     for (u32 i = 0; i < this->valid_len; i++) {
         if ((*this)[i]) std::cout << elements[i] << " ";
     }
-    // std::cout<<" ("<<this->count()<<" "<<this->pad_cover<<")\n";
     std::cout << " (" << this->count() << "/" << this->valid_len << ")\n";
 }
 
@@ -268,7 +266,7 @@ std::vector<u32> graphBits::get_subset(const std::vector<u32>& elements) {
     return ans;
 }
 
-std::vector<u32> graphBits::get_subset(u32* elements, u32 len) {
+std::vector<u32> graphBits::get_subset(const u32* elements, u32 len) {
     // assert(this->valid_len <= len);
     std::vector<u32> ans(this->count());
     for (u32 i = 0, ct = 0; i < this->valid_len; i++) {

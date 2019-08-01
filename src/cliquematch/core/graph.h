@@ -1,6 +1,7 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
+#include <core/searchstate.h>
 #include <core/vertex.h>
 #include <set>
 #include <vector>

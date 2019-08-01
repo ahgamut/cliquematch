@@ -46,10 +46,10 @@ class graphBits {
 
     void show();
     void show(const std::vector<u32>&);
-    void show(u32*, u32);
+    void show(const u32*, u32);
 
     std::vector<u32> get_subset(const std::vector<u32>&);
-    std::vector<u32> get_subset(u32*, u32);
+    std::vector<u32> get_subset(const u32*, u32);
 };
 
 #endif /* GBITS_H */

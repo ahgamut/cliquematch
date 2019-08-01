@@ -6,21 +6,6 @@
 
 using namespace std;
 
-struct SearchState {
-    unsigned int start_at;
-    graphBits cand, res;
-    SearchState(const vertex& ver) {
-        this->start_at = 0;
-        this->res = graphBits(ver.bits);
-        this->cand = ~(ver.bits);
-    };
-    SearchState(const graphBits& prev_cand, const graphBits& prev_res) {
-        this->start_at = 0;
-        this->res = graphBits(prev_res);
-        this->cand = graphBits(prev_cand);
-    };
-};
-
 void graph::dfs_one_clique(u32 cur) {
     std::stack<SearchState> states;
     unsigned int candidates_left, mcs_potential;
@@ -103,7 +88,7 @@ void graph::dfs_one_clique(u32 cur) {
 
                     // next time we return to this state, we can start searching
                     // using ONLY the vertices after vert, because vert will get
-                    // covered by all the future states generated
+                    // covered by future_state and its descendants
                     cur_state.start_at = i + 1;
 
                     states.push(future_state);
