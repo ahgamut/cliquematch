@@ -132,11 +132,6 @@ graphBits& graphBits::operator=(const graphBits& other) {
 
     if (this->ext_ptr) {
         // this has someone to manage its memory, we need to only copy the data
-        if (this->data == nullptr)  // what the fuck
-        {
-            std::cout << "DOOM!\n";
-        }
-
         for (u32 i = 0; i < this->dlen; i++) this->data[i] = other.data[i];
     }
 
