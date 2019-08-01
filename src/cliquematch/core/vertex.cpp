@@ -32,7 +32,7 @@ vertex::vertex() {
     this->mcs = 0;
 }
 
-vertex::vertex(u32 id, u32 N, u32 elo, u32 ebo) {
+void vertex::load_external(u32 id, u32 N, u32 elo, u32 ebo) {
     this->id = id;
     this->N = N;
     this->elo = elo;
@@ -43,7 +43,7 @@ vertex::vertex(u32 id, u32 N, u32 elo, u32 ebo) {
 
 void vertex::set_spos(u32* el_base, u32* eb_base) {
     short f = binary_find(el_base + this->elo, this->N, this->id, this->spos);
-    this->bits = graphBits(&eb_base[this->ebo], this->N);
+    this->bits.load_external(&eb_base[this->ebo], this->N);
     this->bits.set(this->spos);
 }
 

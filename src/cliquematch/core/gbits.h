@@ -18,11 +18,13 @@ class graphBits {
 
     graphBits(u32 n_bits);
     graphBits(const graphBits& other);
-
-    graphBits(u32* ext_data, u32 n_bits, bool cleanout = true);
-
-    ~graphBits();
-
+    void load_external(u32* ext_data, u32 n_bits, bool cleanout = true);
+    virtual ~graphBits() {
+        if (!this->ext_ptr && this->data != nullptr) {
+            delete[] this->data;
+            this->data = nullptr;
+        }
+    };
     void set(u32 i);
     void reset(u32 i);
     void toggle(u32 i);
@@ -31,7 +33,7 @@ class graphBits {
 
     bool block_empty(u32 i) const;
     bool operator[](u32 i) const;
-    graphBits& operator~() const;
+    graphBits operator~() const;
 
     graphBits& operator=(const graphBits& other);  // NOT doing move semantics
     graphBits& operator&=(const graphBits& other);

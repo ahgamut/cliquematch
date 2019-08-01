@@ -44,7 +44,7 @@ graph::graph(u32 n_vert, u32 n_edges, std::vector<std::set<u32> >& edges,
 
     for (u32 i = 0; i < edges.size(); i++) {
         edges[i].insert(i);
-        this->vertices[i] = vertex(i, edges[i].size(), el_size, eb_size);
+        this->vertices[i].load_external(i, edges[i].size(), el_size, eb_size);
         this->edge_list.insert(this->edge_list.end(), edges[i].begin(),
                                edges[i].end());
         this->max_degree =

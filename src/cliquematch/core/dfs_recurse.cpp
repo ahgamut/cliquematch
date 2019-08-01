@@ -105,13 +105,14 @@ void graph::dfs_one_search(u32 cur, const graphBits& prev_cand,
     }
 }
 
-/*
+#ifndef STACK_DFS
+#pragma message("Using recursion for DFS")
 void graph::dfs_one_clique(u32 cur) {
     graphBits res(this->V[cur].bits);
     graphBits cand = ~(this->V[cur].bits);
     dfs_one_search(cur, cand, res);
 }
-*/
+#endif
 
 u32 graph::dfs_all_cliques(u32 start_vertex, double time_limit) {
     u32 i = start_vertex;

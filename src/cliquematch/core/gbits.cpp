@@ -38,7 +38,7 @@ graphBits::graphBits() {
     this->valid_len = 0;
     this->dlen = 0;
     this->data = nullptr;
-    this->ext_ptr = true;
+    this->ext_ptr = false;
     this->pad_cover = 0;
 }
 
@@ -51,7 +51,7 @@ graphBits::graphBits(u32 n_bits) {
     this->pad_cover = n_bits % 32 == 0 ? 0 : ALL_ONES << (32 - n_bits % 32);
 }
 
-graphBits::graphBits(u32* ext_data, u32 n_bits, bool cleanout) {
+void graphBits::load_external(u32* ext_data, u32 n_bits, bool cleanout) {
     this->data = ext_data;  // since someone else gives me the data, they should
                             // have inited
     this->valid_len = n_bits;
@@ -68,13 +68,6 @@ graphBits::graphBits(const graphBits& other) {
     this->ext_ptr = false;
     for (u32 i = 0; i < this->dlen; i++) this->data[i] = other.data[i];
     this->pad_cover = other.pad_cover;
-}
-
-graphBits::~graphBits() {
-    if (!ext_ptr) {
-        delete this->data;
-        this->data = nullptr;
-    }
 }
 
 void graphBits::set(u32 i) {
@@ -119,38 +112,41 @@ bool graphBits::operator[](u32 i) const {
     return (this->data[i / 32] & mask) != 0;
 }
 
-graphBits& graphBits::operator~() const {
-    auto temp = new graphBits(this->valid_len);
+graphBits graphBits::operator~() const {
+    graphBits temp = graphBits(this->valid_len);
     for (u32 i = 0; i < this->dlen; i++) {
-        temp->data[i] = ~(this->data[i]);
+        temp.data[i] = ~(this->data[i]);
     }
     // do I need to worry about what the padding bits are?
     // YES, for the popcnt stuff
-    temp->data[this->dlen - 1] &= this->pad_cover;
-    return *temp;
+    temp.data[this->dlen - 1] &= this->pad_cover;
+    return temp;
 }
 
 graphBits& graphBits::operator=(const graphBits& other) {
-    if (this == &other) return *this;
-    // is the below semantics okay for an equals operator?
-    // I'm expecting a segfault when I chain too many =s in a set of expressions
-    // What about x=x?
-
     // https://stackoverflow.com/questions/1734628/copy-constructor-and-operator-overload-in-c-is-a-common-function-possible
-    // IS THIS SAME AS MOVE SEMANTICS??
+    if (this == &other) return *this;
     this->valid_len = other.valid_len;
     this->dlen = other.dlen;
     this->pad_cover = other.pad_cover;
 
-    if (other.ext_ptr) {
-        if (this->data == nullptr) {
-            this->data = other.data;
-            this->ext_ptr = true;
-        } else {
-            for (u32 i = 0; i < this->dlen; i++) this->data[i] = other.data[i];
+    if (this->ext_ptr) {
+        // this has someone to manage its memory, we need to only copy the data
+        if (this->data == nullptr)  // what the fuck
+        {
+            std::cout << "DOOM!\n";
         }
-    } else {
-        if (this->data == nullptr) this->data = new u32[this->dlen];
+
+        for (u32 i = 0; i < this->dlen; i++) this->data[i] = other.data[i];
+    }
+
+    else {
+        // this is either a nullptr or managing its own memory
+        if (this->data != nullptr) {
+            delete[] this->data;
+            this->data = nullptr;
+        }
+        this->data = new u32[this->dlen];
         for (u32 i = 0; i < this->dlen; i++) this->data[i] = other.data[i];
     }
     return *this;

@@ -6,6 +6,9 @@
 
 using namespace std;
 
+#ifdef STACK_DFS
+#pragma message("Using explicit stack for DFS")
+
 void graph::dfs_one_clique(u32 cur) {
     std::stack<SearchState> states;
     unsigned int candidates_left, mcs_potential;
@@ -109,3 +112,4 @@ void graph::dfs_one_clique(u32 cur) {
     }
 }
 
+#endif
