@@ -3,7 +3,6 @@
 
 #define ALL_ONES 0xFFFFFFFF
 #define MSB_32 0x80000000
-
 #include <vector>
 typedef unsigned int u32;
 
@@ -17,7 +16,6 @@ class graphBits {
     graphBits();
 
     graphBits(u32 n_bits);
-    graphBits(const graphBits& other);
     void load_external(u32* ext_data, u32 n_bits, bool cleanout = true);
     virtual ~graphBits() {
         if (!this->ext_ptr && this->data != nullptr) {
@@ -33,18 +31,22 @@ class graphBits {
 
     bool block_empty(u32 i) const;
     bool operator[](u32 i) const;
-    graphBits operator~() const;
 
-    graphBits& operator=(const graphBits& other);  // NOT doing move semantics
+    graphBits(const graphBits& other);
+    graphBits(graphBits&& other);
+    friend void swap(graphBits& me, graphBits& other);
+    graphBits& operator=(graphBits other);
+
     graphBits& operator&=(const graphBits& other);
     graphBits& operator|=(const graphBits& other);
     graphBits& operator^=(const graphBits& other);
     graphBits& operator-=(const graphBits& other);
 
-    graphBits& operator&(const graphBits& other) const;
-    graphBits& operator|(const graphBits& other) const;
-    graphBits& operator^(const graphBits& other) const;
-    graphBits& operator-(const graphBits& other) const;
+    graphBits operator~() const;
+    graphBits operator&(const graphBits& other) const;
+    graphBits operator|(const graphBits& other) const;
+    graphBits operator^(const graphBits& other) const;
+    graphBits operator-(const graphBits& other) const;
 
     void show();
     void show(const std::vector<u32>&);
