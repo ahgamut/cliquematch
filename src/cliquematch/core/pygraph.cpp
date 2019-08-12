@@ -41,7 +41,7 @@ pygraph::pygraph() {
 //' and so on.
 //' Note that weight will not be considered in clique computation (not even
 // recorded anywhere)
-pygraph::pygraph(std::string filename, unsigned int reader_choice) {
+pygraph::pygraph(std::string filename, unsigned int reader_choice) : pygraph() {
     //	std::cout<<"Constructing graph from a file\n";
     std::string fname = filename;
     std::cerr << "Loading graph from: " << fname << "\n";
@@ -49,11 +49,11 @@ pygraph::pygraph(std::string filename, unsigned int reader_choice) {
     std::vector<std::set<u32>>().swap(this->EDGES);
     if (reader_choice == 1) {
         std::cerr << "Choice: 1 MMIO format -> line: edge edge\n";
-        EDGES = mmio2_reader(fname.c_str(), nvert, nedges);
+        this->EDGES = mmio2_reader(fname.c_str(), nvert, nedges);
     } else if (reader_choice == 2) {
         std::cerr << "Choice: 2 MMIO format -> line: edge edge weight\n";
         std::cerr << "Note that weight of graph is not recorded\n";
-        EDGES = mmio3_reader(fname.c_str(), nvert, nedges);
+        this->EDGES = mmio3_reader(fname.c_str(), nvert, nedges);
     } else {
         throw std::runtime_error("Invalid reading option given!\n" +
                                  std::string(__FILE__) + "  " +
@@ -67,27 +67,19 @@ pygraph::pygraph(std::string filename, unsigned int reader_choice) {
     }
 
     this->load_graph();
-
-    use_heur = false;
-    use_dfs = true;
-    clique_lim = 32;
-    time_lim = 100.0;
-    current_vertex = 0;
-    finished_heur = false;
-    finished_all = false;
 }
 
 //' Graph from adjacency list
 //' Vertices must be numbered 1 to N
 //' No self loops, no weights, only undirected
-pygraph::pygraph(ndarray<unsigned int> edge_list1,
-                 unsigned int no_of_vertices) {
+pygraph::pygraph(ndarray<unsigned int> edge_list1, unsigned int no_of_vertices)
+    : pygraph() {
     //	std::cout<<"Constructing graph from the list of edges (Nx2 matrix)\n";
-    nvert = no_of_vertices;
+    this->nvert = no_of_vertices;
     u32 no_of_edges = 0;
 
     std::vector<std::set<u32>>().swap(this->EDGES);
-    EDGES = std::vector<std::set<u32>>(nvert + 1);
+    this->EDGES = std::vector<std::set<u32>>(nvert + 1);
 
     u32 v1, v2;
 
@@ -125,14 +117,6 @@ pygraph::pygraph(ndarray<unsigned int> edge_list1,
     nedges = no_of_edges;
 
     this->load_graph();
-
-    use_heur = false;
-    use_dfs = true;
-    clique_lim = 32;
-    time_lim = 100.0;
-    current_vertex = 0;
-    finished_heur = false;
-    finished_all = false;
 }
 
 //' Graph from adjacency matrix (square matrix of booleans)
@@ -172,13 +156,6 @@ pygraph::pygraph(ndarray<bool> adjmat1) {
         nedges = no_of_edges;
 
         this->load_graph();
-        use_heur = false;
-        use_dfs = true;
-        clique_lim = 32;
-        time_lim = 100.0;
-        current_vertex = 0;
-        finished_heur = false;
-        finished_all = false;
     }
 }
 
