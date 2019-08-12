@@ -1,5 +1,5 @@
-#ifndef GRAPH2_H
-#define GRAPH2_H
+#ifndef PYGRAPH_H
+#define PYGRAPH_H
 
 #include <core/graph.h>
 #include <core/mmio.h>
@@ -19,21 +19,21 @@ struct pygraph {
     u32 nvert, nedges;
 
     std::vector<u32> ans_clique;
-    bool ans_found = false;
+
+    unsigned int clique_lim;
+    unsigned int current_vertex;
 
     bool use_heur;
     bool use_dfs;
-    unsigned int clique_lim;
-    double time_lim;
-
-    unsigned int current_vertex;
     bool finished_heur;
     bool finished_all;
+    bool ans_found = false;
+    double time_lim;
 
+    pygraph();
     pygraph(ndarray<bool> adjmat);
     pygraph(ndarray<unsigned int> edge_list, unsigned int no_of_vertices);
     pygraph(std::string filename, unsigned int reader_choice);
-    pygraph();
     void load_graph();
     void find_max_clique();
     void continue_search();
@@ -41,5 +41,5 @@ struct pygraph {
     std::string showdata();
 };
 
-#endif /* GRAPH2_H */
+#endif /* PYGRAPH_H */
 

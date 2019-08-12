@@ -11,11 +11,12 @@ struct graph {
     vertex* V;                     // usually vertices.data()
     u32 n_vert;  // number of vertices (expect an off-by-one glitch?)
 
-    std::vector<u32>
-        edge_list;  // raw list of edges (useless without vertex.elo)
-    u32* el_base;   // usually edge_list.data()
-    u32 el_size;    // number of edges (expect an off-by-k glitch? (K = no. of
-                    // isolated vertices +1)
+    std::vector<u32> edge_list;
+    // raw list of edges (useless without vertex.elo)
+    u32* el_base;  // usually edge_list.data()
+    u32 el_size;
+    // number of edges (expect an off-by-k glitch? (K = no. of
+    // isolated vertices +1)
 
     std::vector<u32> edge_bits;  // edges stored as bits for a clique, (padded
                                  // to ensure 32bit)

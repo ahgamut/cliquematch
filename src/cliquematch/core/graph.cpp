@@ -27,17 +27,11 @@ graph::graph() {
 }
 
 graph::graph(u32 n_vert, u32 n_edges, std::vector<std::set<u32> >& edges,
-             u32 clique_lim) {
+             u32 clique_lim)
+    : graph() {
     this->n_vert = n_vert + 1;
     // Therefore the 0th graph vertex is always a sentinel, remember the offset
-    this->el_size = 0;
-    this->eb_size = 0;
-    this->max_degree = 0;
-    this->duration = 0.0;
     this->CLIQUE_LIMIT = clique_lim;
-    this->CUR_MAX_CLIQUE_SIZE = 1;
-    this->CUR_MAX_CLIQUE_LOC = 0;
-    this->TIME_LIMIT = 100;
 
     this->vertices = vector<vertex>(this->n_vert);
     this->edge_list = vector<u32>();
@@ -93,6 +87,23 @@ void graph::find_max_cliques(u32& start_vert, bool& heur_done, bool use_heur,
     }
 
     duration = (clock() - duration) / ((double)CLOCKS_PER_SEC);
+}
+
+u32 graph::dfs_all_cliques(u32 start_vertex, double time_limit) {
+    u32 i = start_vertex;
+    TIME_LIMIT = time_limit;
+    for (; i < vertices.size(); i++) {
+        if ((clock() - duration) / CLOCKS_PER_SEC > TIME_LIMIT) {
+            cerr << "DFS: Exceeded time limit of " << TIME_LIMIT
+                 << " seconds\n";
+            break;
+        }
+        if (V[i].N <= CUR_MAX_CLIQUE_SIZE || CUR_MAX_CLIQUE_SIZE > CLIQUE_LIMIT)
+            continue;
+        dfs_one_clique(i);
+    }
+    // If we pause midway, I want to know where we stopped
+    return i;
 }
 
 vector<u32> graph::get_max_clique() {
