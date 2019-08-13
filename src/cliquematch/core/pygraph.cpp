@@ -10,11 +10,13 @@ pygraph::pygraph() {
     nedges = 0;
     use_heur = false;
     use_dfs = true;
-    clique_lim = 32;
+    lower_bound = 1;
+    upper_bound = 32;
     time_lim = 100.0;
     current_vertex = 0;
     finished_heur = false;
     finished_all = false;
+    ans_found = false;
     std::vector<std::set<u32>>().swap(this->EDGES);
 }
 
@@ -132,16 +134,11 @@ pygraph::pygraph(ndarray<bool> adjmat1) {
 
 // Separate method to make exporting pygraph easier
 void pygraph::load_graph() {
-    //		std::cerr<<"Extracted edges successfully, initializing
-    // graph\n";
     this->G = graph(this->nvert, this->nedges, EDGES);
-    //		std::cerr<<"Graph initialized successfully::
-    //"<<G.n_vert<<" "<<G.el_size<<"\n";
 }
 
 //' Helper function to find maximum clique, does not return anything
 void pygraph::find_max_clique() {
-    G.CLIQUE_LIMIT = clique_lim;
     if (G.n_vert == 0) {
         throw std::runtime_error("Graph is not initialized!!\n" +
                                  std::string(__FILE__) + "  " +
@@ -149,6 +146,11 @@ void pygraph::find_max_clique() {
     }
 
     //	std::cerr<<"Finding cliques\n";
+    this->G.CUR_MAX_CLIQUE_SIZE =
+        this->lower_bound > this->G.CUR_MAX_CLIQUE_SIZE
+            ? this->lower_bound
+            : this->G.CUR_MAX_CLIQUE_SIZE;
+    this->G.CLIQUE_LIMIT = this->upper_bound;
     G.find_max_cliques(current_vertex, finished_heur, use_heur, use_dfs,
                        time_lim);
     ans_clique = G.get_max_clique();
@@ -160,11 +162,15 @@ void pygraph::find_max_clique() {
 // Finds the maximum clique and returns it as a std::vector
 std::vector<u32> pygraph::get_max_clique() {
     if (!ans_found) find_max_clique();
+    if (this->lower_bound > this->ans_clique.size() ||
+        this->G.CUR_MAX_CLIQUE_LOC == 0) {
+        throw std::runtime_error(
+            "Unable to find maximum clique with given bounds\n" +
+            std::string(__FILE__) + "  " + std::to_string(__LINE__) + "\n");
+    }
     return this->ans_clique;
 }
 
-//' The clique search can be reset in case the current set of parameters were
-// not optimal
 void pygraph::continue_search() {
     if (!finished_all) {
         ans_found = false;
@@ -174,13 +180,24 @@ void pygraph::continue_search() {
     }
 }
 
+//' The clique search can be reset in case the current set of parameters were
+// not optimal
+void pygraph::reset_search() {
+    this->ans_found = false;
+    this->finished_all = false;
+    this->finished_heur = false;
+    this->current_vertex = 0;
+    this->G.CUR_MAX_CLIQUE_SIZE = 1;
+    this->G.CUR_MAX_CLIQUE_LOC = 0;
+}
+
 std::string pygraph::showdata() {
     std::stringstream ss;
     ss << "cliquematch.cm_base.pygraph object at " << this << "\n";
     ss << this->nvert << " vertices, " << this->nedges << " edges\n";
     ss << "Search Parameters : \n";
-    ss << "Size Limit: " << this->clique_lim
-       << " Time limit: " << this->time_lim << "s\n";
+    ss << "Bounds: [" << this->lower_bound << "," << this->upper_bound << "]"
+       << "\nTime limit: " << this->time_lim << "s\n";
     ss << "Using Heuristic : " << (this->use_heur ? "True" : "False");
     ss << " Using DFS: " << (this->use_dfs ? "True" : "False");
     ss << "\n";

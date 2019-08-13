@@ -21,6 +21,7 @@ class TestGraph(object):
     * various methods of initialization
     * setting and accessing attributes
     * ensuring dfs works for a small sample Graph
+    * checks that the search can be reset
     * (doesn't check continue_search or heuristic)
     """
 
@@ -65,7 +66,6 @@ class TestGraph(object):
         ]
 
         elist[0, 0] = 0
-        print(elist)
         with pytest.raises(RuntimeError):
             G2 = cliquematch.Graph(elist, 5)
         elist[0, 0] = 1
@@ -122,7 +122,8 @@ class TestGraph(object):
         G = cliquematch.Graph(edges, 8)
         G.use_dfs = True
         G.use_heuristic = False
-        G.size_limit = 100
+        G.lower_bound = 1
+        G.upper_bound = 100
         G.time_limit = 200
         full_inf = repr(G)
         temp_inf = str(G)
@@ -173,5 +174,38 @@ class TestGraph(object):
         G = cliquematch.Graph(edges, 8)
         G.use_dfs = True
         G.use_heuristic = False
+        ans = G.get_max_clique()
+        assert ans == [1, 4, 5, 6, 7]
+
+    def test_reset_search(self):
+        edges = np.array(
+            [
+                [2, 3],
+                [1, 3],
+                [1, 4],
+                [1, 5],
+                [1, 6],
+                [1, 7],
+                [4, 5],
+                [4, 6],
+                [4, 7],
+                [5, 6],
+                [5, 7],
+                [6, 7],
+                [2, 8],
+                [3, 8],
+            ],
+            dtype=np.uint32,
+        )
+
+        G = cliquematch.Graph(edges, 8)
+        G.lower_bound = 6  # will cause error
+        G.upper_bound = 32
+        G.use_dfs = True
+        G.use_heuristic = False
+        with pytest.raises(RuntimeError):
+            ans = G.get_max_clique()
+        G.reset_search()
+        G.lower_bound = 1
         ans = G.get_max_clique()
         assert ans == [1, 4, 5, 6, 7]

@@ -37,7 +37,7 @@ def test_small():
     )
     G = cliquematch.Graph(edges, 8)
     G.use_dfs = True
-    G.size_limit = 100
+    G.upper_bound = 100
     G.time_limit = 200
     print(repr(G))
     print(str(G))
@@ -52,7 +52,7 @@ def test_graph():
 
     # G.use_heuristic = True
     G.use_dfs = True
-    G.size_limit = 100
+    G.upper_bound = 100
     G.time_limit = 0.05
 
     print(G)
@@ -89,7 +89,7 @@ def test_pointset():
     G.build_edges()
 
     G.use_dfs = True
-    G.size_limit = 100
+    G.upper_bound = 100
     G.time_limit = 10
 
     ans = None

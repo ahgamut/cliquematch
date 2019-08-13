@@ -20,14 +20,14 @@ struct pygraph {
 
     std::vector<u32> ans_clique;
 
-    unsigned int clique_lim;
+    unsigned int lower_bound, upper_bound;
     unsigned int current_vertex;
 
     bool use_heur;
     bool use_dfs;
     bool finished_heur;
     bool finished_all;
-    bool ans_found = false;
+    bool ans_found;
     double time_lim;
 
     pygraph();
@@ -37,6 +37,7 @@ struct pygraph {
     void load_graph();
     void find_max_clique();
     void continue_search();
+    void reset_search();
     std::vector<u32> get_max_clique();
     std::string showdata();
 };

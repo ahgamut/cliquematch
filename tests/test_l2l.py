@@ -149,7 +149,7 @@ class TestL2LGraph(object):
         G.time_limit = 100
         G.use_heuristic = False
         G.use_dfs = True
-        G.size_limit = 10
+        G.upper_bound = 10
         G.build_edges()
         ans = G.get_correspondence()
 
@@ -175,7 +175,7 @@ class TestL2LGraph(object):
         G.time_limit = 100
         G.use_heuristic = True
         G.use_dfs = True
-        G.size_limit = 10
+        G.upper_bound = 10
         G.build_edges()
         ans = G.get_correspondence()
 
@@ -194,7 +194,7 @@ class TestL2LGraph(object):
         G.S1[0][1] = 0
         G.use_dfs = True
         G.use_heuristic = False
-        G.size_limit = 100
+        G.upper_bound = 100
         G.time_limit = 200
         full_inf = repr(G)
         temp_inf = str(G)
@@ -240,7 +240,7 @@ class TestL2LGraph(object):
         G.time_limit = 0.001
         # G.use_heuristic = True
         G.use_dfs = True
-        G.size_limit = 100
+        G.upper_bound = 100
         G.build_edges()
         while not G.search_done:
             G.continue_search()
@@ -248,4 +248,36 @@ class TestL2LGraph(object):
         ans = G.get_correspondence()
 
         subset.sort()
-        assert ans[0] == subset
+        assert set(ans[0]) == set(subset)
+
+    def test_reset_search(self):
+        S1 = np.float64(np.random.uniform(0, 100, (100, 2)))
+        subset = list(x for x in range(20))
+        random.shuffle(subset)
+        subset = subset[:50]
+        rotmat = np.array(
+            [
+                [np.cos(np.pi / 3), -np.sin(np.pi / 3)],
+                [np.sin(np.pi / 3), np.cos(np.pi / 3)],
+            ]
+        )
+        S2 = np.float64(np.matmul(S1[subset, :], rotmat) + [1, 1])
+        S1 = S1.tolist()
+        S2 = S2.tolist()
+        G = cliquematch.L2LGraph(S1, S2, eucd, eucd)
+        G.epsilon = 0.001
+        G.build_edges()
+        G.time_limit = 100
+        # G.use_heuristic = True
+        G.use_dfs = True
+        G.lower_bound = 100  # will cause error
+        G.upper_bound = 100
+        with pytest.raises(RuntimeError):
+            ans = G.get_correspondence()
+        G.reset_search()
+        G.lower_bound = 19  # will work
+        ans = G.get_correspondence()
+        subset.sort()
+
+        subset.sort()
+        assert set(ans[0]) == set(subset)

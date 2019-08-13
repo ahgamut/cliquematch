@@ -19,7 +19,8 @@ GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::GraphTemplate() {
     this->nedges = 0;
     this->use_heur = false;
     this->use_dfs = false;
-    this->clique_lim = 32;
+    this->lower_bound = 0;
+    this->upper_bound = 32;
     this->time_lim = 100;
     this->finished_heur = false;
     this->finished_all = false;
@@ -131,8 +132,9 @@ std::string GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::showdata() {
         ss << "Correspondence graph has " << this->nvert << " vertices, "
            << this->nedges << " edges\n";
         ss << "Search Parameters : \n";
-        ss << "Size Limit : " << this->clique_lim
-           << " Time limit: " << this->time_lim << "s\n";
+        ss << "Bounds: [" << this->lower_bound << "," << this->upper_bound
+           << "]"
+           << "\nTime limit: " << this->time_lim << "s\n";
         ss << "Using Heuristic : " << (this->use_heur ? "True" : "False");
         ss << " Using DFS: " << (this->use_dfs ? "True" : "False");
         ss << "\n";

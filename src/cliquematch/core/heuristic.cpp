@@ -87,9 +87,9 @@ void graph::heur_one_clique(u32 cur) {
 
             // this vertex might have a different set of neighbors who may form
             // a bigger clique
+            cand = ~res;
             res.clear();
             res.set(this->V[cur].spos);
-            cand = ~res - this->V[cur].bits;
             cur_clique_size = 1;
         }
         // else, this clique still has potential to beat the maximum, and

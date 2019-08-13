@@ -7,7 +7,7 @@ using namespace pybind11;
 
 void init_pygraph(p::module& m) {
     class_<pygraph>(m, "Graph",
-                   R"cmbase(
+                    R"cmbase(
         Class to load/operate on/store a large sparse graph.
 
         Attributes
@@ -75,8 +75,10 @@ void init_pygraph(p::module& m) {
                        "Search using the heuristic if true")
         .def_readwrite("use_dfs", &pygraph::use_dfs,
                        "Perform the depth-first search if true")
-        .def_readwrite("size_limit", &pygraph::clique_lim,
-                       "Set the limit on the size of clique to find")
+        .def_readwrite("lower_bound", &pygraph::lower_bound,
+                       "Set the lower bound on the size of clique to find")
+        .def_readwrite("upper_bound", &pygraph::upper_bound,
+                       "Set the upper bound on the size of clique to find")
         .def_readwrite("time_limit", &pygraph::time_lim,
                        "Set the time limit on the search")
         .def_readonly("current_vertex", &pygraph::current_vertex,
@@ -108,6 +110,11 @@ void init_pygraph(p::module& m) {
 	    Does nothing if all the vertices have been searched.
 
 	    )cmbase")
+        .def("reset_search", &pygraph::reset_search,
+             R"cmbase(
+        Reset the clique search so as to search using different
+        bounds, etc.
+        )cmbase")
         .def("__repr__", [](pygraph& zz) { return zz.showdata(); })
         .def("__str__", [](pygraph& zz) { return zz.showdata(); });
 }

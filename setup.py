@@ -89,24 +89,12 @@ def has_flag(compiler, flagname):
     return True
 
 
-def cpp_flag(compiler):
-    """Return the -std=c++[11/14] compiler flag.
-    The c++14 is prefered over c++11 (when it is available).
-    """
-    if has_flag(compiler, "-std=c++14"):
-        return "-std=c++14"
-    elif has_flag(compiler, "-std=c++11"):
-        return "-std=c++11"
-    else:
-        raise RuntimeError("Unsupported compiler -- at least C++11 support is needed!")
-
-
 class BuildExt(_build_ext):
     """A custom build extension for adding compiler-specific options."""
 
     c_opts = {
-        "msvc": ["/EHsc"],  # msvc has c++11 by default
-        "unix": ["-Wall", "-Wno-unused-result"],
+        "msvc": ["/EHsc", "-std=c++14"],  # msvc has c++11 by default
+        "unix": ["-Wall", "-Wno-unused-result", "-std=c++14"],
     }
 
     if platform.system() == "Windows":
@@ -119,7 +107,6 @@ class BuildExt(_build_ext):
     def build_extensions(self):
         ct = self.compiler.compiler_type
         opts = self.c_opts.get(ct)
-        opts.append(cpp_flag(self.compiler))
         if ct == "unix":
             opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
             if has_flag(self.compiler, "-fvisibility=hidden"):
