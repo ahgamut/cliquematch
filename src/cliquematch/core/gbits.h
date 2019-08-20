@@ -1,10 +1,10 @@
 #ifndef GBITS_H
 #define GBITS_H
 
-#define ALL_ONES 0xFFFFFFFF
-#define MSB_32 0x80000000
 #include <vector>
 typedef unsigned int u32;
+constexpr unsigned int ALL_ONES = 0xFFFFFFFF;
+constexpr unsigned int MSB_32 = 0x80000000;
 
 class graphBits {
    private:

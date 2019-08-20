@@ -3,7 +3,7 @@
 
 // A structure to contain the indices of two elements and the distance between
 // them. Given an array of items X, where the distance between two elements is
-// measured in T A pair_dist instance with first=0, second=1, has
+// measured in T, a pair_dist instance with first=0, second=1, has
 // dist=distance(X[0], X[1])
 template <class T>
 struct pair_dist {
