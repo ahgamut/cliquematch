@@ -42,7 +42,7 @@ class get_pybind_include(object):
 
 def get_src_cpps(path):
     """
-    Go through src/cliquematch/cm_base recursively, 
+    Go through src/cliquematch/cm_base recursively,
     and return all cpp file paths
     """
     cpps = []
@@ -65,7 +65,7 @@ ext_modules = [
             str(get_pybind_include(True)),
             str(get_pybind_include(False)),
             "src/cliquematch/",
-            os.environ.get("EIGEN_DIR", os.path.expanduser("~/Downloads/")),
+            os.environ.get("EIGEN_DIR", "include/"),
         ],
         define_macros=[("WRAPPY", "1"), ("WRAPR", "0"), ("STACK_DFS", "")],
         language="c++",
