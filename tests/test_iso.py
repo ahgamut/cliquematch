@@ -16,8 +16,8 @@ class TestIsoGraph(object):
 
     """
     Test out properties of IsoGraph using the graph in the
-    sample .mtx file 
-    
+    sample .mtx file
+
     * Loading properly
     * Testing that edges can be built
     * testing data access and dfs (too small for heuristic)

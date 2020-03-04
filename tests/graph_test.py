@@ -9,7 +9,6 @@
 import pytest
 import cliquematch
 import numpy as np
-import random
 
 
 class TestGraph(object):
