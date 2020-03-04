@@ -59,12 +59,13 @@ class TestL2AGraph(object):
     Test out properties of L2AGraph using random numpy arrays
 
     * Loading with different callables
-    * testing that edges can be built, with or without a cfunc 
+    * testing that edges can be built, with or without a cfunc
     * testing data access, dfs, and heuristic (heuristic is buggy)
     * testing time limits with and continue search
     """
 
     def test_loading(self):
+        np.random.seed(824)
         S1 = np.float64(np.random.uniform(0, 100, (20, 2)))
         S2 = np.float64(np.random.uniform(0, 100, (20, 2)))
 
@@ -90,6 +91,7 @@ class TestL2AGraph(object):
             )
 
     def test_edge_build(self):
+        np.random.seed(824)
         S1 = np.float64(np.random.uniform(0, 100, (20, 2)))
         subset = list(x for x in range(20))
         random.shuffle(subset)
@@ -113,6 +115,7 @@ class TestL2AGraph(object):
             G2.build_edges_with_condition(lambda s1, i, j, s2, i2, j2: 0, False)
 
     def test_edge_custom(self):
+        np.random.seed(824)
         S1 = np.float64(np.random.uniform(0, 100, (20, 2)))
         subset = list(x for x in range(20))
         random.shuffle(subset)
@@ -126,6 +129,7 @@ class TestL2AGraph(object):
         G.build_edges_with_condition(condition_func=cf, use_cfunc_only=False)
 
     def test_dfs(self):
+        np.random.seed(824)
         S1 = np.float64(np.random.uniform(0, 100, (20, 2)))
         subset = list(x for x in range(20))
         random.shuffle(subset)
@@ -151,6 +155,7 @@ class TestL2AGraph(object):
         assert ans[0] == subset
 
     def test_heuristic(self):
+        np.random.seed(824)
         S1 = np.float64(np.random.uniform(0, 100, (20, 2)))
         subset = list(x for x in range(20))
         random.shuffle(subset)
@@ -176,6 +181,7 @@ class TestL2AGraph(object):
         assert set(ans[0]) <= set(subset)
 
     def test_data(self):
+        np.random.seed(824)
         S1 = np.float64(np.random.uniform(0, 100, (20, 2)))
         S2 = np.float64(np.random.uniform(0, 100, (20, 2)))
         S1 = S1.tolist()
@@ -214,6 +220,7 @@ class TestL2AGraph(object):
             G.adjacency_list = []
 
     def test_continue(self):
+        np.random.seed(824)
         S1 = np.float64(np.random.uniform(0, 100, (100, 2)))
         subset = list(x for x in range(20))
         random.shuffle(subset)
@@ -242,6 +249,7 @@ class TestL2AGraph(object):
         assert set(ans[0]) == set(subset)
 
     def test_reset_search(self):
+        np.random.seed(824)
         S1 = np.float64(np.random.uniform(0, 100, (100, 2)))
         subset = list(x for x in range(20))
         random.shuffle(subset)

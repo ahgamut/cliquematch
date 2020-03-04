@@ -1,20 +1,5 @@
-"""
-NIST Forensic Footwear Team
-Project Folder: cliquematch
-Filename: setup
-Author: gnv3 (Gautham Venkatasubramanian)
-Created on: 11/13/18 3:47 PM
-
-setup used for:
-
-Installing the cliquematch package
-"""
-
-from sys import platform
-import setuptools
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext as _build_ext
-
 from distutils.command.build import build as _build
 import sys
 import os
@@ -84,7 +69,8 @@ def has_flag(compiler, flagname):
         f.write("int main (int argc, char **argv) { return 0; }")
         try:
             compiler.compile([f.name], extra_postargs=[flagname])
-        except setuptools.distutils.errors.CompileError:
+        except Exception as e:
+            print(e)
             return False
     return True
 
@@ -133,11 +119,6 @@ class BuildExt(_build_ext):
         _build_ext.build_extensions(self)
 
 
-class cm_build(_build):
-    def run(self):
-        _build.run(self)
-
-
 setup(
     name="cliquematch",
     version="0.7.0",
@@ -146,13 +127,11 @@ setup(
     description="Matching using cliques in large sparse graphs",
     license="GPLv3",
     long_description=open("README.md", "r").read(),
-    url="somewhere on NIST github",
+    url="https://github.com/ahgamut/cliquematch",
     packages=find_packages("src"),
     package_dir={"": "src"},
     classifiers=[
-        "Development Status :: 3 - Alpha",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: C++",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 2",
@@ -161,5 +140,5 @@ setup(
     install_requires=["pybind11>=2.2", "numpy>=1.11"],
     setup_requires=["pybind11>=2.2"],
     ext_modules=ext_modules,
-    cmdclass={"build_ext": BuildExt, "build": cm_build},
+    cmdclass={"build_ext": BuildExt},
 )

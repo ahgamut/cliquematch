@@ -47,11 +47,12 @@ class TestA2AGraph(object):
     Test out properties of A2AGraph using random numpy arrays
 
     * Loading with different callables (and warning default as Euclidean)
-    * testing that edges can be built, with or without a cfunc 
+    * testing that edges can be built, with or without a cfunc
     * testing data access, dfs, and heuristic (heuristic is buggy)
     * testing time limits with and continue search
     """
 
+    np.random.seed(824)
     S1 = np.float64(np.random.uniform(0, 100, (20, 2)))
     S2 = np.float64(np.random.uniform(0, 100, (20, 2)))
 
@@ -189,6 +190,7 @@ class TestA2AGraph(object):
             G.adjacency_list = []
 
     def test_continue(self):
+        np.random.seed(824)
         S1 = np.float64(np.random.uniform(0, 100, (100, 2)))
         subset = list(x for x in range(20))
         random.shuffle(subset)
@@ -216,6 +218,7 @@ class TestA2AGraph(object):
         assert set(ans[0].tolist()) == set(subset)
 
     def test_reset_search(self):
+        np.random.seed(824)
         S1 = np.float64(np.random.uniform(0, 100, (100, 2)))
         subset = list(x for x in range(20))
         random.shuffle(subset)

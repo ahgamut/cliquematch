@@ -16,15 +16,15 @@ class TestIsoGraph(object):
 
     """
     Test out properties of IsoGraph using the graph in the
-    sample .mtx file 
-    
+    sample .mtx file
+
     * Loading properly
     * Testing that edges can be built
     * testing data access and dfs (too small for heuristic)
     """
 
-    S1 = cliquematch.Graph("./tests/sample_read1a.mtx", 1).adjacency_list
-    S2 = cliquematch.Graph("./tests/sample_read1b.mtx", 1).adjacency_list
+    S1 = cliquematch.Graph.from_file("./tests/sample_read1a.mtx", 1).adjacency_list
+    S2 = cliquematch.Graph.from_file("./tests/sample_read1b.mtx", 1).adjacency_list
 
     def test_loading(self):
         G = cliquematch.IsoGraph(self.S1, self.S2)
