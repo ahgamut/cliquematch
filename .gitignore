@@ -111,4 +111,5 @@ venv.bak/
 .tmuxp.yaml
 *.mtx
 .vimrc
-tmp/
+tmp/ 
+papers/

@@ -14,7 +14,6 @@ void graph::dfs_one_clique(u32 cur) {
     unsigned int candidates_left, mcs_potential;
     unsigned int vert, ans;
     states.push(SearchState(this->V[cur]));
-
     while (!states.empty()) {
         if (this->CUR_MAX_CLIQUE_SIZE > this->CLIQUE_LIMIT) return;
         if ((clock() - duration) / CLOCKS_PER_SEC > this->TIME_LIMIT) return;
