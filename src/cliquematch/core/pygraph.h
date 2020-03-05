@@ -33,14 +33,16 @@ class pygraph {
     unsigned int current_vertex;
 
     pygraph();
-    pygraph(ndarray<bool> adjmat);
-    pygraph(ndarray<unsigned int> edge_list, unsigned int no_of_vertices);
-    pygraph(std::string filename, unsigned int reader_choice);
+    pygraph(unsigned int, unsigned int, std::vector<std::set<unsigned int>>);
     void continue_search();
     void reset_search();
     std::vector<u32> get_max_clique();
     std::string showdata();
 };
 
+pygraph from_adj_matrix(ndarray<bool> adjmat);
+pygraph from_edgelist(ndarray<unsigned int> edge_list,
+		      unsigned int no_of_vertices);
+pygraph from_file(std::string filename, unsigned int reader_choice);
 #endif /* PYGRAPH_H */
 

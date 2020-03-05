@@ -7,10 +7,14 @@ using namespace pybind11;
 
 void init_pygraph(p::module& m) {
     class_<pygraph>(m, "Graph")
-	.def(init<std::string, unsigned int>(), arg("filename"), arg("type"))
-	.def(init<p::array_t<bool> >(), arg("adjmat"))
-	.def(init<ndarray<unsigned int>, unsigned int>(), arg("edgelist"),
-	     arg("num_vertices"))
+	.def(init<>())
+	.def(init<unsigned int, unsigned int,
+		  std::vector<std::set<unsigned int>>>(),
+	     arg("num_vertices"), arg("num_edges"), arg("edges"))
+	.def_static("from_file", &from_file, arg("filename"), arg("type"))
+	.def_static("from_adj_matrix", &from_adj_matrix, arg("adjmat"))
+	.def_static("from_edgelist", &from_edgelist, arg("edgelist"),
+		    arg("num_vertices"))
 	.def_readwrite("use_heuristic", &pygraph::use_heur,
 		       "Search using the heuristic if true")
 	.def_readwrite("use_dfs", &pygraph::use_dfs,
