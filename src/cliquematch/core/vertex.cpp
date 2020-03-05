@@ -7,18 +7,18 @@ short binary_find(const u32* a, u32 N, u32 val, u32& loc) {
     // returns -1 only if value is outside the search space
     int beg = 0, end = N - 1, mid = (beg + end / 2);
     if (a[end] < val) {
-        loc = end;
-        return -1;
+	loc = end;
+	return -1;
     }
     while (beg <= end) {
-        if (a[mid] == val) {
-            loc = mid;
-            return 1;
-        } else if (a[mid] < val)
-            beg = mid + 1;
-        else
-            end = mid - 1;
-        mid = (beg + end) / 2;
+	if (a[mid] == val) {
+	    loc = mid;
+	    return 1;
+	} else if (a[mid] < val)
+	    beg = mid + 1;
+	else
+	    end = mid - 1;
+	mid = (beg + end) / 2;
     }
     return 0;
 }
@@ -51,7 +51,7 @@ void vertex::disp(const u32* el_base) {
     if (this->N <= 1 || this->mcs <= 1) return;
     std::cout << "Vertex " << this->id << " has " << this->N << " edges\n";
     for (u32 i = 0; i < this->N; i++)
-        std::cerr << el_base[this->elo + i] << " ";
+	std::cerr << el_base[this->elo + i] << " ";
     std::cout << "Current Clique: ";
     this->bits.show();
     this->bits.show(&el_base[this->elo], this->N);

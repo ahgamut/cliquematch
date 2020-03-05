@@ -8,21 +8,18 @@
 
 struct graph {
     std::vector<vertex> vertices;  // list of of vertices
-    vertex* V;                     // usually vertices.data()
     u32 n_vert;  // number of vertices (expect an off-by-one glitch?)
 
     std::vector<u32> edge_list;
     // raw list of edges (useless without vertex.elo)
-    u32* el_base;  // usually edge_list.data()
     u32 el_size;
     // number of edges (expect an off-by-k glitch? (K = no. of
     // isolated vertices +1)
 
     std::vector<u32> edge_bits;  // edges stored as bits for a clique, (padded
-                                 // to ensure 32bit)
-    u32* eb_base;                // edge_bits.data()
+				 // to ensure 32bit)
     u32 eb_size;  // number of bits required for edge-list (+ padding per
-                  // vertex)
+		  // vertex)
 
     // runtime heuristics
     u32 max_degree;
@@ -34,20 +31,21 @@ struct graph {
     double TIME_LIMIT;
 
     inline short find_if_neighbors(const vertex& v1, u32 v2_id,
-                                   u32& v2_position) {
-        return binary_find(this->el_base + v1.elo, v1.N, v2_id, v2_position);
+				   u32& v2_position) {
+	return binary_find(&(this->edge_list[v1.elo]), v1.N, v2_id,
+			   v2_position);
     }
 
     // basic functions
     graph();
     graph(u32 n_vert, u32 n_edges, std::vector<std::set<u32>>& edges,
-          u32 clique_lim = 1000);
+	  u32 clique_lim = 1000);
     void set_vertices();
     void disp();
     // giving max_clique to pygraph
     void find_max_cliques(u32& start_vert, bool& heur_done,
-                          bool use_heur = false, bool use_dfs = true,
-                          double time_limit = 10000);
+			  bool use_heur = false, bool use_dfs = true,
+			  double time_limit = 10000);
     std::vector<u32> get_max_clique(u32 i);
     std::vector<u32> get_max_clique();
 
