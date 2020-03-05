@@ -3,6 +3,7 @@
 SearchState::SearchState(const vertex& ver) {
     this->start_at = 0;
     this->res = graphBits(ver.N);
+    this->res.set(ver.spos);
     this->cand = ~(this->res);
 }
 
