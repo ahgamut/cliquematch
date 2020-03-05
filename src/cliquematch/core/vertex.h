@@ -2,7 +2,6 @@
 #define VERTEX_H
 
 #include <core/gbits.h>
-#include <sstream>
 #include <vector>
 
 struct vertex {
@@ -20,11 +19,11 @@ struct vertex {
 
     vertex();
     void load_external(u32 id, u32 N, u32 elo, u32 ebo);
-
     void set_spos(u32*, u32*);
-    void disp(const u32*);
-    void clique_disp(const u32*);
-    std::vector<u32> give_clique(const u32*);
+
+    void disp(const u32*) const;
+    void clique_disp(const u32*) const;
+    std::vector<u32> give_clique(const u32*) const;
 };
 
 short binary_find(const u32* a, u32 N, u32 val, u32& loc);

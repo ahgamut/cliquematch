@@ -23,14 +23,16 @@ pygraph::pygraph() {
 pygraph::pygraph(unsigned int n_vertices, unsigned int n_edges,
 		 std::vector<std::set<unsigned int>> edges)
     : pygraph() {
-    this->nvert = n_vertices;
-    this->nedges = n_edges;
-    this->EDGES = edges;
-    this->load_graph();
+    this->load_graph(n_vertices, n_edges, edges);
 }
 
 // Separate method to make exporting pygraph easier
-void pygraph::load_graph() {
+void pygraph::load_graph(unsigned int n_vertices, unsigned int n_edges,
+			 std::vector<std::set<unsigned int>> edges) {
+    this->nvert = n_vertices;
+    this->nedges = n_edges;
+    std::vector<std::set<u32>>().swap(this->EDGES);
+    this->EDGES = edges;
     this->G = graph(this->nvert, this->nedges, EDGES);
 }
 

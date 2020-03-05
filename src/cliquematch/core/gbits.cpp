@@ -8,7 +8,6 @@
  * compiler intrinsic (__builtin_popcount and __popcnt respectively). The
  * intrinsics are slightly faster, but may cause compatibility issues, so there
  * is a C version also provided, to count the number of set bits.
- * <20-07-19>
  * */
 #ifdef INTRINSIC_BITCOUNT
 
@@ -51,7 +50,7 @@ graphBits::graphBits(u32 n_bits) {
 
 void graphBits::load_external(u32* ext_data, u32 n_bits, bool cleanout) {
     this->data = ext_data;  // since someone else gives me the data, they should
-                            // have inited
+			    // have inited
     this->valid_len = n_bits;
     this->dlen = 1 + n_bits / 32;
     this->ext_ptr = true;
@@ -79,14 +78,14 @@ void swap(graphBits& me, graphBits& other) {
     me.pad_cover = other.pad_cover;
 
     if (me.ext_ptr) {
-        std::copy(other.data, other.data + other.dlen, me.data);
+	std::copy(other.data, other.data + other.dlen, me.data);
     } else {
-        if (me.data != nullptr) delete[] me.data;
-        me.data = other.data;
-        if (!other.ext_ptr) other.ext_ptr = true;
-        // I expect the other to die before me
-        else  // I shouldn't ruin others' data
-            me.ext_ptr = true;
+	if (me.data != nullptr) delete[] me.data;
+	me.data = other.data;
+	if (!other.ext_ptr) other.ext_ptr = true;
+	// I expect the other to die before me
+	else  // I shouldn't ruin others' data
+	    me.ext_ptr = true;
     }
 }
 
@@ -111,9 +110,9 @@ void graphBits::toggle(u32 i) {
 void graphBits::clear(u32 N) {
     u32 i = 0;
     if (N == 0 || N == this->valid_len || N / 32 == this->dlen) {
-        for (i = 0; i < this->dlen; i++) this->data[i] = 0;
+	for (i = 0; i < this->dlen; i++) this->data[i] = 0;
     } else {
-        this->data[i] &= (ALL_ONES >> N % 32);
+	this->data[i] &= (ALL_ONES >> N % 32);
     }
 }
 
@@ -135,7 +134,7 @@ bool graphBits::operator[](u32 i) const {
 graphBits& graphBits::operator&=(const graphBits& other) {
     // assert(this->valid_len == other.valid_len);
     for (u32 i = 0; i < this->dlen; i++) {
-        this->data[i] &= other.data[i];
+	this->data[i] &= other.data[i];
     }
     this->data[this->dlen - 1] &= this->pad_cover;
     return *this;
@@ -144,7 +143,7 @@ graphBits& graphBits::operator&=(const graphBits& other) {
 graphBits& graphBits::operator|=(const graphBits& other) {
     // assert(this->valid_len == other.valid_len);
     for (u32 i = 0; i < this->dlen; i++) {
-        this->data[i] |= other.data[i];
+	this->data[i] |= other.data[i];
     }
     this->data[this->dlen - 1] &= this->pad_cover;
     return *this;
@@ -153,7 +152,7 @@ graphBits& graphBits::operator|=(const graphBits& other) {
 graphBits& graphBits::operator^=(const graphBits& other) {
     // assert(this->valid_len == other.valid_len);
     for (u32 i = 0; i < this->dlen; i++) {
-        this->data[i] ^= other.data[i];
+	this->data[i] ^= other.data[i];
     }
     this->data[this->dlen - 1] &= this->pad_cover;
     return *this;
@@ -162,7 +161,7 @@ graphBits& graphBits::operator^=(const graphBits& other) {
 graphBits& graphBits::operator-=(const graphBits& other) {
     // assert(this->valid_len == other.valid_len);
     for (u32 i = 0; i < this->dlen; i++) {
-        this->data[i] &= ~(other.data[i]);
+	this->data[i] &= ~(other.data[i]);
     }
     this->data[this->dlen - 1] &= this->pad_cover;
     return *this;
@@ -171,7 +170,7 @@ graphBits& graphBits::operator-=(const graphBits& other) {
 graphBits graphBits::operator~() const {
     graphBits temp(this->valid_len);
     for (u32 i = 0; i < this->dlen; i++) {
-        temp.data[i] = ~(this->data[i]);
+	temp.data[i] = ~(this->data[i]);
     }
     // do I need to worry about what the padding bits are?
     // YES, for the popcnt stuff
@@ -183,7 +182,7 @@ graphBits graphBits::operator&(const graphBits& other) const {
     // assert(this->valid_len == other.valid_len);
     graphBits temp(this->valid_len);
     for (u32 i = 0; i < this->dlen; i++)
-        temp.data[i] = this->data[i] & other.data[i];
+	temp.data[i] = this->data[i] & other.data[i];
     temp.data[temp.dlen - 1] &= temp.pad_cover;
     return temp;
 }
@@ -192,7 +191,7 @@ graphBits graphBits::operator|(const graphBits& other) const {
     // assert(this->valid_len == other.valid_len);
     graphBits temp(this->valid_len);
     for (u32 i = 0; i < this->dlen; i++)
-        temp.data[i] = this->data[i] | other.data[i];
+	temp.data[i] = this->data[i] | other.data[i];
     temp.data[temp.dlen - 1] &= temp.pad_cover;
     return temp;
 }
@@ -201,7 +200,7 @@ graphBits graphBits::operator^(const graphBits& other) const {
     // assert(this->valid_len == other.valid_len);
     graphBits temp(this->valid_len);
     for (u32 i = 0; i < this->dlen; i++)
-        temp.data[i] = this->data[i] ^ other.data[i];
+	temp.data[i] = this->data[i] ^ other.data[i];
     temp.data[temp.dlen - 1] &= temp.pad_cover;
     return temp;
 }
@@ -210,52 +209,52 @@ graphBits graphBits::operator-(const graphBits& other) const {
     // assert(this->valid_len == other.valid_len);
     graphBits temp(this->valid_len);
     for (u32 i = 0; i < this->dlen; i++)
-        temp.data[i] = this->data[i] & ~(other.data[i]);
+	temp.data[i] = this->data[i] & ~(other.data[i]);
     temp.data[temp.dlen - 1] &= temp.pad_cover;
     return temp;
 }
 
-void graphBits::show() {
+void graphBits::show() const {
     for (u32 i = 0; i < this->valid_len; i++) std::cout << (*this)[i];
     std::cout << " (" << this->count() << "/" << this->valid_len << ")\n";
 }
 
-void graphBits::show(const std::vector<u32>& elements) {
+void graphBits::show(const std::vector<u32>& elements) const {
     // assert(this->valid_len <= elements.size());
     for (u32 i = 0; i < this->valid_len; i++) {
-        if ((*this)[i]) std::cout << elements[i] << " ";
+	if ((*this)[i]) std::cout << elements[i] << " ";
     }
     std::cout << " (" << this->count() << "/" << this->valid_len << ")\n";
 }
 
-void graphBits::show(const u32* elements, u32 len) {
+void graphBits::show(const u32* elements, u32 len) const {
     // assert(this->valid_len <= len);
     for (u32 i = 0; i < this->valid_len; i++) {
-        if ((*this)[i]) std::cout << elements[i] << " ";
+	if ((*this)[i]) std::cout << elements[i] << " ";
     }
     std::cout << " (" << this->count() << "/" << this->valid_len << ")\n";
 }
 
-std::vector<u32> graphBits::get_subset(const std::vector<u32>& elements) {
+std::vector<u32> graphBits::get_subset(const std::vector<u32>& elements) const {
     // assert(this->valid_len <= elements.size());
     std::vector<u32> ans(this->count());
     for (u32 i = 0, ct = 0; i < this->valid_len; i++) {
-        if ((*this)[i]) {
-            ans[ct] = elements[i];
-            ct++;
-        }
+	if ((*this)[i]) {
+	    ans[ct] = elements[i];
+	    ct++;
+	}
     }
     return ans;
 }
 
-std::vector<u32> graphBits::get_subset(const u32* elements, u32 len) {
+std::vector<u32> graphBits::get_subset(const u32* elements, u32 len) const {
     // assert(this->valid_len <= len);
     std::vector<u32> ans(this->count());
     for (u32 i = 0, ct = 0; i < this->valid_len; i++) {
-        if ((*this)[i]) {
-            ans[ct] = elements[i];
-            ct++;
-        }
+	if ((*this)[i]) {
+	    ans[ct] = elements[i];
+	    ct++;
+	}
     }
     return ans;
 }

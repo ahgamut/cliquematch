@@ -19,7 +19,8 @@ class pygraph {
     std::vector<unsigned int> ans_clique;
 
    protected:
-    void load_graph();
+    void load_graph(unsigned int, unsigned int,
+		    std::vector<std::set<unsigned int>>);
     bool finished_heur;
 
    public:

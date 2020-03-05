@@ -42,18 +42,18 @@ template <typename List1, typename Delta1, typename List2, typename Delta2,
 	  typename EpsType>
 bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::build_edges(
     List1& pts1, List2& pts2) {
-    std::vector<std::set<u32> >().swap(this->EDGES);
     this->ps1.fill_dists(pts1);
     this->ps2.fill_dists(pts2);
-    this->EDGES = edges_from_relsets(this->nvert, this->nedges, this->ps1,
-				     this->ps2, this->pts_epsilon);
-    if (this->EDGES.data() == nullptr || this->EDGES.size() == 0) {
+    unsigned int no_of_vertices, no_of_edges;
+    auto EDGES = edges_from_relsets(no_of_vertices, no_of_edges, this->ps1,
+				    this->ps2, this->pts_epsilon);
+    if (EDGES.data() == nullptr || EDGES.size() == 0) {
 	throw std::runtime_error("Could not extract edges" +
 				 std::string(__FILE__) + "  " +
 				 std::to_string(__LINE__) + "\n");
     }
 
-    this->load_graph();
+    this->load_graph(no_of_vertices, no_of_edges, EDGES);
     return true;
 }
 
@@ -64,24 +64,25 @@ bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::
 	List1& pts1, List2& pts2,
 	std::function<bool(List1&, u32, u32, List2&, u32, u32)> cfunc,
 	bool use_cfunc_only) {
+    unsigned int no_of_vertices, no_of_edges;
     auto cfwrap = [&pts1, &pts2, &cfunc](u32 i, u32 j, u32 i2, u32 j2) -> bool {
 	return cfunc(pts1, i, j, pts2, i2, j2);
     };
-    std::vector<std::set<u32> >().swap(this->EDGES);
 
     if (!use_cfunc_only) {
 	this->ps1.fill_dists(pts1);
 	this->ps2.fill_dists(pts2);
     }
-    this->EDGES = efr_condition(this->nvert, this->nedges, this->ps1, this->ps2,
-				this->pts_epsilon, cfwrap, use_cfunc_only);
-    if (this->EDGES.data() == nullptr || this->EDGES.size() == 0) {
+    auto EDGES =
+	efr_condition(no_of_vertices, no_of_edges, this->ps1, this->ps2,
+		      this->pts_epsilon, cfwrap, use_cfunc_only);
+    if (EDGES.data() == nullptr || EDGES.size() == 0) {
 	throw std::runtime_error("Could not extract edges" +
 				 std::string(__FILE__) + "  " +
 				 std::to_string(__LINE__) + "\n");
     }
 
-    this->load_graph();
+    this->load_graph(no_of_vertices, no_of_edges, EDGES);
     return true;
 }
 
