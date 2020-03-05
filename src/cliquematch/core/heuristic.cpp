@@ -84,8 +84,8 @@ void graph::heur_one_clique(u32 cur) {
 	    this->CUR_MAX_CLIQUE_LOC = cur;
 	    this->vertices[cur].bits = res;
 	    this->vertices[cur].mcs = this->vertices[cur].bits.count();
-	    cerr << "Heuristic in " << cur << " updated max_clique to "
-		 << this->vertices[cur].mcs << "\n";
+	    // cerr << "Heuristic in " << cur << " updated max_clique to "
+	    //  << this->vertices[cur].mcs << "\n";
 	    this->CUR_MAX_CLIQUE_SIZE = this->vertices[cur].mcs;
 
 	    // this vertex might have a different set of neighbors who may form

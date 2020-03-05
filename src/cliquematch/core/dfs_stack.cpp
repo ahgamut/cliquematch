@@ -13,6 +13,7 @@ void graph::dfs_one_clique(u32 cur) {
     std::stack<SearchState> states;
     unsigned int candidates_left, mcs_potential;
     unsigned int vert, ans;
+
     states.push(SearchState(this->vertices[cur]));
     while (!states.empty()) {
 	if (this->CUR_MAX_CLIQUE_SIZE > this->CLIQUE_LIMIT) return;

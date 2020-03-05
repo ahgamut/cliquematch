@@ -2,8 +2,8 @@
 
 SearchState::SearchState(const vertex& ver) {
     this->start_at = 0;
-    this->res = graphBits(ver.bits);
-    this->cand = ~(ver.bits);
+    this->res = graphBits(ver.N);
+    this->cand = ~(this->res);
 }
 
 SearchState::SearchState(graphBits prev_cand, graphBits prev_res) {

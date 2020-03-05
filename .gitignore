@@ -1,4 +1,8 @@
 # Byte-compiled / optimized / DLL files
+memtest/*
+!memtest/README.md
+!memtest/Makefile
+!memtest/main.cpp
 src/cliquematch/cm_deprecated/
 __pycache__/
 *.py[cod]
