@@ -1,4 +1,3 @@
-import setuptools
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext as _build_ext
 from distutils.command.build import build as _build
@@ -70,7 +69,8 @@ def has_flag(compiler, flagname):
         f.write("int main (int argc, char **argv) { return 0; }")
         try:
             compiler.compile([f.name], extra_postargs=[flagname])
-        except setuptools.distutils.errors.CompileError:
+        except Exception as e:
+            print(e)
             return False
     return True
 
