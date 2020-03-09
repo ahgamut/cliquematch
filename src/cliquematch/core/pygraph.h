@@ -16,34 +16,34 @@ class pygraph {
     graph G;
     bool ans_found;
     void find_max_clique();
-    std::vector<unsigned int> ans_clique;
+    std::vector<std::size_t> ans_clique;
 
    protected:
-    void load_graph(unsigned int, unsigned int,
-		    std::vector<std::set<unsigned int>>);
+    void load_graph(std::size_t, std::size_t,
+		    std::vector<std::set<std::size_t>>);
     bool finished_heur;
 
    public:
-    std::vector<std::set<u32>> EDGES;
+    std::vector<std::set<std::size_t>> EDGES;
     bool use_heur;
     bool use_dfs;
     bool finished_all;
     double time_lim;
-    unsigned int nvert, nedges;
-    unsigned int lower_bound, upper_bound;
-    unsigned int current_vertex;
+    std::size_t nvert, nedges;
+    std::size_t lower_bound, upper_bound;
+    std::size_t current_vertex;
 
     pygraph();
-    pygraph(unsigned int, unsigned int, std::vector<std::set<unsigned int>>);
+    pygraph(std::size_t, std::size_t, std::vector<std::set<std::size_t>>);
     void continue_search();
     void reset_search();
-    std::vector<u32> get_max_clique();
+    std::vector<std::size_t> get_max_clique();
     std::string showdata();
 };
 
 pygraph from_adj_matrix(ndarray<bool> adjmat);
-pygraph from_edgelist(ndarray<unsigned int> edge_list,
-		      unsigned int no_of_vertices);
-pygraph from_file(std::string filename, unsigned int reader_choice);
+pygraph from_edgelist(ndarray<std::size_t> edge_list,
+		      std::size_t no_of_vertices);
+pygraph from_file(std::string filename, std::size_t reader_choice);
 #endif /* PYGRAPH_H */
 

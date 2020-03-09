@@ -8,14 +8,14 @@
 
 template <typename List, typename Delta>
 struct relset {
-    u32 N;
+    std::size_t N;
     std::vector<pair_dist<Delta> > dists;
-    std::function<Delta(List&, u32, u32)> delfunc;
+    std::function<Delta(List&, std::size_t, std::size_t)> delfunc;
     // so delfunc will do the accessing of List,
     // and return the distance value
     bool symmetric;
 
-    relset(u32 N, std::function<Delta(List&, u32, u32)> dfunc,
+    relset(std::size_t N, std::function<Delta(List&, std::size_t, std::size_t)> dfunc,
            bool symmetric = true);
     relset() { this->N = 0; }
     void fill_dists(List);
@@ -34,7 +34,7 @@ struct relset {
  */
 template <typename List1, typename Delta1, typename List2, typename Delta2,
           typename EpsType>
-std::vector<std::set<u32> > edges_from_relsets(u32& nvert, u32& nedges,
+std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& nvert, std::size_t& nedges,
                                                relset<List1, Delta1>&,
                                                relset<List2, Delta2>&,
                                                const EpsType epsilon);
@@ -59,9 +59,9 @@ std::vector<std::set<u32> > edges_from_relsets(u32& nvert, u32& nedges,
  */
 template <typename List1, typename Delta1, typename List2, typename Delta2,
           typename EpsType>
-std::vector<std::set<u32> > efr_condition(
-    u32& nvert, u32& nedges, relset<List1, Delta1>&, relset<List2, Delta2>&,
-    const EpsType epsilon, std::function<bool(u32, u32, u32, u32)> cfunc,
+std::vector<std::set<std::size_t> > efr_condition(
+    std::size_t& nvert, std::size_t& nedges, relset<List1, Delta1>&, relset<List2, Delta2>&,
+    const EpsType epsilon, std::function<bool(std::size_t, std::size_t, std::size_t, std::size_t)> cfunc,
     bool use_cfunc_only);
 
 #endif /* RELSET_H */

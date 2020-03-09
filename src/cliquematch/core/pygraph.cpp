@@ -17,21 +17,21 @@ pygraph::pygraph() {
     finished_heur = false;
     finished_all = false;
     ans_found = false;
-    std::vector<std::set<u32>>().swap(this->EDGES);
+    std::vector<std::set<std::size_t>>().swap(this->EDGES);
 }
 
-pygraph::pygraph(unsigned int n_vertices, unsigned int n_edges,
-		 std::vector<std::set<unsigned int>> edges)
+pygraph::pygraph(std::size_t n_vertices, std::size_t n_edges,
+		 std::vector<std::set<std::size_t>> edges)
     : pygraph() {
     this->load_graph(n_vertices, n_edges, edges);
 }
 
 // Separate method to make exporting pygraph easier
-void pygraph::load_graph(unsigned int n_vertices, unsigned int n_edges,
-			 std::vector<std::set<unsigned int>> edges) {
+void pygraph::load_graph(std::size_t n_vertices, std::size_t n_edges,
+			 std::vector<std::set<std::size_t>> edges) {
     this->nvert = n_vertices;
     this->nedges = n_edges;
-    std::vector<std::set<u32>>().swap(this->EDGES);
+    std::vector<std::set<std::size_t>>().swap(this->EDGES);
     this->EDGES = edges;
     this->G = graph(this->nvert, this->nedges, EDGES);
 }
@@ -55,11 +55,10 @@ void pygraph::find_max_clique() {
     ans_clique = G.get_max_clique();
     ans_found = true;
     finished_all = finished_heur && (current_vertex >= nvert);
-    if (finished_all) std::cerr << "Search complete\n";
 }
 
 // Finds the maximum clique and returns it as a std::vector
-std::vector<u32> pygraph::get_max_clique() {
+std::vector<std::size_t> pygraph::get_max_clique() {
     if (!ans_found) find_max_clique();
     if (this->lower_bound > this->ans_clique.size() ||
 	this->G.CUR_MAX_CLIQUE_LOC == 0) {
@@ -105,13 +104,13 @@ std::string pygraph::showdata() {
     return ss.str();
 }
 
-pygraph from_file(std::string filename, unsigned int reader_choice) {
+pygraph from_file(std::string filename, std::size_t reader_choice) {
     //	std::cout<<"Constructing graph from a file\n";
     std::string fname = filename;
     std::cerr << "Loading graph from: " << fname << "\n";
 
-    std::vector<std::set<u32>> edges;
-    unsigned int nvert, nedges;
+    std::vector<std::set<std::size_t>> edges;
+    std::size_t nvert, nedges;
 
     if (reader_choice == 1) {
 	std::cerr << "Choice: 1 MMIO format -> line: edge edge\n";
@@ -135,15 +134,15 @@ pygraph from_file(std::string filename, unsigned int reader_choice) {
     return pygraph(nvert, nedges, edges);
 }
 
-pygraph from_edgelist(ndarray<unsigned int> edge_list1,
-		      unsigned int no_of_vertices) {
+pygraph from_edgelist(ndarray<std::size_t> edge_list1,
+		      std::size_t no_of_vertices) {
     //	std::cout<<"Constructing graph from the list of edges (Nx2 matrix)\n";
-    unsigned int no_of_edges = 0;
-    unsigned int v1, v2;
-    std::vector<std::set<unsigned int>> EDGES(no_of_vertices + 1);
+    std::size_t no_of_edges = 0;
+    std::size_t v1, v2;
+    std::vector<std::set<std::size_t>> EDGES(no_of_vertices + 1);
     auto edge_list = edge_list1.unchecked<2>();
 
-    for (u32 i = 0; i < edge_list.shape(0); i++) {
+    for (auto i = 0; i < edge_list.shape(0); i++) {
 	v1 = edge_list(i, 0);
 	v2 = edge_list(i, 1);
 	if (v1 > no_of_vertices || v2 > no_of_vertices) {
@@ -167,7 +166,7 @@ pygraph from_edgelist(ndarray<unsigned int> edge_list1,
 				 std::to_string(__LINE__) + "\n");
     }
 
-    for (u32 i = 0; i < EDGES.size(); i++) {
+    for (std::size_t i = 0; i < EDGES.size(); i++) {
 	no_of_edges += EDGES[i].size();
     }
     no_of_edges /= 2;
@@ -182,13 +181,13 @@ pygraph from_adj_matrix(ndarray<bool> adjmat1) {
 	    "Adjacency matrix has to be a square matrix!!\n" +
 	    std::string(__FILE__) + "  " + std::to_string(__LINE__) + "\n");
     } else {
-	unsigned int no_of_vertices = adjmat.shape(0);
-	unsigned int no_of_edges = 0;
+	std::size_t no_of_vertices = adjmat.shape(0);
+	std::size_t no_of_edges = 0;
 
-	std::vector<std::set<u32>> EDGES(no_of_vertices + 1);
+	std::vector<std::set<std::size_t>> EDGES(no_of_vertices + 1);
 
-	for (u32 i = 0; i < no_of_vertices; i++) {
-	    for (u32 j = 0; j < no_of_vertices; j++) {
+	for (std::size_t i = 0; i < no_of_vertices; i++) {
+	    for (std::size_t j = 0; j < no_of_vertices; j++) {
 		if (adjmat(i, j) && i != j) {
 		    EDGES[i + 1].insert(j + 1);
 		    EDGES[j + 1].insert(i + 1);

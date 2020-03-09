@@ -6,12 +6,12 @@
 
 using namespace std;
 
-bool pair_second_g(const pair<u32, u32>& a, const pair<u32, u32>& b) {
+bool pair_second_g(const pair<size_t, size_t>& a, const pair<size_t, size_t>& b) {
     // this can be a lambda
     return (a.second > b.second);
 }
 
-void graph::heur_one_clique(u32 cur) {
+void graph::heur_one_clique(size_t cur) {
     // heuristic assumes that higher degree neighbors are
     // more likely to be part of a clique
     // so it goes through them in O(N^2) to find a clique
@@ -20,14 +20,14 @@ void graph::heur_one_clique(u32 cur) {
     res.set(this->vertices[cur].spos);
     graphBits cand = ~(res);
 
-    vector<pair<u32, u32> > neib_degs(this->vertices[cur].N);
+    vector<pair<size_t, size_t> > neib_degs(this->vertices[cur].N);
 
-    u32 neib, neib_loc;
-    u32 i, j;
+    size_t neib, neib_loc;
+    size_t i, j;
 
     short f1, f2;
-    u32 ans1, ans2;
-    u32 mcs_potential, candidates_left, cur_clique_size = 1;
+    size_t ans1, ans2;
+    size_t mcs_potential, candidates_left, cur_clique_size = 1;
 
     // find all neighbors of cur and sort by decreasing degree
     for (i = 0; i < this->vertices[cur].N; i++) {
@@ -100,14 +100,16 @@ void graph::heur_one_clique(u32 cur) {
     }
 }
 
-u32 graph::heur_all_cliques(u32 start_vertex, double TIME_LIMIT) {
-    u32 i;
+size_t graph::heur_all_cliques(size_t start_vertex, double TIME_LIMIT) {
+    size_t i;
     for (i = start_vertex;
 	 i < vertices.size() && CUR_MAX_CLIQUE_SIZE <= CLIQUE_LIMIT; i++) {
 	if (this->vertices[i].N <= CUR_MAX_CLIQUE_SIZE) continue;
 	if ((clock() - duration) / CLOCKS_PER_SEC > TIME_LIMIT) {
+#ifndef NDEBUG
 	    cerr << "Heuristic: Exceeded time limit of " << TIME_LIMIT
 		 << " seconds\n";
+#endif
 	    break;
 	}
 	heur_one_clique(i);

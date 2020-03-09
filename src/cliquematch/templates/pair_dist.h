@@ -7,7 +7,7 @@
 // dist=distance(X[0], X[1])
 template <class T>
 struct pair_dist {
-    unsigned int first, second;
+    std::size_t first, second;
     T dist;
 
     bool operator>(const pair_dist<T> &BB) const {
@@ -30,12 +30,16 @@ struct pair_dist {
 };
 
 template <class T>
-short binary_find2(pair_dist<T> *a, unsigned int N, T val, unsigned int &loc) {
+short binary_find2(pair_dist<T> *a, std::size_t N, T val, std::size_t &loc) {
     int beg = 0, end = N - 1, mid = (beg + end / 2);
     if (a[end] < val) {
         loc = end;
         return -1;
     }
+	if (a[beg] > val) {
+		loc = beg;
+		return 0;
+	}
     while (beg <= end) {
         loc = mid;
         if (a[mid] == val)
