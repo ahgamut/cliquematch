@@ -73,16 +73,16 @@ bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::
 	this->ps1.fill_dists(pts1);
 	this->ps2.fill_dists(pts2);
     }
-    auto EDGES =
+    auto edges =
 	efr_condition(no_of_vertices, no_of_edges, this->ps1, this->ps2,
 		      this->pts_epsilon, cfwrap, use_cfunc_only);
-    if (EDGES.data() == nullptr || EDGES.size() == 0) {
+    if (edges.data() == nullptr || edges.size() == 0) {
 	throw std::runtime_error("Could not extract edges" +
 				 std::string(__FILE__) + "  " +
 				 std::to_string(__LINE__) + "\n");
     }
 
-    this->load_graph(no_of_vertices, no_of_edges, EDGES);
+    this->load_graph(no_of_vertices, no_of_edges, edges);
     return true;
 }
 

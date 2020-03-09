@@ -12,10 +12,16 @@ Setting up the cliquematch package
 
 VERSION = "0.7.0"
 
-from cliquematch.core import Graph
+from cliquematch.core import (
+    Graph,
+    graph_from_file,
+    graph_from_adjmat,
+    graph_from_edgelist,
+)
 
 from cliquematch.psgraph import psgraph
 from cliquematch.A2AGraph import A2AGraph
+from cliquematch.AlignGraph import AlignGraph
 from cliquematch.A2LGraph import A2LGraph
 from cliquematch.L2LGraph import L2LGraph
 from cliquematch.L2AGraph import L2AGraph

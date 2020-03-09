@@ -23,8 +23,8 @@ class TestIsoGraph(object):
     * testing data access and dfs (too small for heuristic)
     """
 
-    S1 = cliquematch.Graph.from_file("./tests/sample_read1a.mtx", 1).adjacency_list
-    S2 = cliquematch.Graph.from_file("./tests/sample_read1b.mtx", 1).adjacency_list
+    S1 = cliquematch.graph_from_file("./tests/sample_read1a.mtx", 1).adjacency_list
+    S2 = cliquematch.graph_from_file("./tests/sample_read1b.mtx", 1).adjacency_list
 
     def test_loading(self):
         G = cliquematch.IsoGraph(self.S1, self.S2)
