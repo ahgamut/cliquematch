@@ -49,7 +49,7 @@ class TestAlignGraph(object):
         G.use_heuristic = False
         G.use_dfs = True
         G.upper_bound = 10
-        G.build_edges_with_filter(S1_sub, self.mask, percentage=0.8)
+        G.build_edges_with_filter(S2, self.mask, percentage=0.8)
         ans = G.get_correspondence()
 
         assert abs(ans["theta"] - np.pi / 3) < 1e-5
@@ -75,7 +75,7 @@ class TestAlignGraph(object):
         G.use_heuristic = True
         G.use_dfs = True
         G.upper_bound = 10
-        G.build_edges_with_filter(S1_sub, self.mask, percentage=0.8)
+        G.build_edges_with_filter(S2, self.mask, percentage=0.8)
         ans = G.get_correspondence()
         print(G)
 
@@ -102,7 +102,7 @@ class TestAlignGraph(object):
         G.use_heuristic = False
         G.use_dfs = True
         G.upper_bound = 10
-        G.build_edges_with_filter(S1_sub, self.mask, percentage=0.8)
+        G.build_edges_with_filter(S2, self.mask, percentage=0.8)
         ans = G.get_correspondence()
         print(G)
 
@@ -112,9 +112,7 @@ class TestAlignGraph(object):
         G2.use_heuristic = False
         G2.use_dfs = True
         G2.upper_bound = 10
-        filt = cliquematch.wrappers.aligngraph.MaskFilter(
-            S1_sub, self.mask, percentage=0.8
-        )
+        filt = cliquematch.wrappers.aligngraph.MaskFilter(S2, self.mask, percentage=0.8)
         G2.build_edges_with_condition(filt, False)
         ans2 = G2.get_correspondence()
         print(G2)

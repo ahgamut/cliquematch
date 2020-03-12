@@ -29,8 +29,8 @@ class MaskFilter(object):
 
     def __call__(self, mat1, i1, j1, mat2, i2, j2):
         # get the points
-        s1 = mat1[[i1, j1], :]
-        s2 = mat2[[i2, j2], :]
+        s1 = mat2[[i2, j2], :]
+        s2 = mat1[[i1, j1], :]
 
         # solve the linear equation
         # to get the required rotation and translation

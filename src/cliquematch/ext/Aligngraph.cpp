@@ -21,10 +21,10 @@ double inline filter_score(Eigen::Ref<matrix> control,
     double a, b, msk_score = 0;
 
     static double x1, y1, x2, y2, x3, y3, x4, y4;
-    x1 = M1(i1, 0), y1 = M1(i1, 1);
-    x2 = M1(j1, 0), y2 = M1(j1, 1);
-    x3 = M2(i2, 0), y3 = M2(i2, 1);
-    x4 = M2(j2, 0), y4 = M2(j2, 1);
+    x1 = M2(i2, 0), y1 = M2(i2, 1);
+    x2 = M2(j2, 0), y2 = M2(j2, 1);
+    x3 = M1(i1, 0), y3 = M1(i1, 1);
+    x4 = M1(j1, 0), y4 = M1(j1, 1);
     if (x1 - x2 == 0 && y1 - y2 == 0) return msk_score;
 
     coeffs << x1, -y1, 1, 0, y1, x1, 0, 1, x2, -y2, 1, 0, y2, x2, 0, 1;
