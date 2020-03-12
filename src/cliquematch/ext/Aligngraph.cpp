@@ -6,14 +6,6 @@ using uint_matrix = Eigen::Matrix<unsigned int, Eigen::Dynamic, Eigen::Dynamic,
 using bool_matrix =
     Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
-constexpr double get_a(double dx1, double dy1, double dx2, double dy2) {
-    return (dx2 * dx1 + dy2 * dy1) / (dx1 * dx1 + dy1 * dy1);
-}
-
-constexpr double get_b(double dx1, double dy1, double dx2, double dy2) {
-    return (dy2 * dx1 - dy1 * dx2) / (dx1 * dx1 + dy1 * dy1);
-}
-
 double inline filter_score(Eigen::Ref<matrix> control,
 			   Eigen::Ref<bool_matrix> msk, Eigen::RowVector2d& c,
 			   Eigen::Ref<matrix> rot_con,
@@ -21,44 +13,6 @@ double inline filter_score(Eigen::Ref<matrix> control,
 			   unsigned int i1, unsigned int j1,
 			   Eigen::Ref<matrix>& M2, unsigned int i2,
 			   unsigned int j2) {
-    static double x1, y1, x2, y2, x3, y3, x4, y4;
-    static double a, b;
-    unsigned int k, m_r = msk.rows(), m_c = msk.cols();
-
-    double msk_score = 0;
-
-    x1 = M1(i1, 0), y1 = M1(i1, 1);
-    x2 = M1(j1, 0), y2 = M1(j1, 1);
-    x3 = M2(i2, 0), y3 = M2(j2, 1);
-    x4 = M2(i2, 0), y4 = M2(j2, 1);
-
-    if (x1 - x2 == 0 && y1 - y2 == 0) return msk_score;
-    a = get_a(x1 - x2, y1 - y2, x3 - x4, y3 - y4);
-    b = get_b(x1 - x2, y1 - y2, x3 - x4, y3 - y4);
-    c(0) = x3 + b * y1 - a * x1;
-    c(1) = y3 - b * x1 - a * y1;
-
-    rot_con.col(0) = a * control.col(0) - b * control.col(1);
-    rot_con.col(1) = b * control.col(0) + a * control.col(1);
-
-    rot_con.rowwise() += c;
-
-    RCU = rot_con.cast<u32>();
-
-    for (k = 0; k < rot_con.rows(); k++) {
-	if (RCU(k, 0) < m_r && RCU(k, 1) < m_c && msk(RCU(k, 0), RCU(k, 1)))
-	    msk_score++;
-    }
-    msk_score /= rot_con.rows();
-    return msk_score;
-}
-double inline filter_score2(Eigen::Ref<matrix> control,
-			    Eigen::Ref<bool_matrix> msk, Eigen::RowVector2d& c,
-			    Eigen::Ref<matrix> rot_con,
-			    Eigen::Ref<uint_matrix> RCU, Eigen::Ref<matrix>& M1,
-			    unsigned int i1, unsigned int j1,
-			    Eigen::Ref<matrix>& M2, unsigned int i2,
-			    unsigned int j2) {
     static Eigen::Matrix<double, 4, 4> coeffs;
     static Eigen::Matrix<double, 4, 1> rhs;
     static Eigen::Matrix<double, 4, 1> answer;
@@ -106,8 +60,8 @@ void Aligngraph::build_edges_with_filter(Eigen::Ref<matrix>& pts1,
 			 Eigen::Ref<matrix>& p1, unsigned int i1,
 			 unsigned int j1, Eigen::Ref<matrix>& p2,
 			 unsigned int i2, unsigned int j2) -> bool {
-	return filter_score2(control_pts, mask, _c, _rot_con, _RCU, p1, i1, j1,
-			     p2, i2, j2) > percentage;
+	return filter_score(control_pts, mask, _c, _rot_con, _RCU, p1, i1, j1,
+			    p2, i2, j2) >= percentage;
     };
     this->build_edges_with_condition(pts1, pts2, rule_func, false);
 }

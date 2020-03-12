@@ -3,14 +3,14 @@
     cliquematch.IsoGraph
     ~~~~~~~~~~~~~~~~~~~~
 
-    A wrapper class over cliquematch.core.L2LGraph
+    A wrapper class over cliquematchcliquematch.core.L2LGraph
     to find subgraph isomorphisms using cliques in a 
     product graph
 
     :copyright: (c) 2019 by gnv3.
     :license: see LICENSE for more details.
 """
-from .core import L2LGraph as _IsoGraph
+from cliquematch.core import L2LGraph as _IsoGraph
 from warnings import warn
 
 

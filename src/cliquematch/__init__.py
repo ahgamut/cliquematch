@@ -20,9 +20,4 @@ from cliquematch.core import (
 )
 
 from cliquematch.psgraph import psgraph
-from cliquematch.A2AGraph import A2AGraph
-from cliquematch.AlignGraph import AlignGraph
-from cliquematch.A2LGraph import A2LGraph
-from cliquematch.L2LGraph import L2LGraph
-from cliquematch.L2AGraph import L2AGraph
-from cliquematch.IsoGraph import IsoGraph
+from .wrappers import *
