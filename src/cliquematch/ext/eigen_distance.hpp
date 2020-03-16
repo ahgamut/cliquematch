@@ -6,7 +6,8 @@
 
 template <typename DerivedMat>
 double euc_dist0(const Eigen::MatrixBase<DerivedMat>& p,
-                 const Eigen::MatrixBase<DerivedMat>& q) {
+                 const Eigen::MatrixBase<DerivedMat>& q)
+{
     return (p - q).norm();
 }
 

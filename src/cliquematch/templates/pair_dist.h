@@ -6,41 +6,39 @@
 // measured in T, a pair_dist instance with first=0, second=1, has
 // dist=distance(X[0], X[1])
 template <class T>
-struct pair_dist {
+struct pair_dist
+{
     std::size_t first, second;
     T dist;
 
-    bool operator>(const pair_dist<T> &BB) const {
-        return (this->dist > BB.dist);
-    }
-    bool operator<(const pair_dist<T> &BB) const {
-        return (this->dist < BB.dist);
-    }
-    bool operator==(const pair_dist<T> &BB) const {
-        return (this->dist == BB.dist);
-    }
+    bool operator>(const pair_dist<T> &BB) const { return (this->dist > BB.dist); }
+    bool operator<(const pair_dist<T> &BB) const { return (this->dist < BB.dist); }
+    bool operator==(const pair_dist<T> &BB) const { return (this->dist == BB.dist); }
 
     bool operator>(const T &dist_val) const { return (this->dist > dist_val); }
     bool operator<(const T &dist_val) const { return (this->dist < dist_val); }
-    bool operator==(const T &dist_val) const {
-        return (this->dist == dist_val);
-    }
+    bool operator==(const T &dist_val) const { return (this->dist == dist_val); }
 
     void disp();
 };
 
 template <class T>
-short binary_find2(pair_dist<T> *a, std::size_t N, T val, std::size_t &loc) {
+short binary_find2(const pair_dist<T> *a, const std::size_t N, const T &val,
+                   std::size_t &loc)
+{
     int beg = 0, end = N - 1, mid = (beg + end / 2);
-    if (a[end] < val) {
+    if (a[end] < val)
+    {
         loc = end;
         return -1;
     }
-	if (a[beg] > val) {
-		loc = beg;
-		return 0;
-	}
-    while (beg <= end) {
+    if (a[beg] > val)
+    {
+        loc = beg;
+        return 0;
+    }
+    while (beg <= end)
+    {
         loc = mid;
         if (a[mid] == val)
             return 1;

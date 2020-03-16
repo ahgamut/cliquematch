@@ -7,10 +7,8 @@
 #if WRAPPY == 1
 #pragma message("Using pybind11+Eigen, include Eigen directory location")
 #include <Eigen/Dense>
-using matrix =
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-using matmask =
-    Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+using matrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+using matmask = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 // I want to have some vectorizing power from Eigen + Numpy has only Row-Major
 // https://pybind11.readthedocs.io/en/stable/advanced/cast/eigen.html
 

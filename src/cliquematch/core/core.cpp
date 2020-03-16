@@ -8,7 +8,8 @@ void init_L2Agraph(py::module&);
 void init_L2Lgraph(py::module&);
 void init_Aligngraph(py::module&);
 
-PYBIND11_MODULE(core, m) {
+PYBIND11_MODULE(core, m)
+{
     init_pygraph(m);
     init_A2Agraph(m);
     init_A2Lgraph(m);
