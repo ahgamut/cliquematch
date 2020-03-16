@@ -8,23 +8,26 @@ typedef uint32_t u32;
 constexpr u32 ALL_ONES = 0xFFFFFFFF;
 constexpr u32 MSB_32 = 0x80000000;
 
-class graphBits {
+class graphBits
+{
    private:
     u32* data;
     bool ext_ptr;  // true if someone else gave the data pointer
-	std::size_t valid_len, dlen; 
-	u32 pad_cover;
+    std::size_t valid_len, dlen;
+    u32 pad_cover;
 
    public:
     graphBits();
 
     graphBits(std::size_t n_bits);
     void load_external(u32* ext_data, std::size_t n_bits, bool cleanout = true);
-    virtual ~graphBits() {
-	if (!this->ext_ptr && this->data != nullptr) {
-	    delete[] this->data;
-	    this->data = nullptr;
-	}
+    virtual ~graphBits()
+    {
+        if (!this->ext_ptr && this->data != nullptr)
+        {
+            delete[] this->data;
+            this->data = nullptr;
+        }
     };
     void set(std::size_t i);
     void reset(std::size_t i);

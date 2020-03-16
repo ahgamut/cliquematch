@@ -2,7 +2,8 @@
 #define SEARCHSTATE_H
 #include <core/vertex.h>
 
-struct SearchState {
+struct SearchState
+{
     std::size_t start_at;
     graphBits cand, res;
 

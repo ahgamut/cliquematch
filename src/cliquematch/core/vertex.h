@@ -3,14 +3,14 @@
 
 #include <core/gbits.h>
 
-struct vertex {
-	
+struct vertex
+{
     std::size_t id;    // vertex number
     std::size_t N;     // # neighbors + 1
     std::size_t spos;  // (Self-POSition) its own location in the list of neighbors
     std::size_t elo;   // edge list offset
     std::size_t ebo;   // edge list offset with bit padding
-	std::size_t mcs;  // *M*aximum *C*lique *S*ize
+    std::size_t mcs;   // *M*aximum *C*lique *S*ize
 
     graphBits bits;
 
@@ -26,7 +26,8 @@ struct vertex {
     std::vector<std::size_t> give_clique(const std::size_t*) const;
 };
 
-short binary_find(const std::size_t* a, std::size_t N, std::size_t val, std::size_t& loc);
+short binary_find(const std::size_t* a, std::size_t N, std::size_t val,
+                  std::size_t& loc);
 
 #endif /* VERTEX_H */
 
