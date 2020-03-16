@@ -7,7 +7,8 @@
 #include <vector>
 
 template <typename List, typename Delta>
-struct relset {
+struct relset
+{
     std::size_t N;
     std::vector<pair_dist<Delta> > dists;
     std::function<Delta(List&, std::size_t, std::size_t)> delfunc;
@@ -34,10 +35,11 @@ struct relset {
  */
 template <typename List1, typename Delta1, typename List2, typename Delta2,
           typename EpsType>
-std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& nvert, std::size_t& nedges,
-                                               relset<List1, Delta1>&,
-                                               relset<List2, Delta2>&,
-                                               const EpsType epsilon);
+std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& nvert,
+                                                       std::size_t& nedges,
+                                                       relset<List1, Delta1>&,
+                                                       relset<List2, Delta2>&,
+                                                       const EpsType epsilon);
 
 /*
  * A more flexible version of the above function,
@@ -60,8 +62,9 @@ std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& nvert, std::
 template <typename List1, typename Delta1, typename List2, typename Delta2,
           typename EpsType>
 std::vector<std::set<std::size_t> > efr_condition(
-    std::size_t& nvert, std::size_t& nedges, relset<List1, Delta1>&, relset<List2, Delta2>&,
-    const EpsType epsilon, std::function<bool(std::size_t, std::size_t, std::size_t, std::size_t)> cfunc,
+    std::size_t& nvert, std::size_t& nedges, relset<List1, Delta1>&,
+    relset<List2, Delta2>&, const EpsType epsilon,
+    std::function<bool(std::size_t, std::size_t, std::size_t, std::size_t)> cfunc,
     bool use_cfunc_only);
 
 #endif /* RELSET_H */
