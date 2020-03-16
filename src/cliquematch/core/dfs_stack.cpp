@@ -1,12 +1,12 @@
 #include <core/graph.h>
+#include <core/searchstate.h>
 #include <algorithm>
-#include <ctime>
 #include <iostream>
 #include <stack>
 
 using namespace std;
 
-#ifdef STACK_DFS
+#if STACK_DFS == 1
 #pragma message("Using explicit stack for DFS")
 
 void graph::dfs_one_clique(std::size_t cur)
@@ -19,13 +19,14 @@ void graph::dfs_one_clique(std::size_t cur)
     while (!states.empty())
     {
         if (this->CUR_MAX_CLIQUE_SIZE > this->CLIQUE_LIMIT) return;
-        if ((clock() - duration) / CLOCKS_PER_SEC > this->TIME_LIMIT) return;
-
+        if (this->elapsed_time() > this->TIME_LIMIT) return;
         SearchState& cur_state = states.top();
-
         candidates_left = cur_state.cand.count();
         mcs_potential = candidates_left + cur_state.res.count();
-
+        /*
+                std::cout << cur << " " << candidates_left << ":" << mcs_potential << "
+           "; cur_state.res.show(&this->edge_list[this->vertices[cur].elo],
+                                   this->vertices[cur].N);*/
         if (mcs_potential > this->CUR_MAX_CLIQUE_SIZE)
         {
             if (candidates_left == 0)
@@ -102,8 +103,7 @@ void graph::dfs_one_clique(std::size_t cur)
                     // next time we return to this state, we can start searching
                     // using ONLY the vertices after vert, because vert will get
                     // covered by future_state and its descendants
-                    cur_state.start_at = i + 1;
-
+                    cur_state.res.reset(i);
                     states.push(future_state);
                     break;
                 }

@@ -52,7 +52,7 @@ ext_modules = [
             "src/cliquematch/",
             os.environ.get("EIGEN_DIR", "include/"),
         ],
-        define_macros=[("WRAPPY", "1"), ("WRAPR", "0"), ("STACK_DFS", "")],
+        define_macros=[("STACK_DFS", "1"), ("INTRINSIC_BITCOUNT", "0")],
         language="c++",
     )
 ]
@@ -79,7 +79,7 @@ class BuildExt(_build_ext):
     """A custom build extension for adding compiler-specific options."""
 
     c_opts = {
-        "msvc": ["/EHsc", "-std=c++14"],  # msvc has c++11 by default
+        "msvc": ["/EHsc", "/std:c++14"],  # msvc has c++11 by default
         "unix": ["-Wall", "-Wno-unused-result", "-std=c++14"],
     }
 
@@ -121,7 +121,7 @@ class BuildExt(_build_ext):
 
 setup(
     name="cliquematch",
-    version="0.8.0",
+    version="0.9.0",
     author="Gautham Venkatasubramanian",
     author_email="ahgamut@gmail.com",
     description="Matching using cliques in large sparse graphs",

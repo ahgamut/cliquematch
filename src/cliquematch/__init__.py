@@ -10,14 +10,10 @@ __init__.py used for:
 Setting up the cliquematch package
 """
 
-VERSION = "0.7.0"
-
 from cliquematch.core import (
     Graph,
     graph_from_file,
     graph_from_adjmat,
     graph_from_edgelist,
 )
-
-from cliquematch.psgraph import psgraph
 from .wrappers import *

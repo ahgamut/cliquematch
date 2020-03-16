@@ -5,8 +5,8 @@
 
 namespace py = pybind11;
 
-template <typename List1, typename Delta1, typename List2, typename Delta2,
-          typename EpsType>
+template <typename List1, typename Delta1, typename List2, typename Delta2 = Delta1,
+          typename EpsType = Delta1>
 void init_GraphTemplate(py::module& m, std::string classname)
 {
     using namespace pybind11;

@@ -1,6 +1,5 @@
 #include <core/graph.h>
 #include <algorithm>
-#include <ctime>
 #include <iostream>
 #include <utility>
 
@@ -73,12 +72,7 @@ void graph::heur_one_clique(size_t cur)
         {
             // heuristic assumption was not useful, because
             // potential clique with neib cannot beat the maximum
-            // Reset the list of candidates
-            // and try with the remaining neighbors
-            cand = ~res;
-            res.clear();
-            res.set(this->vertices[cur].spos);
-            cur_clique_size = 1;
+            break;
         }
         else if (candidates_left == 0)
         {
@@ -94,12 +88,7 @@ void graph::heur_one_clique(size_t cur)
             //  << this->vertices[cur].mcs << "\n";
             this->CUR_MAX_CLIQUE_SIZE = this->vertices[cur].mcs;
 
-            // this vertex might have a different set of neighbors who may form
-            // a bigger clique
-            cand = ~res;
-            res.clear();
-            res.set(this->vertices[cur].spos);
-            cur_clique_size = 1;
+            break;
         }
         // else, this clique still has potential to beat the maximum, and
         // some candidates left to try, so continue on with the loop
@@ -109,18 +98,22 @@ void graph::heur_one_clique(size_t cur)
 size_t graph::heur_all_cliques(size_t start_vertex, double TIME_LIMIT)
 {
     size_t i;
-    for (i = start_vertex; i < vertices.size() && CUR_MAX_CLIQUE_SIZE <= CLIQUE_LIMIT;
-         i++)
+    size_t ans;
+    for (i = vertices.size() - start_vertex - 1;
+         i > 0 && CUR_MAX_CLIQUE_SIZE <= CLIQUE_LIMIT; i--)
     {
-        if (this->vertices[i].N <= CUR_MAX_CLIQUE_SIZE) continue;
-        if ((clock() - duration) / CLOCKS_PER_SEC > TIME_LIMIT)
+        if (this->elapsed_time() > TIME_LIMIT)
         {
 #ifndef NDEBUG
             cerr << "Heuristic: Exceeded time limit of " << TIME_LIMIT << " seconds\n";
 #endif
             break;
         }
-        heur_one_clique(i);
+        if (this->vertices[indices[i]].N <= CUR_MAX_CLIQUE_SIZE) continue;
+        if (this->find_if_neighbors(this->vertices[CUR_MAX_CLIQUE_LOC], indices[i],
+                                    ans) == 1)
+            continue;  // this is very aggressive
+        heur_one_clique(indices[i]);
     }
-    return i;
+    return vertices.size() - i - 1;
 }

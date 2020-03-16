@@ -1,6 +1,5 @@
 #include <core/graph.h>
 #include <algorithm>
-#include <ctime>
 #include <iostream>
 
 using namespace std;
@@ -9,7 +8,7 @@ void graph::dfs_one_search(size_t cur, const graphBits& prev_cand,
                            const graphBits& prev_res)
 {
     if (CUR_MAX_CLIQUE_SIZE > CLIQUE_LIMIT) return;
-    if ((clock() - duration) / CLOCKS_PER_SEC > TIME_LIMIT) return;
+    if (this->elapsed_time() > TIME_LIMIT) return;
 
     size_t candidates_left = prev_cand.count();
     size_t mcs_potential = candidates_left + prev_res.count();
@@ -117,7 +116,7 @@ void graph::dfs_one_search(size_t cur, const graphBits& prev_cand,
     }
 }
 
-#ifndef STACK_DFS
+#if STACK_DFS == 0
 #pragma message("Using recursion for DFS")
 void graph::dfs_one_clique(size_t cur)
 {
