@@ -8,8 +8,8 @@ using _A2Agraph = GraphTemplate<Eigen::Ref<matrix>, double, Eigen::Ref<matrix>,
 
 class Aligngraph : public _A2Agraph {
    public:
-    Aligngraph(Eigen::Ref<matrix>& pts1, unsigned int pts1_len,
-	       Eigen::Ref<matrix>& pts2, unsigned int pts2_len)
+    Aligngraph(Eigen::Ref<matrix>& pts1, std::size_t pts1_len,
+	       Eigen::Ref<matrix>& pts2, std::size_t pts2_len)
 	: _A2Agraph(pts1, pts1_len, pts2, pts2_len, euclidean, true, euclidean,
 		    true) {}
     void build_edges_with_filter(Eigen::Ref<matrix>& pts1,

@@ -72,7 +72,7 @@ void graph::dfs_one_clique(std::size_t cur) {
 			    this->vertices[cur],
 			    this->edge_list[this->vertices[vert].elo + k], ans);
 			// break if no more common neighbors
-			if (f == -1 && ans >= this->vertices[cur].N) break;
+			if (f == -1) break;
 
 			// if there is a common neighbor,
 			// add it to the list of candidates for the recursive

@@ -12,8 +12,8 @@ void init_pygraph(p::module& m) {
 	  arg("num_vertices"));
     class_<pygraph>(m, "Graph")
 	.def(init<>())
-	.def(init<unsigned int, unsigned int,
-		  std::vector<std::set<unsigned int>>>(),
+	.def(init<std::size_t, std::size_t,
+		  std::vector<std::set<std::size_t>>>(),
 	     arg("num_vertices"), arg("num_edges"), arg("edges"))
 	.def_readwrite("use_heuristic", &pygraph::use_heur,
 		       "Search using the heuristic if true")

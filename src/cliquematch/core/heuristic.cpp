@@ -106,8 +106,10 @@ size_t graph::heur_all_cliques(size_t start_vertex, double TIME_LIMIT) {
 	 i < vertices.size() && CUR_MAX_CLIQUE_SIZE <= CLIQUE_LIMIT; i++) {
 	if (this->vertices[i].N <= CUR_MAX_CLIQUE_SIZE) continue;
 	if ((clock() - duration) / CLOCKS_PER_SEC > TIME_LIMIT) {
+#ifndef NDEBUG
 	    cerr << "Heuristic: Exceeded time limit of " << TIME_LIMIT
 		 << " seconds\n";
+#endif
 	    break;
 	}
 	heur_one_clique(i);

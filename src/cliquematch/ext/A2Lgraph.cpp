@@ -1,19 +1,19 @@
 #include <ext/A2Lgraph.h>
 
-template std::vector<std::set<u32> >
+template std::vector<std::set<std::size_t> >
 edges_from_relsets<Eigen::Ref<matrix>, double, py::list, double, double>(
-    u32&, u32&, relset<Eigen::Ref<matrix>, double>&, relset<py::list, double>&,
+    std::size_t&, std::size_t&, relset<Eigen::Ref<matrix>, double>&, relset<py::list, double>&,
     const double);
 
-template std::vector<std::set<u32> >
+template std::vector<std::set<std::size_t> >
 efr_condition<Eigen::Ref<matrix>, double, py::list, double, double>(
-    u32&, u32&, relset<Eigen::Ref<matrix>, double>&, relset<py::list, double>&,
-    const double, std::function<bool(u32, u32, u32, u32)>, bool);
+    std::size_t&, std::size_t&, relset<Eigen::Ref<matrix>, double>&, relset<py::list, double>&,
+    const double, std::function<bool(std::size_t, std::size_t, std::size_t, std::size_t)>, bool);
 
 template <>
 GraphTemplate<Eigen::Ref<matrix>, double, py::list, double,
-              double>::GraphTemplate(Eigen::Ref<matrix>& pts1, u32 pts1_len,
-                                     py::list& pts2, u32 pts2_len)
+              double>::GraphTemplate(Eigen::Ref<matrix>& pts1, std::size_t pts1_len,
+                                     py::list& pts2, std::size_t pts2_len)
     : GraphTemplate<Eigen::Ref<matrix>, double, py::list, double, double>(
           pts1, pts1_len, pts2, pts2_len, euclidean, true,
           dummy_comparison<py::list, double>, true) {}

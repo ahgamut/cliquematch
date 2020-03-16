@@ -21,9 +21,11 @@ void graph::dfs_one_search(size_t cur, const graphBits& prev_cand,
 	    this->CUR_MAX_CLIQUE_SIZE = mcs_potential;
 	    this->vertices[cur].mcs = mcs_potential;
 	    this->CUR_MAX_CLIQUE_LOC = cur;
-	    cerr << "\n"
+		#ifndef NDEBUG
+		cerr << "\n"
 		 << cur << " updated max_clique size to " << CUR_MAX_CLIQUE_SIZE
 		 << " ";
+		#endif
 	    return;
 	}
 
@@ -72,7 +74,7 @@ void graph::dfs_one_search(size_t cur, const graphBits& prev_cand,
 			this->vertices[cur],
 			this->edge_list[this->vertices[vert].elo + k], ans);
 		    // break if no more common neighbors
-		    if (f == -1 && ans >= this->vertices[cur].N) break;
+		    if (f == -1) break;
 
 		    // if there is a common neighbor,
 		    // add it to the list of candidates for the recursive call

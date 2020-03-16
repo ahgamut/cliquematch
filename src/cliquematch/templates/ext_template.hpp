@@ -30,9 +30,9 @@ GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::GraphTemplate() {
 template <typename List1, typename Delta1, typename List2, typename Delta2,
 	  typename EpsType>
 GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::GraphTemplate(
-    List1& pts1, u32 pts1_len, List2& pts2, u32 pts2_len,
-    std::function<Delta1(List1&, u32, u32)> d1, bool is_d1_symmetric,
-    std::function<Delta2(List2&, u32, u32)> d2, bool is_d2_symmetric)
+    List1& pts1, std::size_t pts1_len, List2& pts2, std::size_t pts2_len,
+    std::function<Delta1(List1&, std::size_t, std::size_t)> d1, bool is_d1_symmetric,
+    std::function<Delta2(List2&, std::size_t, std::size_t)> d2, bool is_d2_symmetric)
     : GraphTemplate<List1, Delta1, List2, Delta2, EpsType>() {
     this->ps1 = relset<List1, Delta1>(pts1_len, d1, is_d1_symmetric);
     this->ps2 = relset<List2, Delta2>(pts2_len, d2, is_d2_symmetric);
@@ -44,7 +44,7 @@ bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::build_edges(
     List1& pts1, List2& pts2) {
     this->ps1.fill_dists(pts1);
     this->ps2.fill_dists(pts2);
-    unsigned int no_of_vertices, no_of_edges;
+    std::size_t no_of_vertices, no_of_edges;
     auto EDGES = edges_from_relsets(no_of_vertices, no_of_edges, this->ps1,
 				    this->ps2, this->pts_epsilon);
     if (EDGES.data() == nullptr || EDGES.size() == 0) {
@@ -62,10 +62,10 @@ template <typename List1, typename Delta1, typename List2, typename Delta2,
 bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::
     build_edges_with_condition(
 	List1& pts1, List2& pts2,
-	std::function<bool(List1&, u32, u32, List2&, u32, u32)> cfunc,
+	std::function<bool(List1&, std::size_t, std::size_t, List2&, std::size_t, std::size_t)> cfunc,
 	bool use_cfunc_only) {
-    unsigned int no_of_vertices, no_of_edges;
-    auto cfwrap = [&pts1, &pts2, &cfunc](u32 i, u32 j, u32 i2, u32 j2) -> bool {
+    std::size_t no_of_vertices, no_of_edges;
+    auto cfwrap = [&pts1, &pts2, &cfunc](std::size_t i, std::size_t j, std::size_t i2, std::size_t j2) -> bool {
 	return cfunc(pts1, i, j, pts2, i2, j2);
     };
 
@@ -89,11 +89,11 @@ bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::
 template <typename List1, typename Delta1, typename List2, typename Delta2,
 	  typename EpsType>
 py::list GraphTemplate<List1, Delta1, List2, Delta2,
-		       EpsType>::get_correspondence2(std::vector<u32> clique) {
+		       EpsType>::get_correspondence2(std::vector<std::size_t> clique) {
     py::list a1;
     py::list a2;
 
-    u32 i, t1, t2;
+    std::size_t i, t1, t2;
     for (i = 0; i < clique.size(); i++) {
 	if (clique[i] == 0) {
 	    throw std::runtime_error(

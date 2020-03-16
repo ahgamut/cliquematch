@@ -60,7 +60,8 @@ void graph::disp() {
 
 void graph::find_max_cliques(size_t& start_vert, bool& heur_done, bool use_heur,
 			     bool use_dfs, double time_limit) {
-    if (start_vert != 0) {
+#ifndef NDEBUG
+	if (start_vert != 0) {
 	cerr << "Continuing at " << start_vert
 		  << " off of a previous search ";
 	if (!heur_done)
@@ -68,6 +69,7 @@ void graph::find_max_cliques(size_t& start_vert, bool& heur_done, bool use_heur,
 	else
 	    cerr << "(DFS)\n";
     }
+#endif
     duration = clock();
     // I'm not sorting by degree because locality (?)
     if (!heur_done && use_heur)
@@ -87,8 +89,10 @@ size_t graph::dfs_all_cliques(size_t start_vertex, double time_limit) {
     TIME_LIMIT = time_limit;
     for (; i < vertices.size(); i++) {
 	if ((clock() - duration) / CLOCKS_PER_SEC > TIME_LIMIT) {
+#ifndef NDEBUG
 	    cerr << "DFS: Exceeded time limit of " << TIME_LIMIT
 		 << " seconds\n";
+#endif
 	    break;
 	}
 	if (this->vertices[i].N <= CUR_MAX_CLIQUE_SIZE ||

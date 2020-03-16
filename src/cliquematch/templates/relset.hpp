@@ -12,7 +12,7 @@ using namespace std;
 
 // template syntax brain hurty
 template <typename List, typename Delta>
-relset<List, Delta>::relset(u32 N, std::function<Delta(List&, u32, u32)> dfunc,
+relset<List, Delta>::relset(std::size_t N, std::function<Delta(List&, std::size_t, std::size_t)> dfunc,
 			    bool symmetric) {
     this->N = N;
     this->delfunc = dfunc;
@@ -25,7 +25,7 @@ relset<List, Delta>::relset(u32 N, std::function<Delta(List&, u32, u32)> dfunc,
 
 template <typename List, typename Delta>
 void relset<List, Delta>::fill_dists(List x) {
-    u32 i, j, count = 0;
+    std::size_t i, j, count = 0;
     for (i = 0; i < this->N; i++) {
 	for (j = (this->symmetric ? i + 1 : 0); j < this->N; j++) {
 	    if (j == i) continue;
@@ -40,7 +40,7 @@ void relset<List, Delta>::fill_dists(List x) {
 
 template <typename List, typename Delta>
 void relset<List, Delta>::disp() {
-    for (u32 i = 0; i < this->dists.size(); i++) {
+    for (std::size_t i = 0; i < this->dists.size(); i++) {
 	cout << this->dists[i].first << " " << this->dists[i].second << " "
 	     << this->dists[i].dist << "\n";
     }
@@ -49,7 +49,7 @@ void relset<List, Delta>::disp() {
 /*
 template <typename List, typename Delta>
 void relset<List, Delta>::disp(const List x) {
-    for (u32 i = 0; i < this->dists.size(); i++) {
+    for (std::size_t i = 0; i < this->dists.size(); i++) {
 	cout << this->dists[i].first << " (" << x.row(this->dists[i].first)
 	     << ") " << this->dists[i].second << " ("
 	     << x.row(this->dists[i].second) << ") "
@@ -60,7 +60,7 @@ void relset<List, Delta>::disp(const List x) {
 
 template <typename List, typename Delta>
 void relset<List, Delta>::disp2(const List x) {
-    for (u32 i = 0; i < this->dists.size(); i++) {
+    for (std::size_t i = 0; i < this->dists.size(); i++) {
 	cout << this->dists[i].first << " (" << x[this->dists[i].first] << ") "
 	     << this->dists[i].second << " (" << x[this->dists[i].second]
 	     << ") "
@@ -71,12 +71,12 @@ void relset<List, Delta>::disp2(const List x) {
 
 template <typename List1, typename Delta1, typename List2, typename Delta2,
 	  typename EpsType>
-std::vector<std::set<u32> > edges_from_relsets(u32& n_vert, u32& n_edges,
+std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& n_vert, std::size_t& n_edges,
 					       relset<List1, Delta1>& s1,
 					       relset<List2, Delta2>& s2,
 					       const EpsType epsilon) {
-    u32 M = s1.N, N = s2.N;
-    u32 i, j;
+    std::size_t M = s1.N, N = s2.N;
+    std::size_t i, j;
     n_vert = M * N;
     n_edges = 0;
 
@@ -86,16 +86,16 @@ std::vector<std::set<u32> > edges_from_relsets(u32& n_vert, u32& n_edges,
 	    std::string(__FILE__) + "  " + std::to_string(__LINE__) + "\n");
     }
 
-    std::vector<std::set<u32> > Edges(n_vert + 1);
+    std::vector<std::set<std::size_t> > Edges(n_vert + 1);
 
-    u32 v1, v2;
+    std::size_t v1, v2;
 
     auto base = s2.dists.data();
-    u32 len1 = s1.symmetric ? M * (M - 1) / 2 : M * (M - 1);
-    u32 len2 = s2.symmetric ? N * (N - 1) / 2 : N * (N - 1);
+    std::size_t len1 = s1.symmetric ? M * (M - 1) / 2 : M * (M - 1);
+    std::size_t len2 = s2.symmetric ? N * (N - 1) / 2 : N * (N - 1);
 
     EpsType cur_ub = 0, cur_lb = 0;
-    u32 ub_loc = len2, lb_loc = 0;
+    std::size_t ub_loc = len2, lb_loc = 0;
 
     short found1, found2;
 
@@ -138,12 +138,12 @@ std::vector<std::set<u32> > edges_from_relsets(u32& n_vert, u32& n_edges,
 
 template <typename List1, typename Delta1, typename List2, typename Delta2,
 	  typename EpsType>
-std::vector<std::set<u32> > efr_condition(
-    u32& n_vert, u32& n_edges, relset<List1, Delta1>& s1,
+std::vector<std::set<std::size_t> > efr_condition(
+    std::size_t& n_vert, std::size_t& n_edges, relset<List1, Delta1>& s1,
     relset<List2, Delta2>& s2, const EpsType epsilon,
-    std::function<bool(u32, u32, u32, u32)> cfunc, bool use_cfunc_only) {
-    u32 M = s1.N, N = s2.N;
-    u32 i, j;
+    std::function<bool(std::size_t, std::size_t, std::size_t, std::size_t)> cfunc, bool use_cfunc_only) {
+    std::size_t M = s1.N, N = s2.N;
+    std::size_t i, j;
     n_vert = M * N;
     n_edges = 0;
 
@@ -153,16 +153,16 @@ std::vector<std::set<u32> > efr_condition(
 	    std::string(__FILE__) + "  " + std::to_string(__LINE__) + "\n");
     }
 
-    std::vector<std::set<u32> > Edges(n_vert + 1);
+    std::vector<std::set<std::size_t> > Edges(n_vert + 1);
 
-    u32 v1, v2;
+    std::size_t v1, v2;
 
     auto base = s2.dists.data();
-    u32 len1 = s1.symmetric ? M * (M - 1) / 2 : M * (M - 1);
-    u32 len2 = s2.symmetric ? N * (N - 1) / 2 : N * (N - 1);
+    std::size_t len1 = s1.symmetric ? M * (M - 1) / 2 : M * (M - 1);
+    std::size_t len2 = s2.symmetric ? N * (N - 1) / 2 : N * (N - 1);
 
     EpsType cur_ub = 0, cur_lb = 0;
-    u32 ub_loc = len2, lb_loc = 0;
+    std::size_t ub_loc = len2, lb_loc = 0;
 
     short found1, found2;
 

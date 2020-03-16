@@ -11,15 +11,15 @@ void init_GraphTemplate(py::module& m, std::string classname) {
     using namespace pybind11;
     using GClass = GraphTemplate<List1, Delta1, List2, Delta2, EpsType>;
     class_<GClass, pygraph>(m, classname.c_str())
-	.def(init<List1&, u32, List2&, u32>(), "set1"_a.noconvert(),
+	.def(init<List1&, std::size_t, List2&, std::size_t>(), "set1"_a.noconvert(),
 	     "set1_len"_a, "set2"_a.noconvert(), "set2_len"_a)
-	.def(init<List1&, u32, List2&, u32,
-		  std::function<Delta1(List1&, u32, u32)>, bool>(),
+	.def(init<List1&, std::size_t, List2&, std::size_t,
+		  std::function<Delta1(List1&, std::size_t, std::size_t)>, bool>(),
 	     "set1"_a.noconvert(), "set1_len"_a, "set2"_a.noconvert(),
 	     "set2_len"_a, "dist_set1"_a, "is_d1_symmetric"_a)
-	.def(init<List1&, u32, List2&, u32,
-		  std::function<Delta1(List1&, u32, u32)>, bool,
-		  std::function<Delta2(List2&, u32, u32)>, bool>(),
+	.def(init<List1&, std::size_t, List2&, std::size_t,
+		  std::function<Delta1(List1&, std::size_t, std::size_t)>, bool,
+		  std::function<Delta2(List2&, std::size_t, std::size_t)>, bool>(),
 	     "set1"_a.noconvert(), "set1_len"_a, "set2"_a.noconvert(),
 	     "set2_len"_a, "dist_set1"_a, "is_d1_symmetric"_a, "dist_set2"_a,
 	     "is_d2_symmetric"_a)

@@ -10,6 +10,6 @@ double euc_dist0(const Eigen::MatrixBase<DerivedMat>& p,
     return (p - q).norm();
 }
 
-double euclidean(Eigen::Ref<matrix>&, unsigned int, unsigned int);
+double euclidean(Eigen::Ref<matrix>&, std::size_t, std::size_t);
 
 #endif /* EIGEN_DISTANCE_H */
