@@ -1,15 +1,14 @@
 #include <ext/Aligngraph.h>
 
-using ulong_matrix =
+using ULongMatrixR =
     Eigen::Matrix<std::size_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
-using bool_matrix =
-    Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-
-double inline filter_score(Eigen::Ref<matrix> control, Eigen::Ref<bool_matrix> msk,
-                           Eigen::RowVector2d& c, Eigen::Ref<matrix> rot_con,
-                           Eigen::Ref<ulong_matrix> RCU, const Eigen::Ref<matrix>& M1,
-                           std::size_t i1, std::size_t j1, const Eigen::Ref<matrix>& M2,
+double inline filter_score(Eigen::Ref<DoubleMatrixR> control,
+                           Eigen::Ref<BoolMatrixR> msk, Eigen::RowVector2d& c,
+                           Eigen::Ref<DoubleMatrixR> rot_con,
+                           Eigen::Ref<ULongMatrixR> RCU,
+                           const Eigen::Ref<DoubleMatrixR>& M1, std::size_t i1,
+                           std::size_t j1, const Eigen::Ref<DoubleMatrixR>& M2,
                            std::size_t i2, std::size_t j2)
 {
     static Eigen::Matrix<double, 4, 4> coeffs;
@@ -48,18 +47,18 @@ double inline filter_score(Eigen::Ref<matrix> control, Eigen::Ref<bool_matrix> m
     return msk_score;
 }
 
-void Aligngraph::build_edges_with_filter(Eigen::Ref<matrix>& pts1,
-                                         Eigen::Ref<matrix>& pts2,
-                                         Eigen::Ref<matrix> control_pts,
-                                         Eigen::Ref<bool_matrix> mask,
+void Aligngraph::build_edges_with_filter(Eigen::Ref<DoubleMatrixR>& pts1,
+                                         Eigen::Ref<DoubleMatrixR>& pts2,
+                                         Eigen::Ref<DoubleMatrixR> control_pts,
+                                         Eigen::Ref<BoolMatrixR> mask,
                                          double percentage)
 {
     Eigen::RowVector2d _c;
-    matrix _rot_con(control_pts.rows(), control_pts.cols());
-    ulong_matrix _RCU(control_pts.rows(), control_pts.cols());
+    DoubleMatrixR _rot_con(control_pts.rows(), control_pts.cols());
+    ULongMatrixR _RCU(control_pts.rows(), control_pts.cols());
     auto rule_func = [&control_pts, &mask, &_c, &_rot_con, &_RCU, &percentage](
-                         Eigen::Ref<matrix>& p1, std::size_t i1, std::size_t j1,
-                         Eigen::Ref<matrix>& p2, std::size_t i2,
+                         Eigen::Ref<DoubleMatrixR>& p1, std::size_t i1, std::size_t j1,
+                         Eigen::Ref<DoubleMatrixR>& p2, std::size_t i2,
                          std::size_t j2) -> bool {
         return filter_score(control_pts, mask, _c, _rot_con, _RCU, p1, i1, j1, p2, i2,
                             j2) >= percentage;
@@ -70,9 +69,10 @@ void Aligngraph::build_edges_with_filter(Eigen::Ref<matrix>& pts1,
 void init_Aligngraph(pybind11::module& mm)
 {
     using namespace pybind11;
-    using a2a =
-        GraphTemplate<Eigen::Ref<matrix>, double, Eigen::Ref<matrix>, double, double>;
+    using a2a = GraphTemplate<Eigen::Ref<DoubleMatrixR>, double,
+                              Eigen::Ref<DoubleMatrixR>, double, double>;
     class_<Aligngraph, a2a>(mm, "AlignGraph")
-        .def(init<Eigen::Ref<matrix>&, std::size_t, Eigen::Ref<matrix>&, std::size_t>())
+        .def(init<Eigen::Ref<DoubleMatrixR>&, std::size_t, Eigen::Ref<DoubleMatrixR>&,
+                  std::size_t>())
         .def("build_edges_with_filter", &Aligngraph::build_edges_with_filter);
 }

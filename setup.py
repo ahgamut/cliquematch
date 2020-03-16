@@ -52,7 +52,7 @@ ext_modules = [
             "src/cliquematch/",
             os.environ.get("EIGEN_DIR", "include/"),
         ],
-        define_macros=[("WRAPPY", "1"), ("WRAPR", "0"), ("STACK_DFS", "")],
+        define_macros=[("STACK_DFS", "")],
         language="c++",
     )
 ]
@@ -121,7 +121,7 @@ class BuildExt(_build_ext):
 
 setup(
     name="cliquematch",
-    version="0.8.0",
+    version="0.9.0",
     author="Gautham Venkatasubramanian",
     author_email="ahgamut@gmail.com",
     description="Matching using cliques in large sparse graphs",
