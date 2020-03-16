@@ -8,8 +8,8 @@ using bool_matrix =
 
 double inline filter_score(Eigen::Ref<matrix> control, Eigen::Ref<bool_matrix> msk,
                            Eigen::RowVector2d& c, Eigen::Ref<matrix> rot_con,
-                           Eigen::Ref<ulong_matrix> RCU, Eigen::Ref<matrix>& M1,
-                           std::size_t i1, std::size_t j1, Eigen::Ref<matrix>& M2,
+                           Eigen::Ref<ulong_matrix> RCU, const Eigen::Ref<matrix>& M1,
+                           std::size_t i1, std::size_t j1, const Eigen::Ref<matrix>& M2,
                            std::size_t i2, std::size_t j2)
 {
     static Eigen::Matrix<double, 4, 4> coeffs;

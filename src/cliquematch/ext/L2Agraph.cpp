@@ -3,13 +3,13 @@
 // required for relset to instantiate
 template std::vector<std::set<std::size_t> >
 edges_from_relsets<py::list, double, Eigen::Ref<matrix>, double, double>(
-    std::size_t&, std::size_t&, relset<py::list, double>&,
-    relset<Eigen::Ref<matrix>, double>&, const double);
+    std::size_t&, std::size_t&, const relset<py::list, double>&,
+    const relset<Eigen::Ref<matrix>, double>&, const double);
 
 template std::vector<std::set<std::size_t> >
 efr_condition<py::list, double, Eigen::Ref<matrix>, double, double>(
-    std::size_t&, std::size_t&, relset<py::list, double>&,
-    relset<Eigen::Ref<matrix>, double>&, const double,
+    std::size_t&, std::size_t&, const relset<py::list, double>&,
+    const relset<Eigen::Ref<matrix>, double>&, const double,
     std::function<bool(std::size_t, std::size_t, std::size_t, std::size_t)>, bool);
 
 // Specializing ctors to account for euclidean default

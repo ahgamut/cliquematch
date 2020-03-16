@@ -80,8 +80,8 @@ template <typename List1, typename Delta1, typename List2, typename Delta2,
           typename EpsType>
 std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& n_vert,
                                                        std::size_t& n_edges,
-                                                       relset<List1, Delta1>& s1,
-                                                       relset<List2, Delta2>& s2,
+                                                       const relset<List1, Delta1>& s1,
+                                                       const relset<List2, Delta2>& s2,
                                                        const EpsType epsilon)
 {
     std::size_t M = s1.N, N = s2.N;
@@ -152,8 +152,8 @@ std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& n_vert,
 template <typename List1, typename Delta1, typename List2, typename Delta2,
           typename EpsType>
 std::vector<std::set<std::size_t> > efr_condition(
-    std::size_t& n_vert, std::size_t& n_edges, relset<List1, Delta1>& s1,
-    relset<List2, Delta2>& s2, const EpsType epsilon,
+    std::size_t& n_vert, std::size_t& n_edges, const relset<List1, Delta1>& s1,
+    const relset<List2, Delta2>& s2, const EpsType epsilon,
     std::function<bool(std::size_t, std::size_t, std::size_t, std::size_t)> cfunc,
     bool use_cfunc_only)
 {

@@ -23,7 +23,8 @@ struct pair_dist
 };
 
 template <class T>
-short binary_find2(pair_dist<T> *a, std::size_t N, T val, std::size_t &loc)
+short binary_find2(const pair_dist<T> *a, const std::size_t N, const T &val,
+                   std::size_t &loc)
 {
     int beg = 0, end = N - 1, mid = (beg + end / 2);
     if (a[end] < val)

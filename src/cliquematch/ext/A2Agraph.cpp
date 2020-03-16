@@ -5,13 +5,13 @@ template struct relset<Eigen::Ref<matrix>, double>;
 
 template std::vector<std::set<std::size_t> >
 edges_from_relsets<Eigen::Ref<matrix>, double, Eigen::Ref<matrix>, double, double>(
-    std::size_t&, std::size_t&, relset<Eigen::Ref<matrix>, double>&,
-    relset<Eigen::Ref<matrix>, double>&, const double);
+    std::size_t&, std::size_t&, const relset<Eigen::Ref<matrix>, double>&,
+    const relset<Eigen::Ref<matrix>, double>&, const double);
 
 template std::vector<std::set<std::size_t> >
 efr_condition<Eigen::Ref<matrix>, double, Eigen::Ref<matrix>, double, double>(
-    std::size_t&, std::size_t&, relset<Eigen::Ref<matrix>, double>&,
-    relset<Eigen::Ref<matrix>, double>&, const double,
+    std::size_t&, std::size_t&, const relset<Eigen::Ref<matrix>, double>&,
+    const relset<Eigen::Ref<matrix>, double>&, const double,
     std::function<bool(std::size_t, std::size_t, std::size_t, std::size_t)>, bool);
 
 // required for GraphTemplate to instantiate
