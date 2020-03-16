@@ -6,16 +6,16 @@
 
 using namespace std;
 
-vector<set<u32> > mmio2_reader(const char* filename, u32& n_vert,
-                               u32& n_edges) {
+vector<set<std::size_t> > mmio2_reader(const char* filename, std::size_t& n_vert,
+                               std::size_t& n_edges) {
     ifstream f(filename, ios::in);
 
-    u32 dummy;
+    std::size_t dummy;
     if (!f.is_open()) {
         throw runtime_error(
             "Unable to open file of form MMIO2 (vertex-vertex)!\n" +
             std::string(__FILE__) + "  " + std::to_string(__LINE__) + "\n");
-        vector<set<u32> > Edges;
+        vector<set<std::size_t> > Edges;
         // Edges.data() = NULL;
         return Edges;
     }
@@ -24,10 +24,10 @@ vector<set<u32> > mmio2_reader(const char* filename, u32& n_vert,
     f >> dummy;
     f >> n_edges;
 
-    vector<set<u32> > Edges(n_vert + 1);
+    vector<set<std::size_t> > Edges(n_vert + 1);
 
-    u32 v1, v2;
-    for (u32 i = 0; i < n_edges && !f.eof(); i++) {
+    std::size_t v1, v2;
+    for (std::size_t i = 0; i < n_edges && !f.eof(); i++) {
         f >> v1 >> v2;
         if (v1 == v2) continue;
         Edges[v1].insert(v2);
@@ -38,19 +38,19 @@ vector<set<u32> > mmio2_reader(const char* filename, u32& n_vert,
     return Edges;
 }
 
-vector<set<u32> > mmio3_reader(const char* filename, u32& n_vert,
-                               u32& n_edges) {
+vector<set<std::size_t> > mmio3_reader(const char* filename, std::size_t& n_vert,
+                               std::size_t& n_edges) {
     ifstream f(filename, ios::in);
 
     double time_taken;
 
-    u32 dummy;
+    std::size_t dummy;
     if (!f.is_open()) {
         throw runtime_error(
             "Unable to open file of form MMIO3: "
             "(vertex-vertex-dummyweight)!\n" +
             std::string(__FILE__) + "  " + std::to_string(__LINE__) + "\n");
-        vector<set<u32> > Edges;
+        vector<set<std::size_t> > Edges;
         // Edges.data() = NULL;
         return Edges;
     }
@@ -60,10 +60,10 @@ vector<set<u32> > mmio3_reader(const char* filename, u32& n_vert,
     f >> dummy;
     f >> n_edges;
 
-    vector<set<u32> > Edges(n_vert + 1);
+    vector<set<std::size_t> > Edges(n_vert + 1);
 
-    u32 v1, v2;
-    for (u32 i = 0; i < n_edges && !f.eof(); i++) {
+    std::size_t v1, v2;
+    for (std::size_t i = 0; i < n_edges && !f.eof(); i++) {
         f >> v1 >> v2 >> time_taken;
         if (v1 == v2) continue;
         Edges[v1].insert(v2);

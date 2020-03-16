@@ -3,7 +3,7 @@
 #include <core/vertex.h>
 
 struct SearchState {
-    unsigned int start_at;
+    std::size_t start_at;
     graphBits cand, res;
 
     SearchState(const vertex&);

@@ -11,55 +11,55 @@ class graph {
     std::vector<vertex> vertices;
     void set_vertices();
     // raw list of edges (useless without vertex.elo)
-    std::vector<u32> edge_list;
-    u32 el_size;
+    std::vector<std::size_t> edge_list;
+    std::size_t el_size;
     // edges stored as bits for a clique, (padded
     // to ensure 32bit)
     std::vector<u32> edge_bits;
-    u32 eb_size;
-    inline short find_if_neighbors(const vertex& v1, u32 v2_id,
-				   u32& v2_position) {
+    std::size_t eb_size;
+    inline short find_if_neighbors(const vertex& v1, std::size_t v2_id,
+				   std::size_t& v2_position) {
 	return binary_find(&(this->edge_list[v1.elo]), v1.N, v2_id,
 			   v2_position);
     }
 
    public:
-    u32 n_vert;
+    std::size_t n_vert;
     // runtime heuristics
     double duration;
-    u32 max_degree;
+    std::size_t max_degree;
 
-    u32 CUR_MAX_CLIQUE_SIZE;
-    u32 CUR_MAX_CLIQUE_LOC;
-    u32 CLIQUE_LIMIT;
+    std::size_t CUR_MAX_CLIQUE_SIZE;
+    std::size_t CUR_MAX_CLIQUE_LOC;
+    std::size_t CLIQUE_LIMIT;
     double TIME_LIMIT;
 
     // basic functions
     graph();
-    graph(u32 n_vert, u32 n_edges, std::vector<std::set<u32>>& edges,
-	  u32 clique_lim = 1000);
+    graph(std::size_t n_vert, std::size_t n_edges, std::vector<std::set<std::size_t>>& edges,
+	  std::size_t clique_lim = 1000);
     void disp();
     // giving max_clique to pygraph
-    void find_max_cliques(u32& start_vert, bool& heur_done,
+    void find_max_cliques(std::size_t& start_vert, bool& heur_done,
 			  bool use_heur = false, bool use_dfs = true,
 			  double time_limit = 10000);
-    std::vector<u32> get_max_clique(u32 i);
-    std::vector<u32> get_max_clique();
+    std::vector<std::size_t> get_max_clique(std::size_t i);
+    std::vector<std::size_t> get_max_clique();
 
     // finding ONE max clique
-    void dfs_one_search(u32 cur, const graphBits&, const graphBits&);
-    void dfs_one_clique(u32 cur);
-    u32 dfs_all_cliques(u32 start_vertex = 0, double time_limit = 1000);
+    void dfs_one_search(std::size_t cur, const graphBits&, const graphBits&);
+    void dfs_one_clique(std::size_t cur);
+    std::size_t dfs_all_cliques(std::size_t start_vertex = 0, double time_limit = 1000);
 
     // using the heuristic for finding ONE clique
-    void heur_one_clique(u32 cur);
-    u32 heur_all_cliques(u32 start_vertex = 0, double time_limit = 100);
+    void heur_one_clique(std::size_t cur);
+    std::size_t heur_all_cliques(std::size_t start_vertex = 0, double time_limit = 100);
 
     // finding OTHER max cliques
-    void dfs_other_search(u32 cur, const graphBits&, const graphBits&);
-    void dfs_other_clique(u32 cur);
-    void dfs_other_clique(u32 cur, u32 limit);
-    std::vector<u32> possible_others();
+    void dfs_other_search(std::size_t cur, const graphBits&, const graphBits&);
+    void dfs_other_clique(std::size_t cur);
+    void dfs_other_clique(std::size_t cur, std::size_t limit);
+    std::vector<std::size_t> possible_others();
 };
 
 #endif /* GRAPH_H */

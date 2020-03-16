@@ -5,13 +5,13 @@
 
 using namespace std;
 
-void graph::dfs_one_search(u32 cur, const graphBits& prev_cand,
+void graph::dfs_one_search(size_t cur, const graphBits& prev_cand,
 			   const graphBits& prev_res) {
     if (CUR_MAX_CLIQUE_SIZE > CLIQUE_LIMIT) return;
     if ((clock() - duration) / CLOCKS_PER_SEC > TIME_LIMIT) return;
 
-    u32 candidates_left = prev_cand.count();
-    u32 mcs_potential = candidates_left + prev_res.count();
+    size_t candidates_left = prev_cand.count();
+    size_t mcs_potential = candidates_left + prev_res.count();
 
     if (mcs_potential > this->CUR_MAX_CLIQUE_SIZE) {
 	// no candidates left => clique cannot grow
@@ -34,9 +34,9 @@ void graph::dfs_one_search(u32 cur, const graphBits& prev_cand,
 	    graphBits res(prev_res);
 	    graphBits future_cand(this->vertices[cur].N);
 
-	    u32 i, k;
+	    size_t i, k;
 	    short f = 0;
-	    u32 vert, ans;
+	    size_t vert, ans;
 	    for (i = 0; i < this->vertices[cur].N; i++) {
 		// keep going until a candidate exists
 		if (cand.block_empty(i)) {
@@ -72,7 +72,7 @@ void graph::dfs_one_search(u32 cur, const graphBits& prev_cand,
 			this->vertices[cur],
 			this->edge_list[this->vertices[vert].elo + k], ans);
 		    // break if no more common neighbors
-		    if (f == -1) break;
+		    if (f == -1 && ans >= this->vertices[cur].N) break;
 
 		    // if there is a common neighbor,
 		    // add it to the list of candidates for the recursive call
@@ -110,7 +110,7 @@ void graph::dfs_one_search(u32 cur, const graphBits& prev_cand,
 
 #ifndef STACK_DFS
 #pragma message("Using recursion for DFS")
-void graph::dfs_one_clique(u32 cur) {
+void graph::dfs_one_clique(size_t cur) {
     graphBits res(this->vertices[cur].bits);
     graphBits cand = ~(this->vertices[cur].bits);
     dfs_one_search(cur, cand, res);

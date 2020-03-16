@@ -13,7 +13,7 @@ graph::graph() {
     this->duration = 0.0;
 
     this->vertices = vector<vertex>();
-    this->edge_list = vector<u32>();
+    this->edge_list = vector<size_t>();
     this->edge_bits = vector<u32>();
 
     this->CUR_MAX_CLIQUE_SIZE = 1;
@@ -22,17 +22,17 @@ graph::graph() {
     this->TIME_LIMIT = 100;
 }
 
-graph::graph(u32 n_vert, u32 n_edges, std::vector<std::set<u32> >& edges,
-	     u32 clique_lim)
+graph::graph(size_t n_vert, size_t n_edges, vector<set<size_t> >& edges,
+	     size_t clique_lim)
     : graph() {
     this->n_vert = n_vert + 1;
     // Therefore the 0th graph vertex is always a sentinel, remember the offset
     this->CLIQUE_LIMIT = clique_lim;
 
     this->vertices = vector<vertex>(this->n_vert);
-    this->edge_list = vector<u32>();
+    this->edge_list = vector<size_t>();
 
-    for (u32 i = 0; i < edges.size(); i++) {
+    for (size_t i = 0; i < edges.size(); i++) {
 	edges[i].insert(i);
 	this->vertices[i].load_external(i, edges[i].size(), el_size, eb_size);
 	this->edge_list.insert(this->edge_list.end(), edges[i].begin(),
@@ -49,24 +49,24 @@ graph::graph(u32 n_vert, u32 n_edges, std::vector<std::set<u32> >& edges,
 }
 
 void graph::set_vertices() {
-    for (u32 i = 0; i < vertices.size(); i++)
+    for (size_t i = 0; i < vertices.size(); i++)
 	vertices[i].set_spos(this->edge_list.data(), this->edge_bits.data());
 }
 
 void graph::disp() {
-    for (u32 i = 0; i < this->n_vert; i++)
+    for (size_t i = 0; i < this->n_vert; i++)
 	this->vertices[i].disp(this->edge_list.data());
 }
 
-void graph::find_max_cliques(u32& start_vert, bool& heur_done, bool use_heur,
+void graph::find_max_cliques(size_t& start_vert, bool& heur_done, bool use_heur,
 			     bool use_dfs, double time_limit) {
     if (start_vert != 0) {
-	std::cerr << "Continuing at " << start_vert
+	cerr << "Continuing at " << start_vert
 		  << " off of a previous search ";
 	if (!heur_done)
-	    std::cerr << "(heuristic)\n";
+	    cerr << "(heuristic)\n";
 	else
-	    std::cerr << "(DFS)\n";
+	    cerr << "(DFS)\n";
     }
     duration = clock();
     // I'm not sorting by degree because locality (?)
@@ -82,8 +82,8 @@ void graph::find_max_cliques(u32& start_vert, bool& heur_done, bool use_heur,
     duration = (clock() - duration) / ((double)CLOCKS_PER_SEC);
 }
 
-u32 graph::dfs_all_cliques(u32 start_vertex, double time_limit) {
-    u32 i = start_vertex;
+size_t graph::dfs_all_cliques(size_t start_vertex, double time_limit) {
+    size_t i = start_vertex;
     TIME_LIMIT = time_limit;
     for (; i < vertices.size(); i++) {
 	if ((clock() - duration) / CLOCKS_PER_SEC > TIME_LIMIT) {
@@ -100,10 +100,10 @@ u32 graph::dfs_all_cliques(u32 start_vertex, double time_limit) {
     return i;
 }
 
-vector<u32> graph::get_max_clique() {
+vector<size_t> graph::get_max_clique() {
     return this->get_max_clique(this->CUR_MAX_CLIQUE_LOC);
 }
 
-vector<u32> graph::get_max_clique(u32 i) {
+vector<size_t> graph::get_max_clique(size_t i) {
     return this->vertices[i].give_clique(this->edge_list.data());
 }

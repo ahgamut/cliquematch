@@ -1,13 +1,16 @@
 #include <core/vertex.h>
 #include <iostream>
 
-short binary_find(const u32* a, u32 N, u32 val, u32& loc) {
+short binary_find(const std::size_t* a, std::size_t N, std::size_t val, std::size_t& loc) {
     // modified binary search, returns location by reference
     // return 1 if found, 0 if not found
     // returns -1 only if value is outside the search space
-    int beg = 0, end = N - 1, mid = (beg + end / 2);
+    std::size_t beg = 0, end = N - 1, mid = (beg + end / 2);
     if (a[end] < val) {
 	loc = end;
+	return -1;
+    } else if (a[beg] > val) {
+	loc = beg;
 	return -1;
     }
     while (beg <= end) {
@@ -32,7 +35,7 @@ vertex::vertex() {
     this->mcs = 0;
 }
 
-void vertex::load_external(u32 id, u32 N, u32 elo, u32 ebo) {
+void vertex::load_external(std::size_t id, std::size_t N, std::size_t elo, std::size_t ebo) {
     this->id = id;
     this->N = N;
     this->elo = elo;
@@ -41,26 +44,26 @@ void vertex::load_external(u32 id, u32 N, u32 elo, u32 ebo) {
     this->spos = 0;
 }
 
-void vertex::set_spos(u32* el_base, u32* eb_base) {
+void vertex::set_spos(std::size_t* el_base, u32* eb_base) {
     short f = binary_find(&el_base[this->elo], this->N, this->id, this->spos);
     this->bits.load_external(&eb_base[this->ebo], this->N);
     this->bits.set(this->spos);
 }
 
-void vertex::disp(const u32* el_base) const {
+void vertex::disp(const std::size_t* el_base) const {
     if (this->N <= 1 || this->mcs <= 1) return;
     std::cout << "Vertex " << this->id << " has " << this->N << " edges\n";
-    for (u32 i = 0; i < this->N; i++)
+    for (std::size_t i = 0; i < this->N; i++)
 	std::cerr << el_base[this->elo + i] << " ";
     std::cout << "Current Clique: ";
     this->bits.show();
     this->bits.show(&el_base[this->elo], this->N);
 }
 
-void vertex::clique_disp(const u32* el_base) const {
+void vertex::clique_disp(const std::size_t* el_base) const {
     this->bits.show(&el_base[this->elo], this->N);
 }
 
-std::vector<u32> vertex::give_clique(const u32* el_base) const {
+std::vector<std::size_t> vertex::give_clique(const std::size_t* el_base) const {
     return this->bits.get_subset(&el_base[this->elo], this->N);
 }

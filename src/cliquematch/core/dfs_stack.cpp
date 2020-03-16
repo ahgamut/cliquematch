@@ -9,10 +9,10 @@ using namespace std;
 #ifdef STACK_DFS
 #pragma message("Using explicit stack for DFS")
 
-void graph::dfs_one_clique(u32 cur) {
+void graph::dfs_one_clique(std::size_t cur) {
     std::stack<SearchState> states;
-    unsigned int candidates_left, mcs_potential;
-    unsigned int vert, ans;
+    std::size_t candidates_left, mcs_potential;
+    std::size_t vert, ans;
 
     states.push(SearchState(this->vertices[cur]));
     while (!states.empty()) {
@@ -35,7 +35,7 @@ void graph::dfs_one_clique(u32 cur) {
 
 	    else {
 		SearchState future_state(cur_state.cand, cur_state.res);
-		unsigned int i, k;
+		std::size_t i, k;
 		short f = 0;
 		for (i = cur_state.start_at; i < this->vertices[cur].N; i++) {
 		    // keep going until a candidate exists
@@ -72,7 +72,7 @@ void graph::dfs_one_clique(u32 cur) {
 			    this->vertices[cur],
 			    this->edge_list[this->vertices[vert].elo + k], ans);
 			// break if no more common neighbors
-			if (f == -1) break;
+			if (f == -1 && ans >= this->vertices[cur].N) break;
 
 			// if there is a common neighbor,
 			// add it to the list of candidates for the recursive
