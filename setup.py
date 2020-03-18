@@ -79,7 +79,7 @@ class BuildExt(_build_ext):
     """A custom build extension for adding compiler-specific options."""
 
     c_opts = {
-        "msvc": ["/EHsc", "-std=c++14"],  # msvc has c++11 by default
+        "msvc": ["/EHsc", "/std:c++14"],  # msvc has c++11 by default
         "unix": ["-Wall", "-Wno-unused-result", "-std=c++14"],
     }
 

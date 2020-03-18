@@ -8,9 +8,20 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.pdf
+*.bash
+.*.s[a-z][a-z]
+.tmuxp.yaml
+.vimrc
+tmp/ 
+papers/
+
+# only the sample matrix files
+*.mtx
+!tests/*.mtx
 
 # C extensions
 *.so
+*.o
 
 # Distribution / packaging
 .Python
@@ -110,10 +121,4 @@ venv.bak/
 .mypy_cache/
 
 
-*.bash
-.*.s[a-z][a-z]
-.tmuxp.yaml
-*.mtx
-.vimrc
-tmp/ 
-papers/
+
