@@ -1,6 +1,6 @@
 #include <core/graph.h>
 #include <algorithm>
-#include <ctime>
+#include <chrono>
 #include <iostream>
 
 using namespace std;
@@ -14,6 +14,7 @@ graph::graph()
     this->duration = 0.0;
 
     this->vertices = vector<vertex>();
+    this->indices = vector<size_t>();
     this->edge_list = vector<size_t>();
     this->edge_bits = vector<u32>();
 
@@ -32,6 +33,7 @@ graph::graph(size_t n_vert, size_t n_edges, vector<set<size_t> >& edges,
     this->CLIQUE_LIMIT = clique_lim;
 
     this->vertices = vector<vertex>(this->n_vert);
+    this->indices = vector<size_t>(this->n_vert);
     this->edge_list = vector<size_t>();
 
     for (size_t i = 0; i < edges.size(); i++)
@@ -42,6 +44,7 @@ graph::graph(size_t n_vert, size_t n_edges, vector<set<size_t> >& edges,
         this->max_degree = max_degree > edges[i].size() ? max_degree : edges[i].size();
         this->el_size += edges[i].size();
         this->eb_size += 1 + edges[i].size() / 32;
+        this->indices[i] = i;
         edges[i].erase(i);
     }
 
@@ -53,6 +56,9 @@ void graph::set_vertices()
 {
     for (size_t i = 0; i < vertices.size(); i++)
         vertices[i].set_spos(this->edge_list.data(), this->edge_bits.data());
+    std::stable_sort(indices.begin(), indices.end(), [this](size_t a, size_t b) {
+        return this->vertices[a].N < this->vertices[b].N;
+    });
 }
 
 void graph::disp()
@@ -64,28 +70,28 @@ void graph::disp()
 void graph::find_max_cliques(size_t& start_vert, bool& heur_done, bool use_heur,
                              bool use_dfs, double time_limit)
 {
-#ifndef NDEBUG
     if (start_vert != 0)
     {
+#ifndef NDEBUG
         cerr << "Continuing at " << start_vert << " off of a previous search ";
         if (!heur_done)
             cerr << "(heuristic)\n";
         else
             cerr << "(DFS)\n";
-    }
 #endif
-    duration = clock();
+    }
+    this->start_time = std::chrono::steady_clock::now();
     // I'm not sorting by degree because locality (?)
     if (!heur_done && use_heur) start_vert = heur_all_cliques(start_vert, time_limit);
 
-    if ((clock() - duration) / CLOCKS_PER_SEC < time_limit)
+    if (this->elapsed_time() < time_limit)
     {
         if (!heur_done) start_vert = 0;
         heur_done = true;
         if (use_dfs) start_vert = dfs_all_cliques(start_vert, time_limit);
     }
 
-    duration = (clock() - duration) / ((double)CLOCKS_PER_SEC);
+    duration = this->elapsed_time();
 }
 
 size_t graph::dfs_all_cliques(size_t start_vertex, double time_limit)
@@ -94,17 +100,17 @@ size_t graph::dfs_all_cliques(size_t start_vertex, double time_limit)
     TIME_LIMIT = time_limit;
     for (; i < vertices.size(); i++)
     {
-        if ((clock() - duration) / CLOCKS_PER_SEC > TIME_LIMIT)
+        if (this->elapsed_time() > TIME_LIMIT)
         {
 #ifndef NDEBUG
             cerr << "DFS: Exceeded time limit of " << TIME_LIMIT << " seconds\n";
 #endif
             break;
         }
-        if (this->vertices[i].N <= CUR_MAX_CLIQUE_SIZE ||
+        if (this->vertices[indices[i]].N <= CUR_MAX_CLIQUE_SIZE ||
             CUR_MAX_CLIQUE_SIZE > CLIQUE_LIMIT)
             continue;
-        dfs_one_clique(i);
+        dfs_one_clique(indices[i]);
     }
     // If we pause midway, I want to know where we stopped
     return i;

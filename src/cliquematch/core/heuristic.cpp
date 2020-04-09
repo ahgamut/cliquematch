@@ -1,6 +1,5 @@
 #include <core/graph.h>
 #include <algorithm>
-#include <ctime>
 #include <iostream>
 #include <utility>
 
@@ -113,7 +112,7 @@ size_t graph::heur_all_cliques(size_t start_vertex, double TIME_LIMIT)
          i++)
     {
         if (this->vertices[i].N <= CUR_MAX_CLIQUE_SIZE) continue;
-        if ((clock() - duration) / CLOCKS_PER_SEC > TIME_LIMIT)
+        if (this->elapsed_time() > TIME_LIMIT)
         {
 #ifndef NDEBUG
             cerr << "Heuristic: Exceeded time limit of " << TIME_LIMIT << " seconds\n";
