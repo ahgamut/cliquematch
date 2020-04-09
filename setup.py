@@ -52,7 +52,7 @@ ext_modules = [
             "src/cliquematch/",
             os.environ.get("EIGEN_DIR", "include/"),
         ],
-        define_macros=[("STACK_DFS", "")],
+        define_macros=[("STACK_DFS", "1"), ("INTRINSIC_BITCOUNT", "0")],
         language="c++",
     )
 ]

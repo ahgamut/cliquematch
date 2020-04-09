@@ -116,7 +116,7 @@ void graph::dfs_one_search(size_t cur, const graphBits& prev_cand,
     }
 }
 
-#ifndef STACK_DFS
+#if STACK_DFS == 0
 #pragma message("Using recursion for DFS")
 void graph::dfs_one_clique(size_t cur)
 {

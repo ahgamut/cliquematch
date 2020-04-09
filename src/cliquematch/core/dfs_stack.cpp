@@ -5,7 +5,7 @@
 
 using namespace std;
 
-#ifdef STACK_DFS
+#if STACK_DFS == 1
 #pragma message("Using explicit stack for DFS")
 
 void graph::dfs_one_clique(std::size_t cur)

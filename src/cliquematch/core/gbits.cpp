@@ -9,7 +9,8 @@
  * intrinsics are slightly faster, but may cause compatibility issues, so there
  * is a C version also provided, to count the number of set bits.
  * */
-#ifdef INTRINSIC_BITCOUNT
+#if INTRINSIC_BITCOUNT
+#pragma message("Using compiler intrinsics for bit-counting")
 
 #ifdef _MSC_VER
 #include <intrin.h>
