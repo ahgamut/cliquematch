@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
     {
         std::cout << "Using heuristic\n";
         use_heur = true;
+        use_dfs = false;
     }
     auto edges = mmio3_reader(argv[1], no_of_vertices, no_of_edges);
     graph G(no_of_vertices, no_of_edges, edges);
