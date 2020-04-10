@@ -99,8 +99,8 @@ size_t graph::heur_all_cliques(size_t start_vertex, double TIME_LIMIT)
 {
     size_t i;
     size_t ans;
-    for (i = start_vertex; i < vertices.size() && CUR_MAX_CLIQUE_SIZE <= CLIQUE_LIMIT;
-         i++)
+    for (i = vertices.size() - start_vertex - 1;
+         i > 0 && CUR_MAX_CLIQUE_SIZE <= CLIQUE_LIMIT; i--)
     {
         if (this->elapsed_time() > TIME_LIMIT)
         {
@@ -115,5 +115,5 @@ size_t graph::heur_all_cliques(size_t start_vertex, double TIME_LIMIT)
             continue;  // this is very aggressive
         heur_one_clique(indices[i]);
     }
-    return i;
+    return vertices.size() - i - 1;
 }

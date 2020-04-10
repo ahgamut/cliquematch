@@ -57,7 +57,7 @@ void graph::set_vertices()
     for (size_t i = 0; i < vertices.size(); i++)
         vertices[i].set_spos(this->edge_list.data(), this->edge_bits.data());
     std::stable_sort(indices.begin(), indices.end(), [this](size_t a, size_t b) {
-        return this->vertices[a].N < this->vertices[b].N;
+        return this->vertices[a].N <= this->vertices[b].N;
     });
 }
 
