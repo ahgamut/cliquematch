@@ -15,8 +15,8 @@ Delta dummy_comparison(List& ll, std::size_t i, std::size_t j)
     return (Delta)(0);
 }
 
-template <typename List1, typename Delta1, typename List2, typename Delta2,
-          typename EpsType>
+template <typename List1, typename Delta1, typename List2, typename Delta2 = Delta1,
+          typename EpsType = Delta1>
 class GraphTemplate : public pygraph
 {
    private:

@@ -33,8 +33,8 @@ struct relset
  *  where d1 is a distance metric to relate elements of s1
  *  and   d2 is a distance metric to relate elements of s2
  */
-template <typename List1, typename Delta1, typename List2, typename Delta2,
-          typename EpsType>
+template <typename List1, typename Delta1, typename List2, typename Delta2 = Delta1,
+          typename EpsType = Delta1>
 std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& nvert,
                                                        std::size_t& nedges,
                                                        const relset<List1, Delta1>&,
@@ -59,8 +59,8 @@ std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& nvert,
  * skip the epsilon check,
  * causing a time complexity of N^4.
  */
-template <typename List1, typename Delta1, typename List2, typename Delta2,
-          typename EpsType>
+template <typename List1, typename Delta1, typename List2, typename Delta2 = Delta1,
+          typename EpsType = Delta1>
 std::vector<std::set<std::size_t> > efr_condition(
     std::size_t& nvert, std::size_t& nedges, const relset<List1, Delta1>&,
     const relset<List2, Delta2>&, const EpsType epsilon,
