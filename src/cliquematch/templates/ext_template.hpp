@@ -135,21 +135,18 @@ template <typename List1, typename Delta1, typename List2, typename Delta2,
 std::string GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::showdata()
 {
     std::stringstream ss;
-    ss << "cliquematch.cm_base.<templated class object> at " << this << "\n";
-    ss << "epsilon = " << this->pts_epsilon << "\n";
+    ss << "cliquematch.core.<templated class object> at " << this << "\n(";
+    ss << "epsilon=" << this->pts_epsilon << ",";
+    ss << "n_vertices=" << this->nvert << ",";
+    ss << "n_edges=" << this->nedges << ",";
+    ss << "lower_bound=" << this->lower_bound << ",";
+    ss << "upper_bound=" << this->upper_bound << ",";
+    ss << "time_limit=" << this->time_lim << ",";
+    ss << "use_heuristic=" << (this->use_heur ? "True" : "False") << ",";
+    ss << "use_dfs=" << (this->use_dfs ? "True" : "False") << ",";
+    ss << "search_done=" << (this->finished_all ? "True" : "False");
+    ss << ")";
 
-    if (this->nvert != 0)
-    {
-        ss << "Correspondence graph has " << this->nvert << " vertices, "
-           << this->nedges << " edges\n";
-        ss << "Search Parameters : \n";
-        ss << "Bounds: [" << this->lower_bound << "," << this->upper_bound << "]"
-           << "\nTime limit: " << this->time_lim << "s\n";
-        ss << "Using Heuristic : " << (this->use_heur ? "True" : "False");
-        ss << " Using DFS: " << (this->use_dfs ? "True" : "False");
-        ss << "\n";
-        ss << "Search Completed? : " << (this->finished_all ? "True" : "False") << "\n";
-    }
     return ss.str();
 }
 
