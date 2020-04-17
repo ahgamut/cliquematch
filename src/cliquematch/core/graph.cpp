@@ -1,9 +1,20 @@
 #include <core/graph.h>
 #include <algorithm>
-#include <chrono>
 #include <iostream>
 
 using namespace std;
+
+short graph::find_if_neighbors(const vertex& v1, std::size_t v2_id,
+                               std::size_t& v2_position)
+{
+    return binary_find(&(this->edge_list[v1.elo]), v1.N, v2_id, v2_position);
+}
+double graph::elapsed_time()
+{
+    auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
+        std::chrono::steady_clock::now() - this->start_time);
+    return static_cast<double>(elapsed.count()) / 1e6;
+}
 
 graph::graph()
 {

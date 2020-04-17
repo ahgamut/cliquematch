@@ -2,7 +2,6 @@
 #define PYGRAPH_H
 
 #include <core/graph.h>
-#include <core/mmio.h>
 #include <cmath>
 // need to #include<cmath> before pybind11/numpy otherwise issues with ::hypot
 #include <pybind11/numpy.h>

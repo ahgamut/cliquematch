@@ -1,4 +1,5 @@
 #include <core/graph.h>
+#include <core/searchstate.h>
 #include <algorithm>
 #include <iostream>
 #include <stack>
