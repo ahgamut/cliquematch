@@ -1,31 +1,39 @@
 # `cliquematch` : Finding cliques in large sparse graphs
 
-The `cliquematch` package is used to to find a [maximum clique](https://en.wikipedia.org/wiki/Clique_(graph_theory)#Definitions)
-in large sparse undirected graphs as quickly as possible. Additionally, the functionality of `cliquematch` extends to finding a (sub)set of
-corresponding elements between two sets *S*<sub>1</sub> and *S*<sub>2</sub>.
-
+The `cliquematch` package is used to to find a [maximum
+clique](https://en.wikipedia.org/wiki/Clique_(graph_theory)#Definitions) in large sparse undirected graphs as
+quickly as possible. It also provides a framework with generic classes for implementing applications of the
+maximum clique problem: finding a (sub)set of corresponding elements between two sets *S*<sub>1</sub> and
+*S*<sub>2</sub>.
 
 ## Installation Instructions
 
 ### Installing from a wheel
 
-### Installing from Github
+### Installing from source
 
 1. `cliquematch` requires `pybind11` for its setup: 
 
 ```bash
-pip install pybind11
+pip3 install pybind11
 ```
-You may need admin privileges to install pybind11 correctly.
-
 2. `cliquematch` requires Eigen (v3.3.7 or newer) as part of its setup. 
 	
 	* You can clone the repo via `git clone --recursive` to get Eigen.
-	* Or if you already have an existing version of Eigen, set the `EIGEN_DIR` 
-	environment variable before compilation.
+	* If you already have an existing version of Eigen, set the `EIGEN_DIR` 
+	environment variable to folder containing Eigen before compilation.
 
 3. A `C++-14` compatible compiler must be available on `PATH` for the installation:
 
-	* On Linux, `gcc` is called with `--std=c++14`. 
+	* On Linux, GCC is called with `--std=c++14`. 
 	* On Windows, Visual Studio 2015 (MSVC 14.0 runtime) or later is needed.
 	* **Note:** Installing under Windows+MinGW is untested and may crash.
+
+4. Compilation Flags: `setup.py` compiles the `cliquematch` extension with two additional flags.
+	
+	* `STACK_DFS` (`1` by default): If nonzero, `cliquematch` uses an explicit stack for the depth-first clique
+	  search;  otherwise it uses recursive function calls. Primarily for debugging purposes.
+
+	* `INTRINSIC_BITCOUNT` (`0` by default): If nonzero, `cliquematch` uses compiler intrinsics to calculate
+	  the number of set bits in a 32-bit integer (`__builtin_popcount` in GCC , and `__popcnt` in MSVC); otherwise
+	  it uses an inline function. The intrinsics provide a small speed boost.
