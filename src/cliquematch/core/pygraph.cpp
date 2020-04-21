@@ -119,20 +119,20 @@ pygraph from_file(std::string filename, bool weighted)
 {
     //	std::cout<<"Constructing graph from a file\n";
     std::string fname = filename;
-    std::cerr << "Loading graph from: " << fname << "\n";
+    // std::cerr << "Loading graph from: " << fname << "\n";
 
     std::vector<std::set<std::size_t>> edges;
     std::size_t nvert, nedges;
 
     if (!weighted)
     {
-        std::cerr << "Choice: 1 MMIO format -> line: edge edge\n";
+        // std::cerr << "Choice: 1 MMIO format -> line: edge edge\n";
         edges = mmio2_reader(fname.c_str(), nvert, nedges);
     }
     else
     {
-        std::cerr << "Choice: 2 MMIO format -> line: edge edge weight\n";
-        std::cerr << "Note that weight of graph is not recorded\n";
+        // std::cerr << "Choice: 2 MMIO format -> line: edge edge weight\n";
+        // std::cerr << "Note that weight of graph is not recorded\n";
         edges = mmio3_reader(fname.c_str(), nvert, nedges);
     }
 
