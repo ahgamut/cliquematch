@@ -1,7 +1,8 @@
 # Checking `cliquematch` for memory leaks #
 
 This directory contains a sample program and `Makefile` that runs the core algorithm of `cliquematch`.
-It checks if the search method for cliques causes any memory leaks. Python/`pybind11` is not required.
+It uses `valgrind` to check if the search method for cliques causes any memory leaks. 
+Python/`pybind11` is not required.
 
 ## Usage ##
 
