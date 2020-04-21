@@ -115,7 +115,7 @@ std::string pygraph::showdata()
     return ss.str();
 }
 
-pygraph from_file(std::string filename, std::size_t reader_choice)
+pygraph from_file(std::string filename, bool weighted)
 {
     //	std::cout<<"Constructing graph from a file\n";
     std::string fname = filename;
@@ -124,22 +124,16 @@ pygraph from_file(std::string filename, std::size_t reader_choice)
     std::vector<std::set<std::size_t>> edges;
     std::size_t nvert, nedges;
 
-    if (reader_choice == 1)
+    if (!weighted)
     {
         std::cerr << "Choice: 1 MMIO format -> line: edge edge\n";
         edges = mmio2_reader(fname.c_str(), nvert, nedges);
     }
-    else if (reader_choice == 2)
+    else
     {
         std::cerr << "Choice: 2 MMIO format -> line: edge edge weight\n";
         std::cerr << "Note that weight of graph is not recorded\n";
         edges = mmio3_reader(fname.c_str(), nvert, nedges);
-    }
-    else
-    {
-        throw std::runtime_error("Invalid reading option given!\n" +
-                                 std::string(__FILE__) + "  " +
-                                 std::to_string(__LINE__) + "\n");
     }
 
     if (edges.data() == NULL || edges.size() == 0)
@@ -156,7 +150,7 @@ pygraph from_edgelist(ndarray<std::size_t> edge_list1, std::size_t no_of_vertice
     //	std::cout<<"Constructing graph from the list of edges (Nx2 matrix)\n";
     std::size_t no_of_edges = 0;
     std::size_t v1, v2;
-    std::vector<std::set<std::size_t>> EDGES(no_of_vertices + 1);
+    std::vector<std::set<std::size_t>> edges(no_of_vertices + 1);
     auto edge_list = edge_list1.unchecked<2>();
 
     for (auto i = 0; i < edge_list.shape(0); i++)
@@ -176,19 +170,19 @@ pygraph from_edgelist(ndarray<std::size_t> edge_list1, std::size_t no_of_vertice
                 "value\n" +
                 std::string(__FILE__) + "  " + std::to_string(__LINE__) + "\n");
         }
-        EDGES[v1].insert(v2);
-        EDGES[v2].insert(v1);
+        edges[v1].insert(v2);
+        edges[v2].insert(v1);
     }
 
-    if (EDGES.data() == NULL || EDGES.size() == 0)
+    if (edges.data() == NULL || edges.size() == 0)
     {
         throw std::runtime_error("Could not extract edges!!\n" + std::string(__FILE__) +
                                  "  " + std::to_string(__LINE__) + "\n");
     }
 
-    for (std::size_t i = 0; i < EDGES.size(); i++) { no_of_edges += EDGES[i].size(); }
+    for (std::size_t i = 0; i < edges.size(); i++) { no_of_edges += edges[i].size(); }
     no_of_edges /= 2;
-    return pygraph(no_of_vertices, no_of_edges, EDGES);
+    return pygraph(no_of_vertices, no_of_edges, edges);
 }
 
 pygraph from_adj_matrix(ndarray<bool> adjmat1)
@@ -206,7 +200,7 @@ pygraph from_adj_matrix(ndarray<bool> adjmat1)
         std::size_t no_of_vertices = adjmat.shape(0);
         std::size_t no_of_edges = 0;
 
-        std::vector<std::set<std::size_t>> EDGES(no_of_vertices + 1);
+        std::vector<std::set<std::size_t>> edges(no_of_vertices + 1);
 
         for (std::size_t i = 0; i < no_of_vertices; i++)
         {
@@ -214,22 +208,22 @@ pygraph from_adj_matrix(ndarray<bool> adjmat1)
             {
                 if (adjmat(i, j) && i != j)
                 {
-                    EDGES[i + 1].insert(j + 1);
-                    EDGES[j + 1].insert(i + 1);
+                    edges[i + 1].insert(j + 1);
+                    edges[j + 1].insert(i + 1);
                     no_of_edges++;
                 }
             }
         }
 
         no_of_edges /= 2;
-        if (EDGES.data() == NULL || EDGES.size() == 0)
+        if (edges.data() == NULL || edges.size() == 0)
         {
             throw std::runtime_error("Could not extract edges!!\n" +
                                      std::string(__FILE__) + "  " +
                                      std::to_string(__LINE__) + "\n");
         }
 
-        return pygraph(no_of_vertices, no_of_edges, EDGES);
+        return pygraph(no_of_vertices, no_of_edges, edges);
     }
 }
 

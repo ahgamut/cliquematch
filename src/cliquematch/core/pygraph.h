@@ -42,6 +42,6 @@ class pygraph
 
 pygraph from_adj_matrix(ndarray<bool> adjmat);
 pygraph from_edgelist(ndarray<std::size_t> edge_list, std::size_t no_of_vertices);
-pygraph from_file(std::string filename, std::size_t reader_choice);
+pygraph from_file(std::string filename, bool is_weighted = false);
 #endif /* PYGRAPH_H */
 

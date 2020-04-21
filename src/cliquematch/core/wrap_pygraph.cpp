@@ -7,9 +7,6 @@ using namespace pybind11;
 
 void init_pygraph(p::module& m)
 {
-    m.def("graph_from_file", &from_file, arg("filename"), arg("type"));
-    m.def("graph_from_adjmat", &from_adj_matrix, arg("adjmat"));
-    m.def("graph_from_edgelist", &from_edgelist, arg("edgelist"), arg("num_vertices"));
     class_<pygraph>(m, "Graph")
         .def(init<>())
         .def(init<std::size_t, std::size_t, std::vector<std::set<std::size_t>>>(),
@@ -39,6 +36,10 @@ void init_pygraph(p::module& m)
              return_value_policy::copy)
         .def("continue_search", &pygraph::continue_search)
         .def("reset_search", &pygraph::reset_search)
+        .def_static("from_file", &from_file, arg("filename"), arg("weighted"))
+        .def_static("from_adjmat", &from_adj_matrix, arg("adjmat"))
+        .def_static("from_edgelist", &from_edgelist, arg("edgelist"),
+                    arg("num_vertices"))
         .def("__repr__", [](pygraph& zz) { return zz.showdata(); })
         .def("__str__", [](pygraph& zz) { return zz.showdata(); });
 }
