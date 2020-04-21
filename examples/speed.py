@@ -9,6 +9,12 @@ BENCHMARK_GRAPHS = {
     "ca-GrQc": ("", False),
     "ca-HepPh": ("", False),
     "ca-HepTh": ("", False),
+    "Erdos02": ("", False),
+    "Erdos972": ("", False),
+    "fe_body": ("", False),
+    "fe_sphere": ("", False),
+    "cti": ("", False),
+    "delaunay_n13": ("", False),
     "cond-mat-2003": ("", True),
 }
 HELP_STRING = (
