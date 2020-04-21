@@ -6,7 +6,7 @@
 % Python sample
 % 
 % import cliquematch
-% G = cliquematch.graph("sample_read1.mtx", reader_choice=1)
+% G = cliquematch.Graph.from_file("sample_read1.mtx", weighted=False)
 % print(repr(G))
 %--------------------------------------
 %

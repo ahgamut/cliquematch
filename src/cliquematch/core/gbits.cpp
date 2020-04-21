@@ -47,7 +47,7 @@ graphBits::graphBits(std::size_t n_bits)
     this->valid_len = n_bits;
     this->dlen = 1 + n_bits / 32;
     this->data = new u32[this->dlen];
-    for (unsigned int i = 0; i < this->dlen; ++i) this->data[i] = 0;
+    for (std::size_t i = 0; i < this->dlen; ++i) this->data[i] = 0;
     this->ext_ptr = false;
     this->pad_cover = n_bits % 32 == 0 ? 0 : ALL_ONES << (32 - n_bits % 32);
 }

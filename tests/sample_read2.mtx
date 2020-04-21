@@ -9,7 +9,7 @@
 % Python sample
 % 
 % import cliquematch
-% G = cliquematch.graph("sample_read2.mtx", reader_choice=2)
+% G = cliquematch.Graph.from_file("sample_read2.mtx", weighted=True)
 % print(repr(G))
 %--------------------------------------
 %

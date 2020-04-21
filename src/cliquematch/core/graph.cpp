@@ -5,11 +5,11 @@
 using namespace std;
 
 short graph::find_if_neighbors(const vertex& v1, std::size_t v2_id,
-                               std::size_t& v2_position)
+                               std::size_t& v2_position) const
 {
     return binary_find(&(this->edge_list[v1.elo]), v1.N, v2_id, v2_position);
 }
-double graph::elapsed_time()
+double graph::elapsed_time() const
 {
     auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
         std::chrono::steady_clock::now() - this->start_time);
@@ -45,13 +45,13 @@ graph::graph(size_t n_vert, size_t n_edges, vector<set<size_t> >& edges,
 
     this->vertices = vector<vertex>(this->n_vert);
     this->indices = vector<size_t>(this->n_vert);
-    this->edge_list = vector<size_t>();
+    this->edge_list = vector<size_t>(this->n_vert + 2 * n_edges);
 
     for (size_t i = 0; i < edges.size(); i++)
     {
         edges[i].insert(i);
+        std::copy(edges[i].begin(), edges[i].end(), this->edge_list.begin() + el_size);
         this->vertices[i].load_external(i, edges[i].size(), el_size, eb_size);
-        this->edge_list.insert(this->edge_list.end(), edges[i].begin(), edges[i].end());
         this->max_degree = max_degree > edges[i].size() ? max_degree : edges[i].size();
         this->el_size += edges[i].size();
         this->eb_size += 1 + edges[i].size() / 32;
@@ -72,12 +72,6 @@ void graph::set_vertices()
     });
 }
 
-void graph::disp()
-{
-    for (size_t i = 0; i < this->n_vert; i++)
-        this->vertices[i].disp(this->edge_list.data());
-}
-
 void graph::find_max_cliques(size_t& start_vert, bool& heur_done, bool use_heur,
                              bool use_dfs, double time_limit)
 {
@@ -92,7 +86,6 @@ void graph::find_max_cliques(size_t& start_vert, bool& heur_done, bool use_heur,
 #endif
     }
     this->start_time = std::chrono::steady_clock::now();
-    // I'm not sorting by degree because locality (?)
     if (!heur_done && use_heur) start_vert = heur_all_cliques(start_vert, time_limit);
 
     if (this->elapsed_time() < time_limit)
@@ -127,12 +120,27 @@ size_t graph::dfs_all_cliques(size_t start_vertex, double time_limit)
     return i;
 }
 
-vector<size_t> graph::get_max_clique()
+vector<size_t> graph::get_max_clique() const
 {
     return this->get_max_clique(this->CUR_MAX_CLIQUE_LOC);
 }
 
-vector<size_t> graph::get_max_clique(size_t i)
+vector<size_t> graph::get_max_clique(size_t i) const
 {
     return this->vertices[i].give_clique(this->edge_list.data());
+}
+
+void graph::disp() const
+{
+    for (size_t i = 0; i < this->n_vert; i++)
+        this->vertices[i].disp(this->edge_list.data());
+}
+
+void graph::send_data(std::function<void(size_t, size_t)> dfunc) const
+{
+    for (size_t i = 0; i < this->n_vert; i++)
+    {
+        for (size_t k = this->vertices[i].spos + 1; k < this->vertices[i].N; k++)
+            dfunc(i, this->edge_list[this->vertices[i].elo + k]);
+    }
 }

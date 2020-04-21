@@ -31,52 +31,64 @@ class TestGraph(object):
         adjmat[2, [0, 4]] = True
         adjmat[3, [0, 1]] = True
         adjmat[4, [0, 2]] = True
-        G1 = cliquematch.graph_from_adjmat(adjmat)
+        G1 = cliquematch.Graph.from_matrix(adjmat)
 
         assert G1.n_vertices == 5
         assert G1.n_edges == np.sum(adjmat) / 2
-        assert G1.adjacency_list == [
-            set(),
-            {2, 3, 4, 5},
-            {1, 4},
-            {1, 5},
-            {1, 2},
-            {1, 3},
-        ]
+        assert np.sum(adjmat ^ G1.to_matrix()) == 0
 
         badmat = np.zeros((5, 4), dtype=np.bool)
         with pytest.raises(RuntimeError):
-            G2 = cliquematch.graph_from_adjmat(badmat)
+            G2 = cliquematch.Graph.from_matrix(badmat)
 
     def test_elist(self):
         elist = np.array(
             [[1, 2], [1, 3], [1, 4], [1, 5], [2, 4], [3, 5]], dtype=np.uint32
         )
-        G1 = cliquematch.graph_from_edgelist(elist, 5)
+        G1 = cliquematch.Graph.from_edgelist(elist, 5)
         assert G1.n_vertices == 5
         assert G1.n_edges == len(elist)
-        assert G1.adjacency_list == [
-            set(),
-            {2, 3, 4, 5},
-            {1, 4},
-            {1, 5},
-            {1, 2},
-            {1, 3},
-        ]
+        assert np.sum(G1.to_edgelist() - elist) == 0
 
         elist[0, 0] = 0
         with pytest.raises(RuntimeError):
-            G2 = cliquematch.graph_from_edgelist(elist, 5)
+            G2 = cliquematch.Graph.from_edgelist(elist, 5)
         elist[0, 0] = 1
 
         with pytest.raises(RuntimeError):
-            G2 = cliquematch.graph_from_edgelist(elist, 3)
+            G2 = cliquematch.Graph.from_edgelist(elist, 3)
 
-    def test_filing(self):
-        G1 = cliquematch.graph_from_file("./tests/sample_read1.mtx", 1)
+    def test_adjlist(self):
+        adjlist = [
+            set(),
+            {2, 3, 4, 5},
+            {1, 4},
+            {1, 5},
+            {1, 2},
+            {1, 3},
+        ]
+        G1 = cliquematch.Graph.from_adjlist(5, 6, adjlist)
         assert G1.n_vertices == 5
         assert G1.n_edges == 6
-        assert G1.adjacency_list == [
+        assert G1.to_adjlist() == adjlist
+
+        with pytest.raises(RuntimeError):
+            G2 = cliquematch.Graph.from_adjlist(4, 6, adjlist)
+
+        with pytest.raises(RuntimeError):
+            G2 = cliquematch.Graph.from_adjlist(5, 7, adjlist)
+
+        with pytest.raises(RuntimeError):
+            G2 = cliquematch.Graph.from_adjlist(4, 6, adjlist[1:])
+        adjlist[1].add(1)
+        with pytest.raises(RuntimeError):
+            G2 = cliquematch.Graph.from_adjlist(5, 6, adjlist)
+
+    def test_filing(self):
+        G1 = cliquematch.Graph.from_file("./tests/sample_read1.mtx", False)
+        assert G1.n_vertices == 5
+        assert G1.n_edges == 6
+        assert G1.to_adjlist() == [
             set(),
             {2, 3, 4, 5},
             {1, 4},
@@ -85,10 +97,10 @@ class TestGraph(object):
             {1, 3},
         ]
 
-        G2 = cliquematch.graph_from_file("./tests/sample_read2.mtx", 2)
+        G2 = cliquematch.Graph.from_file("./tests/sample_read2.mtx", True)
         assert G2.n_vertices == 5
         assert G2.n_edges == 6
-        assert G2.adjacency_list == [
+        assert G2.to_adjlist() == [
             set(),
             {2, 3, 4, 5},
             {1, 4},
@@ -118,7 +130,7 @@ class TestGraph(object):
             dtype=np.uint32,
         )
 
-        G = cliquematch.graph_from_edgelist(edges, 8)
+        G = cliquematch.Graph.from_edgelist(edges, 8)
         G.use_dfs = True
         G.use_heuristic = False
         G.lower_bound = 1
@@ -131,7 +143,6 @@ class TestGraph(object):
             G.search_done,
             G.n_vertices,
             G.n_edges,
-            G.adjacency_list,
         ]
 
         with pytest.raises(AttributeError):
@@ -145,9 +156,6 @@ class TestGraph(object):
 
         with pytest.raises(AttributeError):
             G.n_edges = 31
-
-        with pytest.raises(AttributeError):
-            G.adjacency_list = []
 
     def test_dfs(self):
         edges = np.array(
@@ -170,7 +178,7 @@ class TestGraph(object):
             dtype=np.uint32,
         )
 
-        G = cliquematch.graph_from_edgelist(edges, 8)
+        G = cliquematch.Graph.from_edgelist(edges, 8)
         G.use_dfs = True
         G.use_heuristic = False
         ans = G.get_max_clique()
@@ -197,7 +205,7 @@ class TestGraph(object):
             dtype=np.uint32,
         )
 
-        G = cliquematch.graph_from_edgelist(edges, 8)
+        G = cliquematch.Graph.from_edgelist(edges, 8)
         G.lower_bound = 6  # will cause error
         G.upper_bound = 32
         G.use_dfs = True
