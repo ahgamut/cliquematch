@@ -201,7 +201,6 @@ class TestL2AGraph(object):
             G.search_done,
             G.n_vertices,
             G.n_edges,
-            G.adjacency_list,
         ]
 
         with pytest.raises(AttributeError):
@@ -215,9 +214,6 @@ class TestL2AGraph(object):
 
         with pytest.raises(AttributeError):
             G.n_edges = 31
-
-        with pytest.raises(AttributeError):
-            G.adjacency_list = []
 
     def test_continue(self):
         np.random.seed(824)

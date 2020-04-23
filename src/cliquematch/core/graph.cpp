@@ -136,3 +136,12 @@ vector<size_t> graph::get_max_clique(size_t i)
 {
     return this->vertices[i].give_clique(this->edge_list.data());
 }
+
+void graph::send_data(std::function<void(size_t, size_t)> dfunc)
+{
+    for (size_t i = 0; i < this->n_vert; i++)
+    {
+        for (size_t k = this->vertices[i].spos + 1; k < this->vertices[i].N; k++)
+            dfunc(i, this->edge_list[this->vertices[i].elo + k]);
+    }
+}

@@ -1,5 +1,6 @@
 #include <set>
 #include <vector>
+#include <fstream>
 
 // both of the below functions can throw a runtime error if the file does not
 // exist

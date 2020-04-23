@@ -1,6 +1,3 @@
-// this hpp contains templates included in multiple files
-// keep a ifndef guard to prevent excesses
-
 #ifndef EXT_TEMPLATE_HPP
 #define EXT_TEMPLATE_HPP
 
@@ -48,15 +45,15 @@ bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::build_edges(List1& pt
     this->ps1.fill_dists(pts1);
     this->ps2.fill_dists(pts2);
     std::size_t no_of_vertices, no_of_edges;
-    auto EDGES = edges_from_relsets(no_of_vertices, no_of_edges, this->ps1, this->ps2,
+    auto edges = edges_from_relsets(no_of_vertices, no_of_edges, this->ps1, this->ps2,
                                     this->pts_epsilon);
-    if (EDGES.data() == nullptr || EDGES.size() == 0)
+    if (edges.data() == nullptr || edges.size() == 0)
     {
         throw std::runtime_error("Could not extract edges" + std::string(__FILE__) +
                                  "  " + std::to_string(__LINE__) + "\n");
     }
 
-    this->load_graph(no_of_vertices, no_of_edges, EDGES);
+    this->load_graph(no_of_vertices, no_of_edges, edges);
     return true;
 }
 

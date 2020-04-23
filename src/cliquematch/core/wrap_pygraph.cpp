@@ -9,8 +9,6 @@ void init_pygraph(p::module& m)
 {
     class_<pygraph>(m, "Graph")
         .def(init<>())
-        .def(init<std::size_t, std::size_t, std::vector<std::set<std::size_t>>>(),
-             arg("num_vertices"), arg("num_edges"), arg("edges"))
         .def_readwrite("use_heuristic", &pygraph::use_heur,
                        "Search using the heuristic if true")
         .def_readwrite("use_dfs", &pygraph::use_dfs,
@@ -29,17 +27,21 @@ void init_pygraph(p::module& m)
                       "Number of vertices in the graph (Readonly)")
         .def_readonly("n_edges", &pygraph::nedges,
                       "Number of edges in the graph (Readonly)")
-        .def_property_readonly("adjacency_list", [](pygraph& zz) { return zz.EDGES; },
-                               "The adjacency list of the graph (Readonly)")
         .def("get_max_clique", &pygraph::get_max_clique,
              p::call_guard<p::scoped_ostream_redirect, p::scoped_estream_redirect>(),
              return_value_policy::copy)
         .def("continue_search", &pygraph::continue_search)
         .def("reset_search", &pygraph::reset_search)
         .def_static("from_file", &from_file, arg("filename"), arg("weighted"))
-        .def_static("from_adjmat", &from_adj_matrix, arg("adjmat"))
         .def_static("from_edgelist", &from_edgelist, arg("edgelist"),
                     arg("num_vertices"))
+        .def_static("from_matrix", &from_adj_matrix, arg("adjmat"))
+        .def_static("from_adjlist", &from_adj_list, arg("num_vertices"),
+                    arg("num_edges"), arg("edges"))
+        .def("to_file", &pygraph::to_file, arg("filename"))
+        .def("to_edgelist", &pygraph::to_edgelist)
+        .def("to_matrix", &pygraph::to_adj_matrix)
+        .def("to_adjlist", &pygraph::to_adj_list)
         .def("__repr__", [](pygraph& zz) { return zz.showdata(); })
         .def("__str__", [](pygraph& zz) { return zz.showdata(); });
 }

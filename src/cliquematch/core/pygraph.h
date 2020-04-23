@@ -23,7 +23,6 @@ class pygraph
     bool finished_heur;
 
    public:
-    std::vector<std::set<std::size_t>> EDGES;
     bool use_heur;
     bool use_dfs;
     bool finished_all;
@@ -38,10 +37,17 @@ class pygraph
     void reset_search();
     std::vector<std::size_t> get_max_clique();
     std::string showdata();
+
+    ndarray<bool> to_adj_matrix();
+    ndarray<std::size_t> to_edgelist();
+    std::vector<std::set<std::size_t>> to_adj_list();
+    void to_file(std::string filename);
 };
 
 pygraph from_adj_matrix(ndarray<bool> adjmat);
 pygraph from_edgelist(ndarray<std::size_t> edge_list, std::size_t no_of_vertices);
 pygraph from_file(std::string filename, bool is_weighted = false);
+pygraph from_adj_list(std::size_t n_vertices, std::size_t n_edges,
+                      std::vector<std::set<std::size_t>> edges);
 #endif /* PYGRAPH_H */
 

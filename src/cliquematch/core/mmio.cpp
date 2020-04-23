@@ -1,6 +1,5 @@
 #include <core/mmio.h>
 #include <exception>
-#include <fstream>
 #include <iostream>
 #include <string>
 

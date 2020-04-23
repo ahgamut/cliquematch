@@ -3,6 +3,7 @@
 
 #include <core/vertex.h>
 #include <chrono>
+#include <functional>
 #include <set>
 
 class graph
@@ -39,6 +40,7 @@ class graph
     graph(std::size_t n_vert, std::size_t n_edges,
           std::vector<std::set<std::size_t>>& edges, std::size_t clique_lim = 1000);
     void disp();
+    void send_data(std::function<void(std::size_t, std::size_t)>);
 
     // giving max_clique to pygraph
     void find_max_cliques(std::size_t& start_vert, bool& heur_done,
