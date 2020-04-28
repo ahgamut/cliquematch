@@ -20,8 +20,8 @@ class graph
     std::size_t eb_size;
     std::chrono::time_point<std::chrono::steady_clock> start_time;
 
-    short find_if_neighbors(const vertex&, std::size_t, std::size_t&);
-    double elapsed_time();
+    short find_if_neighbors(const vertex&, std::size_t, std::size_t&) const;
+    double elapsed_time() const;
     void set_vertices();
 
    public:
@@ -39,15 +39,15 @@ class graph
     graph();
     graph(std::size_t n_vert, std::size_t n_edges,
           std::vector<std::set<std::size_t>>& edges, std::size_t clique_lim = 1000);
-    void disp();
-    void send_data(std::function<void(std::size_t, std::size_t)>);
+    void disp() const;
+    void send_data(std::function<void(std::size_t, std::size_t)>) const;
 
     // giving max_clique to pygraph
     void find_max_cliques(std::size_t& start_vert, bool& heur_done,
                           bool use_heur = false, bool use_dfs = true,
                           double time_limit = 10000);
-    std::vector<std::size_t> get_max_clique(std::size_t i);
-    std::vector<std::size_t> get_max_clique();
+    std::vector<std::size_t> get_max_clique(std::size_t i) const;
+    std::vector<std::size_t> get_max_clique() const;
 
     // finding ONE max clique
     void dfs_one_search(std::size_t cur, const graphBits&, const graphBits&);
