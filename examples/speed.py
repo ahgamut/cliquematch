@@ -30,12 +30,12 @@ def runner(name_list):
         )
     )
     for x in name_list:
+        start = time.time()
         G = cliquematch.Graph.from_file(x + ".mtx", BENCHMARK_GRAPHS[x][1])
         G.upper_bound = 1000
         G.time_limit = 100
         G.use_dfs = True
         G.use_heuristic = True
-        start = time.time()
         ans = G.get_max_clique()
         t = time.time() - start
         print(

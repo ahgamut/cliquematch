@@ -45,13 +45,13 @@ graph::graph(size_t n_vert, size_t n_edges, vector<set<size_t> >& edges,
 
     this->vertices = vector<vertex>(this->n_vert);
     this->indices = vector<size_t>(this->n_vert);
-    this->edge_list = vector<size_t>();
+    this->edge_list = vector<size_t>(this->n_vert + 2 * n_edges);
 
     for (size_t i = 0; i < edges.size(); i++)
     {
         edges[i].insert(i);
+        std::copy(edges[i].begin(), edges[i].end(), this->edge_list.begin() + el_size);
         this->vertices[i].load_external(i, edges[i].size(), el_size, eb_size);
-        this->edge_list.insert(this->edge_list.end(), edges[i].begin(), edges[i].end());
         this->max_degree = max_degree > edges[i].size() ? max_degree : edges[i].size();
         this->el_size += edges[i].size();
         this->eb_size += 1 + edges[i].size() / 32;
