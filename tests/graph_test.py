@@ -85,7 +85,7 @@ class TestGraph(object):
             G2 = cliquematch.Graph.from_adjlist(5, 6, adjlist)
 
     def test_filing(self):
-        G1 = cliquematch.Graph.from_file("./tests/sample_read1.mtx", False)
+        G1 = cliquematch.Graph.from_file("./tests/sample_read1.mtx")
         assert G1.n_vertices == 5
         assert G1.n_edges == 6
         assert G1.to_adjlist() == [
@@ -97,7 +97,7 @@ class TestGraph(object):
             {1, 3},
         ]
 
-        G2 = cliquematch.Graph.from_file("./tests/sample_read2.mtx", True)
+        G2 = cliquematch.Graph.from_file("./tests/sample_read2.mtx")
         assert G2.n_vertices == 5
         assert G2.n_edges == 6
         assert G2.to_adjlist() == [

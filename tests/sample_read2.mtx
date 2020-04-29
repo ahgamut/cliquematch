@@ -1,6 +1,5 @@
 % sample created for cliquematch package
 % similar to Matrix Market format for undirected weighted graphs
-% expected format for reader_choice = 2
 %
 % NOTE: the weights are not stored in the graph.
 % The weights are ignored while reading the file.
@@ -9,7 +8,7 @@
 % Python sample
 % 
 % import cliquematch
-% G = cliquematch.Graph.from_file("sample_read2.mtx", weighted=True)
+% G = cliquematch.Graph.from_file("sample_read2.mtx")
 % print(repr(G))
 %--------------------------------------
 %

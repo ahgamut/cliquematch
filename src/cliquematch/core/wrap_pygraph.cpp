@@ -32,7 +32,7 @@ void init_pygraph(p::module& m)
              return_value_policy::copy)
         .def("continue_search", &pygraph::continue_search)
         .def("reset_search", &pygraph::reset_search)
-        .def_static("from_file", &from_file, arg("filename"), arg("weighted"))
+        .def_static("from_file", &from_file, arg("filename"))
         .def_static("from_edgelist", &from_edgelist, arg("edgelist"),
                     arg("num_vertices"))
         .def_static("from_matrix", &from_adj_matrix, arg("adjmat"))

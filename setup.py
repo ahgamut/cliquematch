@@ -8,6 +8,11 @@ import glob
 import distutils.log
 
 distutils.log.set_verbosity(distutils.log.DEBUG)
+REQUIRED_MACROS = [
+    ("STACK_DFS", "1"),
+    ("INTRINSIC_BITCOUNT", "0"),
+    ("BENCHMARKING", "0"),
+]
 
 
 class get_pybind_include(object):
@@ -52,7 +57,7 @@ ext_modules = [
             "src/cliquematch/",
             os.environ.get("EIGEN_DIR", "include/"),
         ],
-        define_macros=[("STACK_DFS", "1"), ("INTRINSIC_BITCOUNT", "0")],
+        define_macros=REQUIRED_MACROS,
         language="c++",
     )
 ]

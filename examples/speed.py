@@ -23,19 +23,19 @@ HELP_STRING = (
 )
 
 
-def runner(name_list):
+def runner(name_list, use_dfs, use_heuristic):
     print(
         "{:<15s}{:>15s}{:>15s}{:>15s}{:>15s}".format(
             "Name", "#Vertices", "#Edges", "Clique Size", "Time"
         )
     )
     for x in name_list:
-        start = time.time()
-        G = cliquematch.Graph.from_file(x + ".mtx", BENCHMARK_GRAPHS[x][1])
+        G = cliquematch.Graph.from_file(x + ".mtx")
         G.upper_bound = 1000
         G.time_limit = 100
-        G.use_dfs = True
-        G.use_heuristic = True
+        G.use_dfs = use_dfs
+        G.use_heuristic = use_heuristic
+        start = time.time()
         ans = G.get_max_clique()
         t = time.time() - start
         print(
@@ -50,10 +50,24 @@ def main():
         description=HELP_STRING, formatter_class=argparse.RawTextHelpFormatter
     )
     parser.add_argument("names", nargs="*", help="Name(s) of benchmark graphs")
+    parser.add_argument(
+        "-u",
+        "--use-heuristic",
+        default=False,
+        type=int,
+        help="Use the heuristic search method (0 or 1)",
+    )
+    parser.add_argument(
+        "-d",
+        "--use-dfs",
+        default=True,
+        type=int,
+        help="Use the depth-first search method (0 or 1)",
+    )
     a = parser.parse_args()
     if a.names == []:
         a.names = sorted(list(BENCHMARK_GRAPHS.keys()))
-    runner(a.names)
+    runner(a.names, bool(a.use_dfs), bool(a.use_heuristic))
 
 
 if __name__ == "__main__":
