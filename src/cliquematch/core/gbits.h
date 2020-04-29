@@ -34,6 +34,7 @@ class graphBits
     void toggle(std::size_t i);
     void clear(std::size_t N = 0);
     std::size_t count() const;
+    std::size_t len() const { return this->valid_len; };
 
     bool block_empty(std::size_t i) const;
     bool operator[](std::size_t i) const;

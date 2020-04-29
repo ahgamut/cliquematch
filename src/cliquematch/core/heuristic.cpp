@@ -102,13 +102,9 @@ size_t graph::heur_all_cliques(size_t start_vertex, double TIME_LIMIT)
     for (i = vertices.size() - start_vertex - 1;
          i > 0 && CUR_MAX_CLIQUE_SIZE <= CLIQUE_LIMIT; i--)
     {
-        if (this->elapsed_time() > TIME_LIMIT)
-        {
-#ifndef NDEBUG
-            cerr << "Heuristic: Exceeded time limit of " << TIME_LIMIT << " seconds\n";
+#if BENCHMARKING == 0
+        if (this->elapsed_time() > TIME_LIMIT) break;
 #endif
-            break;
-        }
         if (this->vertices[indices[i]].N <= CUR_MAX_CLIQUE_SIZE) continue;
         if (this->find_if_neighbors(this->vertices[CUR_MAX_CLIQUE_LOC], indices[i],
                                     ans) == 1)

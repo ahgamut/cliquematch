@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     G.find_max_cliques(start_vertex, heur_done, use_heur, use_dfs, limit);
     auto ans = G.get_max_clique();
 
-    std::cout << "\n";
+    std::cout << G.duration << "s: clique of size: " << ans.size() << "\n";
     for (auto x : ans) { std::cout << x << " "; }
     std::cout << "\n";
     return 0;

@@ -67,9 +67,6 @@ void graph::set_vertices()
 {
     for (size_t i = 0; i < vertices.size(); i++)
         vertices[i].set_spos(this->edge_list.data(), this->edge_bits.data());
-    std::stable_sort(indices.begin(), indices.end(), [this](size_t a, size_t b) {
-        return this->vertices[a].N <= this->vertices[b].N;
-    });
 }
 
 void graph::find_max_cliques(size_t& start_vert, bool& heur_done, bool use_heur,
@@ -86,6 +83,9 @@ void graph::find_max_cliques(size_t& start_vert, bool& heur_done, bool use_heur,
 #endif
     }
     this->start_time = std::chrono::steady_clock::now();
+    std::stable_sort(indices.begin(), indices.end(), [this](size_t a, size_t b) {
+        return this->vertices[a].N <= this->vertices[b].N;
+    });
     if (!heur_done && use_heur) start_vert = heur_all_cliques(start_vert, time_limit);
 
     if (this->elapsed_time() < time_limit)
@@ -104,16 +104,12 @@ size_t graph::dfs_all_cliques(size_t start_vertex, double time_limit)
     TIME_LIMIT = time_limit;
     for (; i < vertices.size(); i++)
     {
-        if (this->elapsed_time() > TIME_LIMIT)
-        {
-#ifndef NDEBUG
-            cerr << "DFS: Exceeded time limit of " << TIME_LIMIT << " seconds\n";
-#endif
-            break;
-        }
         if (this->vertices[indices[i]].N <= CUR_MAX_CLIQUE_SIZE ||
             CUR_MAX_CLIQUE_SIZE > CLIQUE_LIMIT)
             continue;
+#if BENCHMARKING == 0
+        if (this->elapsed_time() > TIME_LIMIT) break;
+#endif
         dfs_one_clique(indices[i]);
     }
     // If we pause midway, I want to know where we stopped
