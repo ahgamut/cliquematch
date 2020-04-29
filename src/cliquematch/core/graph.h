@@ -10,7 +10,6 @@ class graph
 {
    private:
     std::vector<vertex> vertices;
-    std::vector<std::size_t> indices;  // for sorting
     // raw list of edges (useless without vertex.elo)
     std::vector<std::size_t> edge_list;
     std::size_t el_size;

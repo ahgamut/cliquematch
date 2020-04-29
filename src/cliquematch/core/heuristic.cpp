@@ -19,36 +19,42 @@ void graph::heur_one_clique(size_t cur)
     // (dfs is exponential complexity)
     graphBits res(this->vertices[cur].N);
     res.set(this->vertices[cur].spos);
-    graphBits cand = ~(res);
+    graphBits cand(this->vertices[cur].N);
 
-    vector<pair<size_t, size_t> > neib_degs(this->vertices[cur].N);
-
+    vector<pair<size_t, size_t> > neib_degs(this->vertices[cur].N -
+                                            this->vertices[cur].spos);
     size_t neib, neib_loc;
     size_t i, j;
 
     short f1, f2;
     size_t ans1, ans2;
-    size_t mcs_potential, candidates_left, cur_clique_size = 1;
+    size_t mcs_potential, candidates_left, cur_clique_size = 1, cand_max;
 
     // find all neighbors of cur and sort by decreasing degree
-    for (i = 0; i < this->vertices[cur].N; i++)
+    for (i = this->vertices[cur].spos + 1, j = 0; i < this->vertices[cur].N; i++)
     {
         neib = this->edge_list[this->vertices[cur].elo + i];
-        neib_degs[i] = make_pair(neib, this->vertices[neib].N);
+        neib_degs[j] = make_pair<std::size_t, std::size_t>(0, 0);
+        if (this->vertices[neib].N >= CUR_MAX_CLIQUE_SIZE)
+        {
+            neib_degs[j].first = neib;
+            neib_degs[j].second = this->vertices[neib].N;
+            cand.set(i);
+        }
+        j++;
     }
     sort(neib_degs.begin(), neib_degs.end(), pair_second_g);
 
-    // let neib be a high-degree neighbor of cur
-    for (i = 0; i < this->vertices[cur].N; i++)
+    cand_max = cand.count();
+    // let neib be a high-degree neighbor of cur that hasn't been searched earlier
+    for (i = 0; i < cand_max; i++)
     {
         neib = neib_degs[i].first;
-        if (neib == cur) continue;
 
         // should neib be considered as a candidate?
         neib_loc = 0;
         f1 = this->find_if_neighbors(this->vertices[cur], neib, neib_loc);
-        if (this->vertices[neib].N < this->CUR_MAX_CLIQUE_SIZE || !cand[neib_loc])
-            continue;
+        if (f1 != 1 || !cand[neib_loc]) continue;
 
         // it can be part of the current clique
         res.set(neib_loc);
@@ -57,7 +63,7 @@ void graph::heur_one_clique(size_t cur)
 
         // assume neib is a worthwhile candidate
         // modify candidate list using neib's neighbors
-        for (j = i + 1; j < this->vertices[cur].N; j++)
+        for (j = i + 1; j < cand_max; j++)
         {
             f1 = this->find_if_neighbors(this->vertices[cur], neib_degs[j].first, ans1);
             f2 =
@@ -79,14 +85,12 @@ void graph::heur_one_clique(size_t cur)
             // there are no candidates left =>
             // potential has been realized and beaten the current maximum
             // so save the clique's data as the new global maximum
-            this->vertices[cur].mcs = mcs_potential;
-            this->CUR_MAX_CLIQUE_SIZE = mcs_potential;
+            this->vertices[cur].mcs = res.count();
+            this->CUR_MAX_CLIQUE_SIZE = res.count();
             this->CUR_MAX_CLIQUE_LOC = cur;
             this->vertices[cur].bits = res;
-            this->vertices[cur].mcs = this->vertices[cur].bits.count();
             // cerr << "Heuristic in " << cur << " updated max_clique to "
             //  << this->vertices[cur].mcs << "\n";
-            this->CUR_MAX_CLIQUE_SIZE = this->vertices[cur].mcs;
 
             break;
         }
@@ -99,17 +103,15 @@ size_t graph::heur_all_cliques(size_t start_vertex, double TIME_LIMIT)
 {
     size_t i;
     size_t ans;
-    for (i = vertices.size() - start_vertex - 1;
-         i > 0 && CUR_MAX_CLIQUE_SIZE <= CLIQUE_LIMIT; i--)
+    for (i = 0; i < vertices.size() && CUR_MAX_CLIQUE_SIZE <= CLIQUE_LIMIT; i++)
     {
 #if BENCHMARKING == 0
         if (this->elapsed_time() > TIME_LIMIT) break;
 #endif
-        if (this->vertices[indices[i]].N <= CUR_MAX_CLIQUE_SIZE) continue;
-        if (this->find_if_neighbors(this->vertices[CUR_MAX_CLIQUE_LOC], indices[i],
-                                    ans) == 1)
+        if (this->vertices[i].N <= CUR_MAX_CLIQUE_SIZE ||
+            this->find_if_neighbors(this->vertices[CUR_MAX_CLIQUE_LOC], i, ans) == 1)
             continue;  // this is very aggressive
-        heur_one_clique(indices[i]);
+        heur_one_clique(i);
     }
-    return vertices.size() - i - 1;
+    return i;
 }

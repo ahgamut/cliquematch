@@ -17,7 +17,7 @@ void graph::dfs_one_clique(std::size_t cur)
     std::size_t i, k;
     short f = 0;
     SearchState x(this->vertices[cur]);
-    for (std::size_t i = 0; i < this->vertices[cur].N; i++)
+    for (i = 0; i < this->vertices[cur].N; i++)
     {
         vert = this->edge_list[this->vertices[cur].elo + i];
         if (vert == cur || this->vertices[vert].N < this->vertices[cur].N) continue;

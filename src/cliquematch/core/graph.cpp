@@ -25,7 +25,6 @@ graph::graph()
     this->duration = 0.0;
 
     this->vertices = vector<vertex>();
-    this->indices = vector<size_t>();
     this->edge_list = vector<size_t>();
     this->edge_bits = vector<u32>();
 
@@ -44,7 +43,6 @@ graph::graph(size_t n_vert, size_t n_edges, vector<set<size_t> >& edges,
     this->CLIQUE_LIMIT = clique_lim;
 
     this->vertices = vector<vertex>(this->n_vert);
-    this->indices = vector<size_t>(this->n_vert);
     this->edge_list = vector<size_t>(this->n_vert + 2 * n_edges);
 
     for (size_t i = 0; i < edges.size(); i++)
@@ -55,7 +53,6 @@ graph::graph(size_t n_vert, size_t n_edges, vector<set<size_t> >& edges,
         this->max_degree = max_degree > edges[i].size() ? max_degree : edges[i].size();
         this->el_size += edges[i].size();
         this->eb_size += 1 + edges[i].size() / 32;
-        this->indices[i] = i;
         edges[i].erase(i);
     }
 
@@ -83,9 +80,6 @@ void graph::find_max_cliques(size_t& start_vert, bool& heur_done, bool use_heur,
 #endif
     }
     this->start_time = std::chrono::steady_clock::now();
-    std::stable_sort(indices.begin(), indices.end(), [this](size_t a, size_t b) {
-        return this->vertices[a].N <= this->vertices[b].N;
-    });
     if (!heur_done && use_heur) start_vert = heur_all_cliques(start_vert, time_limit);
 
     if (this->elapsed_time() < time_limit)
@@ -104,13 +98,13 @@ size_t graph::dfs_all_cliques(size_t start_vertex, double time_limit)
     TIME_LIMIT = time_limit;
     for (; i < vertices.size(); i++)
     {
-        if (this->vertices[indices[i]].N <= CUR_MAX_CLIQUE_SIZE ||
+        if (this->vertices[i].N <= CUR_MAX_CLIQUE_SIZE ||
             CUR_MAX_CLIQUE_SIZE > CLIQUE_LIMIT)
             continue;
 #if BENCHMARKING == 0
         if (this->elapsed_time() > TIME_LIMIT) break;
 #endif
-        dfs_one_clique(indices[i]);
+        dfs_one_clique(i);
     }
     // If we pause midway, I want to know where we stopped
     return i;
