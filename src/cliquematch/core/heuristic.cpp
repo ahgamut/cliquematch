@@ -102,15 +102,12 @@ void graph::heur_one_clique(size_t cur)
 size_t graph::heur_all_cliques(size_t start_vertex, double TIME_LIMIT)
 {
     size_t i;
-    size_t ans;
     for (i = 0; i < vertices.size() && CUR_MAX_CLIQUE_SIZE <= CLIQUE_LIMIT; i++)
     {
 #if BENCHMARKING == 0
         if (this->elapsed_time() > TIME_LIMIT) break;
 #endif
-        if (this->vertices[i].N <= CUR_MAX_CLIQUE_SIZE ||
-            this->find_if_neighbors(this->vertices[CUR_MAX_CLIQUE_LOC], i, ans) == 1)
-            continue;  // this is very aggressive
+        if (this->vertices[i].N <= CUR_MAX_CLIQUE_SIZE) continue;
         heur_one_clique(i);
     }
     return i;
