@@ -1,6 +1,10 @@
 #ifndef PYGRAPH_H
 #define PYGRAPH_H
 
+#define CM_ERROR(x)                                                                   \
+    std::runtime_error((x) + std::string(__FILE__) + " " + std::to_string(__LINE__) + \
+                       "\n")
+
 #include <core/graph.h>
 #include <cmath>
 // need to #include<cmath> before pybind11/numpy otherwise issues with ::hypot

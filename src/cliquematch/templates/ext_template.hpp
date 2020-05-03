@@ -48,10 +48,7 @@ bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::build_edges(List1& pt
     auto edges = edges_from_relsets(no_of_vertices, no_of_edges, this->ps1, this->ps2,
                                     this->pts_epsilon);
     if (edges.data() == nullptr || edges.size() == 0)
-    {
-        throw std::runtime_error("Could not extract edges" + std::string(__FILE__) +
-                                 "  " + std::to_string(__LINE__) + "\n");
-    }
+        throw CM_ERROR("Could not extract edges");
 
     this->load_graph(no_of_vertices, no_of_edges, edges);
     return true;
@@ -80,10 +77,7 @@ bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::build_edges_with_cond
     auto edges = efr_condition(no_of_vertices, no_of_edges, this->ps1, this->ps2,
                                this->pts_epsilon, cfwrap, use_cfunc_only);
     if (edges.data() == nullptr || edges.size() == 0)
-    {
-        throw std::runtime_error("Could not extract edges" + std::string(__FILE__) +
-                                 "  " + std::to_string(__LINE__) + "\n");
-    }
+        throw CM_ERROR("Could not extract edges");
 
     this->load_graph(no_of_vertices, no_of_edges, edges);
     return true;
@@ -102,10 +96,9 @@ py::list GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::get_correspondenc
     {
         if (clique[i] == 0)
         {
-            throw std::runtime_error(
+            throw CM_ERROR(
                 "Sentinel Value (0) appeared in clique. Increase the time "
-                "limit; if repeated, reset graph\n" +
-                std::string(__FILE__) + "  " + std::to_string(__LINE__) + "\n");
+                "limit; if repeated, reset graph\n");
         }
         t1 = (clique[i] - 1) / ps2.N;
         t2 = (clique[i] - 1) % ps2.N;

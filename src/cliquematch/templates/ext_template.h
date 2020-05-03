@@ -9,9 +9,7 @@
 template <typename List, typename Delta>
 Delta dummy_comparison(List& ll, std::size_t i, std::size_t j)
 {
-    throw std::runtime_error("Can't have a distance function for an unknown type " +
-                             std::string(__FILE__) + "  " + std::to_string(__LINE__) +
-                             "\n");
+    throw CM_ERROR("Can't have a distance function for an unknown type ");
     return (Delta)(0);
 }
 

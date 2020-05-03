@@ -7,10 +7,6 @@
 
 namespace py = pybind11;
 
-#define CM_ERROR(x)                                                                   \
-    std::runtime_error((x) + std::string(__FILE__) + " " + std::to_string(__LINE__) + \
-                       "\n")
-
 pygraph::pygraph()
 {
     nvert = 0;
