@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <fstream>
 
 namespace py = pybind11;
 
@@ -105,26 +106,12 @@ std::string pygraph::showdata()
     return ss.str();
 }
 
-pygraph from_file(std::string filename, bool weighted)
+pygraph from_file(std::string filename)
 {
-    //	std::cout<<"Constructing graph from a file\n";
     std::string fname = filename;
-    // std::cerr << "Loading graph from: " << fname << "\n";
-
     std::vector<std::set<std::size_t>> edges;
     std::size_t nvert, nedges;
-
-    if (!weighted)
-    {
-        // std::cerr << "Choice: 1 MMIO format -> line: edge edge\n";
-        edges = mmio2_reader(fname.c_str(), nvert, nedges);
-    }
-    else
-    {
-        // std::cerr << "Choice: 2 MMIO format -> line: edge edge weight\n";
-        // std::cerr << "Note that weight of graph is not recorded\n";
-        edges = mmio3_reader(fname.c_str(), nvert, nedges);
-    }
+    edges = mmio2_reader(fname.c_str(), nvert, nedges);
 
     if (edges.data() == NULL || edges.size() == 0)
         throw CM_ERROR("Could not extract edges!!\n");
