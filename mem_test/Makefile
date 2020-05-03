@@ -21,8 +21,8 @@ test: cm_base cond-mat-2003.mtx
 	valgrind --tool=memcheck --leak-check=full --leak-resolution=high --show-leak-kinds=all --errors-for-leak-kinds=all ./cm_base cond-mat-2003.mtx 0
 
 run: cm_base cond-mat-2003.mtx
-	./cm_base cond-mat-2003.mtx 0
 	./cm_base cond-mat-2003.mtx 1
+	./cm_base cond-mat-2003.mtx 0
 
 clean:
 	rm cm_base

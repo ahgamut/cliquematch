@@ -30,7 +30,7 @@ def runner(name_list, use_dfs, use_heuristic):
         )
     )
     for x in name_list:
-        G = cliquematch.Graph.from_file(x + ".mtx", BENCHMARK_GRAPHS[x][1])
+        G = cliquematch.Graph.from_file(x + ".mtx")
         G.upper_bound = 1000
         G.time_limit = 100
         G.use_dfs = use_dfs
