@@ -18,7 +18,7 @@ vector<set<size_t> > mmio2_reader(const char* filename, size_t& n_vert, size_t& 
         // Edges.data() = NULL;
         return Edges;
     }
-    while (f.peek() == '%') f.ignore(2048, '\n');
+    while (f.peek() == '%' || f.peek() == '#') f.ignore(2048, '\n');
     f >> n_vert;
     f >> dummy;
     f >> n_edges;
@@ -34,7 +34,7 @@ vector<set<size_t> > mmio2_reader(const char* filename, size_t& n_vert, size_t& 
 
         if (v1 > n_vert || v2 > n_vert || v1 == v2)
         {
-            dummy++;
+            dummy = dummy + (v1 != v2);
             continue;
         }
         Edges[v1].insert(v2);

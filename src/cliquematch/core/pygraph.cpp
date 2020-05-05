@@ -14,7 +14,7 @@ pygraph::pygraph()
     use_heur = false;
     use_dfs = true;
     lower_bound = 1;
-    upper_bound = 32;
+    upper_bound = 0xFFFFFFFF;
     time_lim = 100.0;
     current_vertex = 0;
     finished_heur = false;
