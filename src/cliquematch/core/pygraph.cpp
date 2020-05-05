@@ -14,7 +14,7 @@ pygraph::pygraph()
     use_heur = false;
     use_dfs = true;
     lower_bound = 1;
-    upper_bound = 32;
+    upper_bound = 0xFFFFFFFF;
     time_lim = 100.0;
     current_vertex = 0;
     finished_heur = false;
@@ -92,12 +92,12 @@ std::string pygraph::showdata()
     ss << "cliquematch.core.Graph object at " << this << "\n(";
     ss << "n_vertices=" << this->nvert << ",";
     ss << "n_edges=" << this->nedges << ",";
+    ss << "search_done=" << (this->finished_all ? "True" : "False");
     ss << "lower_bound=" << this->lower_bound << ",";
     ss << "upper_bound=" << this->upper_bound << ",";
     ss << "time_limit=" << this->time_lim << ",";
     ss << "use_heuristic=" << (this->use_heur ? "True" : "False") << ",";
     ss << "use_dfs=" << (this->use_dfs ? "True" : "False") << ",";
-    ss << "search_done=" << (this->finished_all ? "True" : "False");
     ss << ")";
     return ss.str();
 }

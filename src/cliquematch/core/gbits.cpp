@@ -2,25 +2,7 @@
 #include <cassert>
 #include <iostream>
 
-/* Using Intrinsics:
- *
- * To count the number of set bits in an unsigned int, gcc and msvc offer a
- * compiler intrinsic (__builtin_popcount and __popcnt respectively). The
- * intrinsics are slightly faster, but may cause compatibility issues, so there
- * is a C version also provided, to count the number of set bits.
- * */
-#if INTRINSIC_BITCOUNT
-#pragma message("Using compiler intrinsics for bit-counting")
-
-#ifdef _MSC_VER
-#include <intrin.h>
-#define bitcount __popcnt
-#else
-#define bitcount __builtin_popcount
-#endif
-
-#else
-inline u32 arith_bcount(u32 n)
+inline u32 bitcount(u32 n)
 {
     n = n - ((n >> 1) & 0x55555555);
     n = (n & 0x33333333) + ((n >> 2) & 0x33333333);
@@ -29,9 +11,6 @@ inline u32 arith_bcount(u32 n)
     n = n + (n >> 16);
     return (n & 0x0000003F);
 }
-
-#define bitcount arith_bcount
-#endif
 
 graphBits::graphBits()
 {

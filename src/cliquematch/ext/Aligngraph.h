@@ -3,8 +3,7 @@
 
 #include <ext/A2Agraph.h>
 
-using _A2Agraph =
-    GraphTemplate<Eigen::Ref<DoubleMatrixR>, double, Eigen::Ref<DoubleMatrixR>>;
+using _A2Agraph = GraphTemplate<Eigen::Ref<DoubleMatrixR>, Eigen::Ref<DoubleMatrixR>>;
 
 class Aligngraph : public _A2Agraph
 {

@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     }
     std::size_t no_of_vertices, no_of_edges, start_vertex = 0;
     bool heur_done = false, use_heur = false, use_dfs = true;
-    double limit = 100;
+    double limit = 10000;
     std::cout << "Reading from file: " << argv[1] << "\n";
     if (argc >= 3 && std::atoi(argv[2]) == 1)
     {

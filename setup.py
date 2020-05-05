@@ -10,7 +10,6 @@ import distutils.log
 distutils.log.set_verbosity(distutils.log.DEBUG)
 REQUIRED_MACROS = [
     ("STACK_DFS", "1"),
-    ("INTRINSIC_BITCOUNT", "0"),
     ("BENCHMARKING", "0"),
 ]
 
