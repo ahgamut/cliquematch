@@ -34,6 +34,4 @@ pip3 install pybind11
 	* `STACK_DFS` (`1` by default): If nonzero, `cliquematch` uses an explicit stack for the depth-first clique
 	  search;  otherwise it uses recursive function calls. Primarily for debugging purposes.
 
-	* `INTRINSIC_BITCOUNT` (`0` by default): If nonzero, `cliquematch` uses compiler intrinsics to calculate
-	  the number of set bits in a 32-bit integer (`__builtin_popcount` in GCC , and `__popcnt` in MSVC); otherwise
-	  it uses an inline function. The intrinsics provide a small speed boost.
+	* `BENCHMARKING` (`0` by default): Set to `1` when benchmarking the core cliquematch algorithm.
