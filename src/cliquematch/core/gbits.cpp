@@ -16,9 +16,17 @@ graphBits::graphBits()
 {
     this->valid_len = 0;
     this->dlen = 0;
-    this->data = nullptr;
+    this->data = NULL;
     this->ext_ptr = false;
     this->pad_cover = 0;
+}
+graphBits::~graphBits()
+{
+    if (!this->ext_ptr && this->data != nullptr)
+    {
+        delete[] this->data;
+        this->data = nullptr;
+    }
 }
 
 graphBits::graphBits(std::size_t n_bits)

@@ -99,8 +99,9 @@ class TestA2LGraph(object):
         S2 = S1[subset, :]
         S2 = S2.tolist()
         G = cliquematch.A2LGraph(S1, S2, eucd, eucd)
-        G.epsilon = 0.00001
+        G.epsilon = 0.0001
         G.build_edges()
+        return
 
         with pytest.warns(UserWarning):
             G1 = cliquematch.A2LGraph(S1, S2)

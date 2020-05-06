@@ -4,7 +4,7 @@
     ~~~~~~~~~~~~~~~~~~~~
 
     A wrapper class over cliquematchcliquematch.core.L2LGraph
-    to find subgraph isomorphisms using cliques in a 
+    to find subgraph isomorphisms using cliques in a
     product graph
 
     :copyright: (c) 2019 by gnv3.
@@ -30,7 +30,10 @@ class IsoGraph(_IsoGraph):
         for x in self.S2:
             assert isinstance(x, set), "Adjacency List of Graph must be List[Set]"
 
-        _IsoGraph.__init__(
+        _IsoGraph.__init__(self)
+
+    def build_edges(self):
+        _IsoGraph.build_edges_metric_only(
             self,
             self.S1,
             len(self.S1),
@@ -42,12 +45,9 @@ class IsoGraph(_IsoGraph):
             True,
         )
 
-    def build_edges(self):
-        _IsoGraph.build_edges(self, self.S1, self.S2)
-
     def build_edges_with_condition(self, condition_func, use_cfunc_only):
-        _IsoGraph.build_edges_with_condition(
-            self, self.S1, self.S2, condition_func, use_cfunc_only
+        _IsoGraph.build_edges_condition_only(
+            self, self.S1, len(self.S1), self.S2, len(self.S2), condition_func
         )
 
     def get_correspondence(self, return_indices=True):
@@ -60,7 +60,7 @@ class IsoGraph(_IsoGraph):
         :returns: List
 
         """
-        indices = _IsoGraph.get_correspondence(self)
+        indices = _IsoGraph.get_correspondence(self, len(self.S1), len(self.S2))
         indices = [sorted(indices[0]), sorted(indices[1])]
         if not return_indices:
             answer = [

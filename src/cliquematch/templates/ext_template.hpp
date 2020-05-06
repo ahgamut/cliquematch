@@ -9,84 +9,21 @@
 namespace py = pybind11;
 // template syntax brain hurty
 
-template <typename List1, typename List2, typename Delta1, typename Delta2,
-          typename EpsType>
-GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::GraphTemplate()
+template <typename List1, typename List2>
+bool SlowTemplate<List1, List2>::build_edges(List1& pts1, size_t len1, List2& pts2,
+                                             size_t len2)
 {
-    this->nvert = 0;
-    this->nedges = 0;
-    this->use_heur = false;
-    this->use_dfs = false;
-    this->lower_bound = 0;
-    this->upper_bound = 32;
-    this->time_lim = 100;
-    this->finished_heur = false;
-    this->finished_all = false;
-    this->current_vertex = 0;
-}
-
-template <typename List1, typename List2, typename Delta1, typename Delta2,
-          typename EpsType>
-GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::GraphTemplate(
-    List1& pts1, std::size_t pts1_len, List2& pts2, std::size_t pts2_len,
-    std::function<Delta1(List1&, std::size_t, std::size_t)> d1, bool is_d1_symmetric,
-    std::function<Delta2(List2&, std::size_t, std::size_t)> d2, bool is_d2_symmetric)
-    : GraphTemplate<List1, List2, Delta1, Delta2, EpsType>()
-{
-    this->ps1 = relset<List1, Delta1>(pts1_len, d1, is_d1_symmetric);
-    this->ps2 = relset<List2, Delta2>(pts2_len, d2, is_d2_symmetric);
-}
-
-template <typename List1, typename List2, typename Delta1, typename Delta2,
-          typename EpsType>
-bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges(List1& pts1,
-                                                                       List2& pts2)
-{
-    this->ps1.fill_dists(pts1);
-    this->ps2.fill_dists(pts2);
     std::size_t no_of_vertices, no_of_edges;
-    auto edges = edges_from_relsets(no_of_vertices, no_of_edges, this->ps1, this->ps2,
-                                    this->pts_epsilon);
-    if (edges.data() == nullptr || edges.size() == 0)
-        throw CM_ERROR("Could not extract edges");
+    auto edges = std::vector<std::set<std::size_t>>();
+    throw CM_ERROR("Could not extract edges");
 
     this->load_graph(no_of_vertices, no_of_edges, edges);
     return true;
 }
 
-template <typename List1, typename List2, typename Delta1, typename Delta2,
-          typename EpsType>
-bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges_with_condition(
-    List1& pts1, List2& pts2,
-    std::function<bool(List1&, std::size_t, std::size_t, List2&, std::size_t,
-                       std::size_t)>
-        cfunc,
-    bool use_cfunc_only)
-{
-    std::size_t no_of_vertices, no_of_edges;
-    auto cfwrap = [&pts1, &pts2, &cfunc](std::size_t i, std::size_t j, std::size_t i2,
-                                         std::size_t j2) -> bool {
-        return cfunc(pts1, i, j, pts2, i2, j2);
-    };
-
-    if (!use_cfunc_only)
-    {
-        this->ps1.fill_dists(pts1);
-        this->ps2.fill_dists(pts2);
-    }
-    auto edges = efr_condition(no_of_vertices, no_of_edges, this->ps1, this->ps2,
-                               this->pts_epsilon, cfwrap, use_cfunc_only);
-    if (edges.data() == nullptr || edges.size() == 0)
-        throw CM_ERROR("Could not extract edges");
-
-    this->load_graph(no_of_vertices, no_of_edges, edges);
-    return true;
-}
-
-template <typename List1, typename List2, typename Delta1, typename Delta2,
-          typename EpsType>
-py::list GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::get_correspondence2(
-    std::vector<std::size_t> clique)
+template <typename List1, typename List2>
+py::list SlowTemplate<List1, List2>::get_correspondence2(
+    size_t len1, size_t len2, std::vector<std::size_t> clique)
 {
     py::list a1;
     py::list a2;
@@ -100,8 +37,8 @@ py::list GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::get_correspondenc
                 "Sentinel Value (0) appeared in clique. Increase the time "
                 "limit; if repeated, reset graph\n");
         }
-        t1 = (clique[i] - 1) / ps2.N;
-        t2 = (clique[i] - 1) % ps2.N;
+        t1 = (clique[i] - 1) / len2;
+        t2 = (clique[i] - 1) % len2;
         a1.append(t1);
         a2.append(t2);
     }
@@ -113,20 +50,17 @@ py::list GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::get_correspondenc
     return ans;
 }
 
-template <typename List1, typename List2, typename Delta1, typename Delta2,
-          typename EpsType>
-py::list GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::get_correspondence()
+template <typename List1, typename List2>
+py::list SlowTemplate<List1, List2>::get_correspondence(size_t len1, size_t len2)
 {
-    return this->get_correspondence2(this->get_max_clique());
+    return this->get_correspondence2(len1, len2, this->get_max_clique());
 }
 
-template <typename List1, typename List2, typename Delta1, typename Delta2,
-          typename EpsType>
-std::string GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::showdata()
+template <typename List1, typename List2>
+std::string SlowTemplate<List1, List2>::showdata()
 {
     std::stringstream ss;
     ss << "cliquematch.core.<templated class object> at " << this << "\n(";
-    ss << "epsilon=" << this->pts_epsilon << ",";
     ss << "n_vertices=" << this->nvert << ",";
     ss << "n_edges=" << this->nedges << ",";
     ss << "search_done=" << (this->finished_all ? "True" : "False");
@@ -140,13 +74,147 @@ std::string GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::showdata()
     return ss.str();
 }
 
+// *************************************************************
 template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
-std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& n_vert,
-                                                       std::size_t& n_edges,
-                                                       const relset<List1, Delta1>& s1,
-                                                       const relset<List2, Delta2>& s2,
-                                                       const EpsType epsilon)
+bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges_metric_only(
+    List1& pts1, std::size_t pts1_len, List2& pts2, std::size_t pts2_len,
+    std::function<Delta1(List1&, std::size_t, std::size_t)> d1, bool is_d1_symmetric,
+    std::function<Delta2(List2&, std::size_t, std::size_t)> d2, bool is_d2_symmetric)
+{
+    std::size_t no_of_vertices, no_of_edges;
+    auto ps1 = relset<List1, Delta1>(pts1_len, d1, is_d1_symmetric);
+    auto ps2 = relset<List2, Delta2>(pts2_len, d2, is_d2_symmetric);
+    ps1.fill_dists(pts1);
+    ps2.fill_dists(pts2);
+    auto edges =
+        edges_from_relsets(no_of_vertices, no_of_edges, ps1, ps2, this->pts_epsilon);
+    if (edges.data() == nullptr || edges.size() == 0)
+        throw CM_ERROR("Could not extract edges");
+    this->load_graph(no_of_vertices, no_of_edges, edges);
+    return true;
+}
+template <typename List1, typename List2, typename Delta1, typename Delta2,
+          typename EpsType>
+bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges_metric_only(
+    List1& pts1, std::size_t pts1_len, List2& pts2, std::size_t pts2_len,
+    std::function<Delta1(List1&, std::size_t, std::size_t)> d1, bool is_d1_symmetric)
+{
+    return this->build_edges_metric_only(pts1, pts1_len, pts2, pts2_len, d1,
+                                         is_d1_symmetric,
+                                         dummy_comparison<List2, Delta2>, true);
+}
+template <typename List1, typename List2, typename Delta1, typename Delta2,
+          typename EpsType>
+bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges_metric_only(
+    List1& pts1, std::size_t pts1_len, List2& pts2, std::size_t pts2_len)
+{
+    return this->build_edges_metric_only(pts1, pts1_len, pts2, pts2_len,
+                                         dummy_comparison<List1, Delta1>, true,
+                                         dummy_comparison<List2, Delta2>, true);
+}
+
+template <typename List1, typename List2, typename Delta1, typename Delta2,
+          typename EpsType>
+bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges_condition_only(
+    List1& pts1, std::size_t pts1_len, List2& pts2, std::size_t pts2_len,
+    std::function<bool(List1&, std::size_t, std::size_t, List2&, std::size_t,
+                       std::size_t)>
+        cfunc)
+{
+    std::size_t no_of_vertices = pts1_len * pts2_len, no_of_edges = 0;
+    std::size_t i1, i2, j1, j2, v1, v2;
+    std::vector<std::set<std::size_t>> edges(no_of_vertices + 1);
+
+    for (i1 = 0; i1 < pts1_len; ++i1)
+    {
+        for (i2 = i1 + 1; i2 < pts1_len; ++i2)
+        {
+            for (j1 = 0; j1 < pts2_len; ++j1)
+            {
+                for (j2 = j1 + 1; j2 < pts2_len; ++j2)
+                {
+                    if (cfunc(pts1, i1, i2, pts2, j1, j2))
+                    {
+                        v1 = i1 * pts2_len + j1 + 1;
+                        v2 = i2 * pts2_len + j2 + 1;
+                        edges[v1].insert(v2);
+                        edges[v2].insert(v1);
+
+                        // ouch
+                        v1 = i2 * pts2_len + j1 + 1;
+                        v2 = i1 * pts2_len + j2 + 1;
+                        edges[v1].insert(v2);
+                        edges[v2].insert(v1);
+
+                        no_of_edges += 2;
+                    }
+                }
+            }
+        }
+    }
+    return true;
+}
+
+template <typename List1, typename List2, typename Delta1, typename Delta2,
+          typename EpsType>
+bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges(
+    List1& pts1, std::size_t pts1_len, List2& pts2, std::size_t pts2_len,
+    std::function<bool(List1&, std::size_t, std::size_t, List2&, std::size_t,
+                       std::size_t)>
+        cfunc,
+    std::function<Delta1(List1&, std::size_t, std::size_t)> d1, bool is_d1_symmetric,
+    std::function<Delta2(List2&, std::size_t, std::size_t)> d2, bool is_d2_symmetric)
+{
+    std::size_t no_of_vertices, no_of_edges;
+    auto cfwrap = [&pts1, &pts2, &cfunc](std::size_t i, std::size_t j, std::size_t i2,
+                                         std::size_t j2) -> bool {
+        return cfunc(pts1, i, j, pts2, i2, j2);
+    };
+    auto ps1 = relset<List1, Delta1>(pts1_len, d1, is_d1_symmetric);
+    auto ps2 = relset<List2, Delta2>(pts2_len, d2, is_d2_symmetric);
+    ps1.fill_dists(pts1);
+    ps2.fill_dists(pts2);
+    auto edges = efr_condition(no_of_vertices, no_of_edges, ps1, ps2, this->pts_epsilon,
+                               cfwrap, false);
+    if (edges.data() == nullptr || edges.size() == 0)
+        throw CM_ERROR("Could not extract edges");
+    this->load_graph(no_of_vertices, no_of_edges, edges);
+
+    return true;
+}
+template <typename List1, typename List2, typename Delta1, typename Delta2,
+          typename EpsType>
+bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges(
+    List1& pts1, std::size_t pts1_len, List2& pts2, std::size_t pts2_len,
+    std::function<bool(List1&, std::size_t, std::size_t, List2&, std::size_t,
+                       std::size_t)>
+        cfunc,
+    std::function<Delta1(List1&, std::size_t, std::size_t)> d1, bool is_d1_symmetric)
+{
+    return this->build_edges(pts1, pts1_len, pts2, pts2_len, cfunc, d1, is_d1_symmetric,
+                             dummy_comparison<List2, Delta2>, true);
+}
+template <typename List1, typename List2, typename Delta1, typename Delta2,
+          typename EpsType>
+bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges(
+    List1& pts1, std::size_t pts1_len, List2& pts2, std::size_t pts2_len,
+    std::function<bool(List1&, std::size_t, std::size_t, List2&, std::size_t,
+                       std::size_t)>
+        cfunc)
+{
+    return this->build_edges(pts1, pts1_len, pts2, pts2_len, cfunc,
+                             dummy_comparison<List1, Delta1>, true,
+                             dummy_comparison<List2, Delta2>, true);
+}
+
+template <typename List1, typename List2, typename Delta1, typename Delta2,
+          typename EpsType>
+std::vector<std::set<std::size_t>> edges_from_relsets(std::size_t& n_vert,
+                                                      std::size_t& n_edges,
+                                                      const relset<List1, Delta1>& s1,
+                                                      const relset<List2, Delta2>& s2,
+                                                      const EpsType epsilon)
 {
     std::size_t M = s1.N, N = s2.N;
     std::size_t i, j;
@@ -160,7 +228,7 @@ std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& n_vert,
                                  std::to_string(__LINE__) + "\n");
     }
 
-    std::vector<std::set<std::size_t> > Edges(n_vert + 1);
+    std::vector<std::set<std::size_t>> Edges(n_vert + 1);
 
     std::size_t v1, v2;
 
@@ -215,7 +283,7 @@ std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& n_vert,
 
 template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
-std::vector<std::set<std::size_t> > efr_condition(
+std::vector<std::set<std::size_t>> efr_condition(
     std::size_t& n_vert, std::size_t& n_edges, const relset<List1, Delta1>& s1,
     const relset<List2, Delta2>& s2, const EpsType epsilon,
     std::function<bool(std::size_t, std::size_t, std::size_t, std::size_t)> cfunc,
@@ -233,7 +301,7 @@ std::vector<std::set<std::size_t> > efr_condition(
                                  std::to_string(__LINE__) + "\n");
     }
 
-    std::vector<std::set<std::size_t> > Edges(n_vert + 1);
+    std::vector<std::set<std::size_t>> Edges(n_vert + 1);
 
     std::size_t v1, v2;
 
