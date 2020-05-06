@@ -13,8 +13,8 @@ Delta dummy_comparison(List& ll, std::size_t i, std::size_t j)
     return (Delta)(0);
 }
 
-template <typename List1, typename Delta1, typename List2, typename Delta2 = Delta1,
-          typename EpsType = Delta1>
+template <typename List1, typename List2, typename Delta1 = double,
+          typename Delta2 = Delta1, typename EpsType = Delta1>
 class GraphTemplate : public pygraph
 {
    private:
@@ -66,8 +66,8 @@ class GraphTemplate : public pygraph
  *  where d1 is a distance metric to relate elements of s1
  *  and   d2 is a distance metric to relate elements of s2
  */
-template <typename List1, typename Delta1, typename List2, typename Delta2 = Delta1,
-          typename EpsType = Delta1>
+template <typename List1, typename List2, typename Delta1 = double,
+          typename Delta2 = Delta1, typename EpsType = Delta1>
 std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& nvert,
                                                        std::size_t& nedges,
                                                        const relset<List1, Delta1>&,
@@ -92,8 +92,8 @@ std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& nvert,
  * skip the epsilon check,
  * causing a time complexity of N^4.
  */
-template <typename List1, typename Delta1, typename List2, typename Delta2 = Delta1,
-          typename EpsType = Delta1>
+template <typename List1, typename List2, typename Delta1 = double,
+          typename Delta2 = Delta1, typename EpsType = Delta1>
 std::vector<std::set<std::size_t> > efr_condition(
     std::size_t& nvert, std::size_t& nedges, const relset<List1, Delta1>&,
     const relset<List2, Delta2>&, const EpsType epsilon,

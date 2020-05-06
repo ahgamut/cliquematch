@@ -9,9 +9,9 @@
 namespace py = pybind11;
 // template syntax brain hurty
 
-template <typename List1, typename Delta1, typename List2, typename Delta2,
+template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
-GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::GraphTemplate()
+GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::GraphTemplate()
 {
     this->nvert = 0;
     this->nedges = 0;
@@ -25,21 +25,21 @@ GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::GraphTemplate()
     this->current_vertex = 0;
 }
 
-template <typename List1, typename Delta1, typename List2, typename Delta2,
+template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
-GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::GraphTemplate(
+GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::GraphTemplate(
     List1& pts1, std::size_t pts1_len, List2& pts2, std::size_t pts2_len,
     std::function<Delta1(List1&, std::size_t, std::size_t)> d1, bool is_d1_symmetric,
     std::function<Delta2(List2&, std::size_t, std::size_t)> d2, bool is_d2_symmetric)
-    : GraphTemplate<List1, Delta1, List2, Delta2, EpsType>()
+    : GraphTemplate<List1, List2, Delta1, Delta2, EpsType>()
 {
     this->ps1 = relset<List1, Delta1>(pts1_len, d1, is_d1_symmetric);
     this->ps2 = relset<List2, Delta2>(pts2_len, d2, is_d2_symmetric);
 }
 
-template <typename List1, typename Delta1, typename List2, typename Delta2,
+template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
-bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::build_edges(List1& pts1,
+bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges(List1& pts1,
                                                                        List2& pts2)
 {
     this->ps1.fill_dists(pts1);
@@ -54,9 +54,9 @@ bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::build_edges(List1& pt
     return true;
 }
 
-template <typename List1, typename Delta1, typename List2, typename Delta2,
+template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
-bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::build_edges_with_condition(
+bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges_with_condition(
     List1& pts1, List2& pts2,
     std::function<bool(List1&, std::size_t, std::size_t, List2&, std::size_t,
                        std::size_t)>
@@ -83,9 +83,9 @@ bool GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::build_edges_with_cond
     return true;
 }
 
-template <typename List1, typename Delta1, typename List2, typename Delta2,
+template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
-py::list GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::get_correspondence2(
+py::list GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::get_correspondence2(
     std::vector<std::size_t> clique)
 {
     py::list a1;
@@ -113,34 +113,34 @@ py::list GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::get_correspondenc
     return ans;
 }
 
-template <typename List1, typename Delta1, typename List2, typename Delta2,
+template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
-py::list GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::get_correspondence()
+py::list GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::get_correspondence()
 {
     return this->get_correspondence2(this->get_max_clique());
 }
 
-template <typename List1, typename Delta1, typename List2, typename Delta2,
+template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
-std::string GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::showdata()
+std::string GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::showdata()
 {
     std::stringstream ss;
     ss << "cliquematch.core.<templated class object> at " << this << "\n(";
     ss << "epsilon=" << this->pts_epsilon << ",";
     ss << "n_vertices=" << this->nvert << ",";
     ss << "n_edges=" << this->nedges << ",";
+    ss << "search_done=" << (this->finished_all ? "True" : "False");
     ss << "lower_bound=" << this->lower_bound << ",";
     ss << "upper_bound=" << this->upper_bound << ",";
     ss << "time_limit=" << this->time_lim << ",";
     ss << "use_heuristic=" << (this->use_heur ? "True" : "False") << ",";
     ss << "use_dfs=" << (this->use_dfs ? "True" : "False") << ",";
-    ss << "search_done=" << (this->finished_all ? "True" : "False");
     ss << ")";
 
     return ss.str();
 }
 
-template <typename List1, typename Delta1, typename List2, typename Delta2,
+template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
 std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& n_vert,
                                                        std::size_t& n_edges,
@@ -213,7 +213,7 @@ std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& n_vert,
     return Edges;
 }
 
-template <typename List1, typename Delta1, typename List2, typename Delta2,
+template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
 std::vector<std::set<std::size_t> > efr_condition(
     std::size_t& n_vert, std::size_t& n_edges, const relset<List1, Delta1>& s1,

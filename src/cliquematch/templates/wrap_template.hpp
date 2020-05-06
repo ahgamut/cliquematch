@@ -5,12 +5,12 @@
 
 namespace py = pybind11;
 
-template <typename List1, typename Delta1, typename List2, typename Delta2 = Delta1,
-          typename EpsType = Delta1>
+template <typename List1, typename List2, typename Delta1 = double,
+          typename Delta2 = Delta1, typename EpsType = Delta1>
 void init_GraphTemplate(py::module& m, std::string classname)
 {
     using namespace pybind11;
-    using GClass = GraphTemplate<List1, Delta1, List2, Delta2, EpsType>;
+    using GClass = GraphTemplate<List1, List2, Delta1, Delta2, EpsType>;
     class_<GClass, pygraph>(m, classname.c_str())
         .def(init<List1&, std::size_t, List2&, std::size_t>(), "set1"_a.noconvert(),
              "set1_len"_a, "set2"_a.noconvert(), "set2_len"_a)

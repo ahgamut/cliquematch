@@ -69,8 +69,7 @@ void Aligngraph::build_edges_with_filter(Eigen::Ref<DoubleMatrixR>& pts1,
 void init_Aligngraph(pybind11::module& mm)
 {
     using namespace pybind11;
-    using a2a =
-        GraphTemplate<Eigen::Ref<DoubleMatrixR>, double, Eigen::Ref<DoubleMatrixR>>;
+    using a2a = GraphTemplate<Eigen::Ref<DoubleMatrixR>, Eigen::Ref<DoubleMatrixR>>;
     class_<Aligngraph, a2a>(mm, "AlignGraph")
         .def(init<Eigen::Ref<DoubleMatrixR>&, std::size_t, Eigen::Ref<DoubleMatrixR>&,
                   std::size_t>())

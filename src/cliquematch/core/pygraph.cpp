@@ -92,12 +92,12 @@ std::string pygraph::showdata()
     ss << "cliquematch.core.Graph object at " << this << "\n(";
     ss << "n_vertices=" << this->nvert << ",";
     ss << "n_edges=" << this->nedges << ",";
+    ss << "search_done=" << (this->finished_all ? "True" : "False");
     ss << "lower_bound=" << this->lower_bound << ",";
     ss << "upper_bound=" << this->upper_bound << ",";
     ss << "time_limit=" << this->time_lim << ",";
     ss << "use_heuristic=" << (this->use_heur ? "True" : "False") << ",";
     ss << "use_dfs=" << (this->use_dfs ? "True" : "False") << ",";
-    ss << "search_done=" << (this->finished_all ? "True" : "False");
     ss << ")";
     return ss.str();
 }
