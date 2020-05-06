@@ -62,6 +62,9 @@ class graph
     void dfs_other_clique(std::size_t cur);
     void dfs_other_clique(std::size_t cur, std::size_t limit);
     std::vector<std::size_t> possible_others();
+
+    friend std::vector<std::set<std::size_t>> iso_edges(std::size_t&, std::size_t&,
+                                                        const graph&, const graph&);
 };
 
 #endif /* GRAPH_H */

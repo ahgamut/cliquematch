@@ -47,11 +47,10 @@ double inline filter_score(Eigen::Ref<DoubleMatrixR> control,
     return msk_score;
 }
 
-void Aligngraph::build_edges_with_filter(Eigen::Ref<DoubleMatrixR>& pts1,
-                                         Eigen::Ref<DoubleMatrixR>& pts2,
-                                         Eigen::Ref<DoubleMatrixR> control_pts,
-                                         Eigen::Ref<BoolMatrixR> mask,
-                                         double percentage)
+void Aligngraph::build_edges_with_filter(
+    Eigen::Ref<DoubleMatrixR>& pts1, size_t pts1_len, Eigen::Ref<DoubleMatrixR>& pts2,
+    size_t pts2_len, Eigen::Ref<DoubleMatrixR> control_pts,
+    Eigen::Ref<BoolMatrixR> mask, double percentage)
 {
     Eigen::RowVector2d _c;
     DoubleMatrixR _rot_con(control_pts.rows(), control_pts.cols());
@@ -63,7 +62,7 @@ void Aligngraph::build_edges_with_filter(Eigen::Ref<DoubleMatrixR>& pts1,
         return filter_score(control_pts, mask, _c, _rot_con, _RCU, p1, i1, j1, p2, i2,
                             j2) >= percentage;
     };
-    this->build_edges_with_condition(pts1, pts2, rule_func, false);
+    this->build_edges(pts1, pts1_len, pts2, pts2_len, rule_func);
 }
 
 void init_Aligngraph(pybind11::module& mm)
@@ -71,7 +70,6 @@ void init_Aligngraph(pybind11::module& mm)
     using namespace pybind11;
     using a2a = GraphTemplate<Eigen::Ref<DoubleMatrixR>, Eigen::Ref<DoubleMatrixR>>;
     class_<Aligngraph, a2a>(mm, "AlignGraph")
-        .def(init<Eigen::Ref<DoubleMatrixR>&, std::size_t, Eigen::Ref<DoubleMatrixR>&,
-                  std::size_t>())
+        .def(init<>())
         .def("build_edges_with_filter", &Aligngraph::build_edges_with_filter);
 }

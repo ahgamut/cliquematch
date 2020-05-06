@@ -79,20 +79,31 @@ class AlignGraph(_AlignGraph):
         """
         self.S1 = np.float64(set1)
         self.S2 = np.float64(set2)
-        _AlignGraph.__init__(self, self.S1, len(self.S1), self.S2, len(self.S2))
+        _AlignGraph.__init__(self)
 
     def build_edges(self):
-        _AlignGraph.build_edges(self, self.S1, self.S2)
+        args = [self, self.S1, len(self.S1), self.S2, len(self.S2)]
+        return _AlignGraph.build_edges_metric_only(*args)
 
     def build_edges_with_condition(self, condition_func, use_cfunc_only):
-        _AlignGraph.build_edges_with_condition(
-            self, self.S1, self.S2, condition_func, use_cfunc_only
-        )
+        args = [self, self.S1, len(self.S1), self.S2, len(self.S2), condition_func]
+        if use_cfunc_only:
+            return _AlignGraph.build_edges_condition_only(*args)
+        else:
+            return _AlignGraph.build_edges(*args)
 
     def build_edges_with_filter(self, control_points, filter_mask, percentage):
-        _AlignGraph.build_edges_with_filter(
-            self, self.S1, self.S2, control_points, filter_mask, percentage
-        )
+        args = [
+            self,
+            self.S1,
+            len(self.S1),
+            self.S2,
+            len(self.S2),
+            control_points,
+            filter_mask,
+            percentage,
+        ]
+        _AlignGraph.build_edges_with_filter(*args)
 
     def get_correspondence(self):
         """
@@ -106,7 +117,7 @@ class AlignGraph(_AlignGraph):
             to transform `S1` to `S2`
             (obtained via `Kabsch Algorithm <https://en.wikipedia.org/wiki/Kabsch_algorithm>`)
         """
-        indices = _AlignGraph.get_correspondence(self)
+        indices = _AlignGraph.get_correspondence(self, len(self.S1), len(self.S2))
         ans = [self.S1[indices[0], :], self.S2[indices[1], :]]
         # I want to find R, T such that S1*R + T = S2
 

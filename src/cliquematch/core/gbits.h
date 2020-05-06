@@ -20,15 +20,8 @@ class graphBits
     graphBits();
 
     graphBits(std::size_t n_bits);
+    virtual ~graphBits();
     void load_external(u32* ext_data, std::size_t n_bits, bool cleanout = true);
-    virtual ~graphBits()
-    {
-        if (!this->ext_ptr && this->data != nullptr)
-        {
-            delete[] this->data;
-            this->data = nullptr;
-        }
-    };
     void set(std::size_t i);
     void reset(std::size_t i);
     void toggle(std::size_t i);

@@ -4,7 +4,7 @@
    ~~~~~~~~~~~~~~~~~~~~
 
    A convenience wrapper over cliquematchcliquematch.core.L2LGraph
- 
+
    :copyright: (c) 2019 by gnv3.
    :license: see LICENSE for more details.
 """
@@ -24,45 +24,42 @@ class L2LGraph(_L2LGraph):
         """
         A simple wrapper over the base class, just to avoid copying
         """
+        _L2LGraph.__init__(self)
         assert isinstance(set1, list)
         assert isinstance(set2, list)
         self.S1 = set1
         self.S2 = set2
+        self.d1 = None
+        self.d2 = None
+        self.is_d1_symmetric = is_d1_symmetric
+        self.is_d2_symmetric = is_d2_symmetric
         if d1 is not None:
+            self.d1 = d1
             if d2 is not None:
-                _L2LGraph.__init__(
-                    self,
-                    self.S1,
-                    len(self.S1),
-                    self.S2,
-                    len(self.S2),
-                    d1,
-                    is_d1_symmetric,
-                    d2,
-                    is_d2_symmetric,
-                )
+                self.d2 = d2
             else:
-                warn("L2LGraph: List S2 has no distance metric")
-                _L2LGraph.__init__(
-                    self,
-                    self.S1,
-                    len(self.S1),
-                    self.S2,
-                    len(self.S2),
-                    d1,
-                    is_d1_symmetric,
-                )
+                warn("L2LGraph: Using default distance metric (Euclidean) for set S2")
         else:
-            warn("L2LGraph: Lists have no distance metric")
-            _L2LGraph.__init__(self, self.S1, len(self.S1), self.S2, len(self.S2))
+            warn("L2LGraph: Using default distance metric (Euclidean) for both arrays")
 
     def build_edges(self):
-        _L2LGraph.build_edges(self, self.S1, self.S2)
+        args = [self, self.S1, len(self.S1), self.S2, len(self.S2)]
+        if self.d1:
+            args = args + [self.d1, self.is_d1_symmetric]
+            if self.d2:
+                args = args + [self.d2, self.is_d2_symmetric]
+        return _L2LGraph.build_edges_metric_only(*args)
 
     def build_edges_with_condition(self, condition_func, use_cfunc_only):
-        _L2LGraph.build_edges_with_condition(
-            self, self.S1, self.S2, condition_func, use_cfunc_only
-        )
+        args = [self, self.S1, len(self.S1), self.S2, len(self.S2), condition_func]
+        if use_cfunc_only:
+            return _L2LGraph.build_edges_condition_only(*args)
+        else:
+            if self.d1:
+                args = args + [self.d1, self.is_d1_symmetric]
+                if self.d2:
+                    args = args + [self.d2, self.is_d2_symmetric]
+            return _L2LGraph.build_edges(*args)
 
     def get_correspondence(self, return_indices=True):
         """
@@ -74,7 +71,7 @@ class L2LGraph(_L2LGraph):
         :returns: List[List, List]
 
         """
-        indices = _L2LGraph.get_correspondence(self)
+        indices = _L2LGraph.get_correspondence(self, len(self.S1), len(self.S2))
         if not return_indices:
             answer = [
                 [self.S1[x] for x in indices[0]],
