@@ -140,5 +140,183 @@ std::string GraphTemplate<List1, Delta1, List2, Delta2, EpsType>::showdata()
     return ss.str();
 }
 
+template <typename List1, typename Delta1, typename List2, typename Delta2,
+          typename EpsType>
+std::vector<std::set<std::size_t> > edges_from_relsets(std::size_t& n_vert,
+                                                       std::size_t& n_edges,
+                                                       const relset<List1, Delta1>& s1,
+                                                       const relset<List2, Delta2>& s2,
+                                                       const EpsType epsilon)
+{
+    std::size_t M = s1.N, N = s2.N;
+    std::size_t i, j;
+    n_vert = M * N;
+    n_edges = 0;
+
+    if (M == 0 || N == 0)
+    {
+        throw std::runtime_error("One of the sets is empty (initialization error)\n" +
+                                 std::string(__FILE__) + "  " +
+                                 std::to_string(__LINE__) + "\n");
+    }
+
+    std::vector<std::set<std::size_t> > Edges(n_vert + 1);
+
+    std::size_t v1, v2;
+
+    auto base = s2.dists.data();
+    std::size_t len1 = s1.symmetric ? M * (M - 1) / 2 : M * (M - 1);
+    std::size_t len2 = s2.symmetric ? N * (N - 1) / 2 : N * (N - 1);
+
+    EpsType cur_ub = 0, cur_lb = 0;
+    std::size_t ub_loc = len2, lb_loc = 0;
+
+    short found1, found2;
+
+    for (i = 0; i < len1; i++)
+    {
+        cur_lb = s1.dists[i].dist - epsilon;
+        cur_ub = cur_lb + 2 * epsilon;
+
+        found1 = binary_find2(base, len2, cur_lb, lb_loc);
+        if (found1 == -1) break;
+        found2 = binary_find2(base, len2, cur_ub, ub_loc);
+        if (found2 == -1) ub_loc = len2 - 1;
+
+        if (lb_loc > ub_loc)
+        {
+            cerr << "Overflow glitch?!?!\n";
+            break;
+        }
+
+        for (j = lb_loc; j <= ub_loc; j++)
+        {
+            // if d(i,j) approx= d(i',j') then edge between (i,i') and (j,j')
+            v1 = s1.dists[i].first * N + s2.dists[j].first + 1;
+            v2 = s1.dists[i].second * N + s2.dists[j].second + 1;
+
+            Edges[v1].insert(v2);
+            Edges[v2].insert(v1);
+            n_edges++;
+
+            if (!s1.symmetric && !s2.symmetric) continue;
+            // if d(i,j) approx= d(i',j') then edge between (i,j') and (j,i')
+            v1 = s1.dists[i].second * N + s2.dists[j].first + 1;
+            v2 = s1.dists[i].first * N + s2.dists[j].second + 1;
+
+            Edges[v1].insert(v2);
+            Edges[v2].insert(v1);
+            n_edges++;
+        }
+    }
+
+    return Edges;
+}
+
+template <typename List1, typename Delta1, typename List2, typename Delta2,
+          typename EpsType>
+std::vector<std::set<std::size_t> > efr_condition(
+    std::size_t& n_vert, std::size_t& n_edges, const relset<List1, Delta1>& s1,
+    const relset<List2, Delta2>& s2, const EpsType epsilon,
+    std::function<bool(std::size_t, std::size_t, std::size_t, std::size_t)> cfunc,
+    bool use_cfunc_only)
+{
+    std::size_t M = s1.N, N = s2.N;
+    std::size_t i, j;
+    n_vert = M * N;
+    n_edges = 0;
+
+    if (M == 0 || N == 0)
+    {
+        throw std::runtime_error("One of the sets is empty (initialization error)\n" +
+                                 std::string(__FILE__) + "  " +
+                                 std::to_string(__LINE__) + "\n");
+    }
+
+    std::vector<std::set<std::size_t> > Edges(n_vert + 1);
+
+    std::size_t v1, v2;
+
+    auto base = s2.dists.data();
+    std::size_t len1 = s1.symmetric ? M * (M - 1) / 2 : M * (M - 1);
+    std::size_t len2 = s2.symmetric ? N * (N - 1) / 2 : N * (N - 1);
+
+    EpsType cur_ub = 0, cur_lb = 0;
+    std::size_t ub_loc = len2, lb_loc = 0;
+
+    short found1, found2;
+
+    for (i = 0; i < len1; i++)
+    {
+        cur_lb = s1.dists[i].dist - epsilon;
+        cur_ub = cur_lb + 2 * epsilon;
+
+        if (!use_cfunc_only)
+        {
+            found1 = binary_find2(base, len2, cur_lb, lb_loc);
+            if (found1 == -1) break;
+            found2 = binary_find2(base, len2, cur_ub, ub_loc);
+            if (found2 == -1) ub_loc = len2 - 1;
+
+            if (lb_loc > ub_loc)
+            {
+                cerr << "Overflow glitch?!?!\n";
+                break;
+            }
+        }
+
+        else
+        {
+            lb_loc = 0;
+            ub_loc = len2 - 1;
+        }
+
+        for (j = lb_loc; j <= ub_loc; j++)
+        {
+            // if d(i,j) approx= d(i',j') then edge between (i,i') and (j,j')
+            v1 = s1.dists[i].first * N + s2.dists[j].first + 1;
+            v2 = s1.dists[i].second * N + s2.dists[j].second + 1;
+
+            if (cfunc(s1.dists[i].first, s1.dists[i].second, s2.dists[j].first,
+                      s2.dists[j].second))
+            {
+                Edges[v1].insert(v2);
+                Edges[v2].insert(v1);
+                n_edges++;
+            }
+
+            if (!s1.symmetric && !s2.symmetric) continue;
+            // if d(i,j) approx= d(i',j') then edge between (i,j') and (j,i')
+            v1 = s1.dists[i].second * N + s2.dists[j].first + 1;
+            v2 = s1.dists[i].first * N + s2.dists[j].second + 1;
+
+            if (s1.symmetric)
+            {
+                if (cfunc(s1.dists[i].second, s1.dists[i].first, s2.dists[j].first,
+                          s2.dists[j].second))
+                {
+                    Edges[v1].insert(v2);
+                    Edges[v2].insert(v1);
+                    n_edges++;
+                }
+            }
+
+            else
+            {
+                // s2 has to be symmetric
+                if (cfunc(s1.dists[i].first, s1.dists[i].second, s2.dists[j].second,
+                          s2.dists[j].first))
+                {
+                    Edges[v1].insert(v2);
+                    Edges[v2].insert(v1);
+                    n_edges++;
+                }
+            }
+        }
+    }
+
+    return Edges;
+}
+
 #endif /* EXT_TEMPLATE_HPP */
 
