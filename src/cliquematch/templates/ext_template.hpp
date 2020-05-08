@@ -10,18 +10,6 @@ namespace py = pybind11;
 // template syntax brain hurty
 
 template <typename List1, typename List2>
-bool SlowTemplate<List1, List2>::build_edges(List1& pts1, size_t len1, List2& pts2,
-                                             size_t len2)
-{
-    std::size_t no_of_vertices, no_of_edges;
-    auto edges = std::vector<std::set<std::size_t>>();
-    throw CM_ERROR("Could not extract edges");
-
-    this->load_graph(no_of_vertices, no_of_edges, edges);
-    return true;
-}
-
-template <typename List1, typename List2>
 py::list SlowTemplate<List1, List2>::get_correspondence2(
     size_t len1, size_t len2, std::vector<std::size_t> clique)
 {

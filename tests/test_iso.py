@@ -23,8 +23,8 @@ class TestIsoGraph(object):
     * testing data access and dfs (too small for heuristic)
     """
 
-    S1 = cliquematch.Graph.from_file("./tests/sample_read1a.mtx").to_adjlist()
-    S2 = cliquematch.Graph.from_file("./tests/sample_read1b.mtx").to_adjlist()
+    S1 = cliquematch.Graph.from_file("./tests/sample_read1a.mtx")
+    S2 = cliquematch.Graph.from_file("./tests/sample_read1b.mtx")
 
     def test_loading(self):
         G = cliquematch.IsoGraph(self.S1, self.S2)
@@ -36,9 +36,6 @@ class TestIsoGraph(object):
     def test_data(self):
         G = cliquematch.IsoGraph(self.S1, self.S2)
 
-        G.epsilon = 0.1
-        G.S2[0] = set()
-        G.S1[0] = set()
         G.use_dfs = True
         G.use_heuristic = False
         G.upper_bound = 100
@@ -66,11 +63,8 @@ class TestIsoGraph(object):
 
     def test_dfs(self):
         G = cliquematch.IsoGraph(self.S1, self.S2)
-        G.epsilon = 0.001
         G.build_edges()
         G.use_dfs = True
-        ans = G.get_correspondence(return_indices=True)
-        assert set(ans[1]) == set([0, 1, 2, 3, 4])
-
-        ans2 = G.get_correspondence(return_indices=False)
-        assert ans2[1] == self.S2
+        ans = G.get_correspondence()
+        assert set(ans[0]) == {1, 2, 3, 4, 5}
+        assert ans[1] == [2, 1, 3, 4, 5]

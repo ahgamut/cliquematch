@@ -46,6 +46,9 @@ class pygraph
     ndarray<std::size_t> to_edgelist();
     std::vector<std::set<std::size_t>> to_adj_list();
     void to_file(std::string filename);
+
+    friend std::vector<std::set<std::size_t>> iso_edges(std::size_t&, std::size_t&,
+                                                        const pygraph&, const pygraph&);
 };
 
 pygraph from_adj_matrix(ndarray<bool> adjmat);

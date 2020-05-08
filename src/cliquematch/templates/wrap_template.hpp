@@ -7,36 +7,6 @@ namespace py = pybind11;
 
 template <typename List1, typename List2, typename Delta1 = double,
           typename Delta2 = Delta1, typename EpsType = Delta1>
-bool build_edges_wrapped(
-    GraphTemplate<List1, List2, Delta1, Delta2, EpsType>& zz, List1& set1, size_t len1,
-    List2& set2, size_t len2,
-    std::function<bool(List1&, size_t, size_t, List2&, size_t, size_t)> cfunc,
-    bool use_cfunc_only, std::function<Delta1(List1&, size_t, size_t)> d1,
-    std::function<Delta2(List2&, size_t, size_t)> d2)
-{
-    if (d1)
-    {
-        if (d2)
-        {
-            return zz.build_edges(set1, len1, set2, len2, cfunc, use_cfunc_only, d1,
-                                  d2);
-        }
-        else
-        {
-            py::print("d2 is None");
-            return zz.build_edges(set1, len1, set2, len2, cfunc, use_cfunc_only, d1);
-        }
-    }
-    else
-    {
-        py::print("d1 is None");
-        return zz.build_edges(set1, len1, set2, len2, cfunc, use_cfunc_only);
-    }
-    return true;
-}
-
-template <typename List1, typename List2, typename Delta1 = double,
-          typename Delta2 = Delta1, typename EpsType = Delta1>
 void init_GraphTemplate(py::module& m, std::string classname)
 {
     using namespace pybind11;

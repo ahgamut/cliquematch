@@ -10,47 +10,23 @@
     :copyright: (c) 2019 by gnv3.
     :license: see LICENSE for more details.
 """
-from cliquematch.core import L2LGraph as _IsoGraph
+from cliquematch.core import IsoGraph as _IsoGraph
 from warnings import warn
 
 
-edge_condition_function = lambda s, i, j: 1 if j in s[i] else 0
-
-
 class IsoGraph(_IsoGraph):
-    def __init__(self, set1, set2):
+    def __init__(self, G1, G2):
         """
         A simple wrapper over the base class, just to save the Graphs here
         """
-        self.S1 = set1
-        self.S2 = set2
-
-        for x in self.S1:
-            assert isinstance(x, set), "Adjacency List of Graph must be List[Set]"
-        for x in self.S2:
-            assert isinstance(x, set), "Adjacency List of Graph must be List[Set]"
-
         _IsoGraph.__init__(self)
+        self.S1 = G1
+        self.S2 = G2
 
     def build_edges(self):
-        _IsoGraph.build_edges_metric_only(
-            self,
-            self.S1,
-            len(self.S1),
-            self.S2,
-            len(self.S2),
-            edge_condition_function,
-            True,
-            edge_condition_function,
-            True,
-        )
+        _IsoGraph.build_edges(self, self.S1, self.S2)
 
-    def build_edges_with_condition(self, condition_func, use_cfunc_only):
-        _IsoGraph.build_edges_condition_only(
-            self, self.S1, len(self.S1), self.S2, len(self.S2), condition_func
-        )
-
-    def get_correspondence(self, return_indices=True):
+    def get_correspondence(self):
         """
         Wrapper over cm_base.L2LGraph.get_correspondence
 
@@ -60,18 +36,9 @@ class IsoGraph(_IsoGraph):
         :returns: List
 
         """
-        indices = _IsoGraph.get_correspondence(self, len(self.S1), len(self.S2))
-        indices = [sorted(indices[0]), sorted(indices[1])]
-        if not return_indices:
-            answer = [
-                [self.S1[x] for x in indices[0]],
-                [self.S2[x] for x in indices[1]],
-            ]
-            for i in range(len(answer)):
-                adjlist = answer[i]
-                for st in adjlist:
-                    st = st.intersection(set(indices[i]))
-        else:
-            answer = indices
-
+        indices = _IsoGraph.get_correspondence(
+            self, self.S1.n_vertices, self.S2.n_vertices
+        )
+        offset = lambda l: [x + 1 for x in l]
+        answer = [offset(indices[0]), offset(indices[1])]
         return answer

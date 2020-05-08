@@ -17,7 +17,7 @@ template <typename List1, typename List2>
 class SlowTemplate : public pygraph
 {
    public:
-    bool build_edges(List1&, size_t, List2&, size_t);
+    bool build_edges(List1&, List2&);
     std::string showdata();
     pybind11::list get_correspondence(size_t len1, size_t len2);
     pybind11::list get_correspondence2(size_t len1, size_t len2,
