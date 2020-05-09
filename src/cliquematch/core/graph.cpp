@@ -52,7 +52,7 @@ graph::graph(size_t n_vert, size_t n_edges, vector<set<size_t> >& edges,
         this->vertices[i].load_external(i, edges[i].size(), el_size, eb_size);
         this->max_degree = max_degree > edges[i].size() ? max_degree : edges[i].size();
         this->el_size += edges[i].size();
-        this->eb_size += 1 + edges[i].size() / 32;
+        this->eb_size += (edges[i].size() % 32 != 0) + edges[i].size() / 32;
         edges[i].erase(i);
     }
 
