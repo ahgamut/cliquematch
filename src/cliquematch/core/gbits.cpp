@@ -32,22 +32,22 @@ graphBits::~graphBits()
 graphBits::graphBits(std::size_t n_bits)
 {
     this->valid_len = n_bits;
-    this->dlen = 1 + n_bits / 32;
+    this->ext_ptr = false;
+    this->dlen = (n_bits % 32 != 0) + n_bits / 32;
+    this->pad_cover = n_bits % 32 == 0 ? ALL_ONES : ALL_ONES << (32 - n_bits % 32);
     this->data = new u32[this->dlen];
     for (std::size_t i = 0; i < this->dlen; ++i) this->data[i] = 0;
-    this->ext_ptr = false;
-    this->pad_cover = n_bits % 32 == 0 ? 0 : ALL_ONES << (32 - n_bits % 32);
 }
 
 void graphBits::load_external(u32* ext_data, std::size_t n_bits, bool cleanout)
 {
     this->data = ext_data;  // since someone else gives me the data, they should
                             // have inited
-    this->valid_len = n_bits;
-    this->dlen = 1 + n_bits / 32;
     this->ext_ptr = true;
+    this->valid_len = n_bits;
+    this->dlen = (n_bits % 32 != 0) + n_bits / 32;
+    this->pad_cover = n_bits % 32 == 0 ? ALL_ONES : ALL_ONES << (32 - n_bits % 32);
     if (cleanout) this->clear();
-    this->pad_cover = n_bits % 32 == 0 ? 0 : ALL_ONES << (32 - n_bits % 32);
 }
 
 graphBits::graphBits(const graphBits& other)

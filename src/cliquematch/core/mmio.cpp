@@ -1,48 +1,54 @@
 #include <core/mmio.h>
 #include <iostream>
 #include <fstream>
-#include <string>
+#include <algorithm>
 
 using namespace std;
 
-vector<set<size_t> > mmio2_reader(const char* filename, size_t& n_vert, size_t& n_edges)
+vector<pair<size_t, size_t>> mmio3_reader(const char* filename, size_t& n_vert,
+                                          size_t& n_edges)
 {
     ifstream f(filename, ios::in);
-
-    size_t dummy;
     if (!f.is_open())
     {
         throw runtime_error("Unable to open Matrix Market File!\n" + string(__FILE__) +
                             "  " + to_string(__LINE__) + "\n");
-        vector<set<size_t> > Edges;
-        // Edges.data() = NULL;
-        return Edges;
     }
     while (f.peek() == '%' || f.peek() == '#') f.ignore(2048, '\n');
+
+    size_t n_loops = 0, n_invalids = 0, dummy, i, j;
+    size_t v1, v2;
+
     f >> n_vert;
     f >> dummy;
     f >> n_edges;
 
-    vector<set<size_t> > Edges(n_vert + 1);
-    dummy = 0;
+    vector<pair<size_t, size_t>> Edges(2 * n_edges + n_vert + 1);
 
-    size_t v1, v2;
-    for (size_t i = 0; i < n_edges && !f.eof(); i++)
+    for (j = 0; j < n_vert + 1; j++) Edges[j] = {j, j};
+    for (i = 0, j = n_vert + 1; i < n_edges && !f.eof(); i++, j += 2)
     {
         f >> v1 >> v2;
         f.ignore(2048, '\n');
 
         if (v1 > n_vert || v2 > n_vert || v1 == v2)
         {
-            dummy = dummy + (v1 != v2);
-            continue;
+            (v1 != v2) ? n_invalids++ : n_loops++;
+            Edges[j] = {0, 0};
+            Edges[j + 1] = {0, 0};
         }
-        Edges[v1].insert(v2);
-        Edges[v2].insert(v1);
+        Edges[j] = {v1, v2};
+        Edges[j + 1] = {v2, v1};
     }
-
     f.close();
-    if (dummy != 0)
-        cerr << "Warning: " << dummy << " invalid edges ignored while reading file\n";
+
+    std::sort(Edges.begin(), Edges.end());
+    auto it = std::unique(Edges.begin(), Edges.end());
+    Edges.resize(std::distance(Edges.begin(), it));
+    n_edges = (Edges.size() - (n_vert + 1)) / 2;
+
+    if (n_invalids != 0)
+        cerr << "Warning: " << n_invalids
+             << " invalid edges ignored while reading file\n";
     return Edges;
 }

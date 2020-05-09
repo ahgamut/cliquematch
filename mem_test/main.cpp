@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
         use_heur = true;
         use_dfs = false;
     }
-    auto edges = mmio2_reader(argv[1], no_of_vertices, no_of_edges);
+    auto edges = mmio3_reader(argv[1], no_of_vertices, no_of_edges);
     graph G(no_of_vertices, no_of_edges, edges);
     G.find_max_cliques(start_vertex, heur_done, use_heur, use_dfs, limit);
     auto ans = G.get_max_clique();

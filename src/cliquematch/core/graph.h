@@ -5,6 +5,9 @@
 #include <chrono>
 #include <functional>
 #include <set>
+#include <utility>
+
+struct vtriple;
 
 class graph
 {
@@ -37,7 +40,9 @@ class graph
     // basic functions
     graph();
     graph(std::size_t n_vert, std::size_t n_edges,
-          std::vector<std::set<std::size_t>>& edges, std::size_t clique_lim = 1000);
+          std::vector<std::set<std::size_t>>& edges);
+    graph(std::size_t n_vert, std::size_t n_edges,
+          std::vector<std::pair<std::size_t, std::size_t>>& edges);
     void disp() const;
     void send_data(std::function<void(std::size_t, std::size_t)>) const;
 
@@ -54,7 +59,8 @@ class graph
     std::size_t dfs_all_cliques(std::size_t start_vertex = 0, double time_limit = 1000);
 
     // using the heuristic for finding ONE clique
-    void heur_one_clique(std::size_t cur);
+    void heur_one_clique(std::size_t cur, std::vector<vtriple>& neighbors, graphBits&,
+                         graphBits&);
     std::size_t heur_all_cliques(std::size_t start_vertex = 0, double time_limit = 100);
 
     // finding OTHER max cliques

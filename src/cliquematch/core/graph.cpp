@@ -24,24 +24,16 @@ graph::graph()
     this->max_degree = 0;
     this->duration = 0.0;
 
-    this->vertices = vector<vertex>();
-    this->edge_list = vector<size_t>();
-    this->edge_bits = vector<u32>();
-
     this->CUR_MAX_CLIQUE_SIZE = 1;
     this->CUR_MAX_CLIQUE_LOC = 0;
-    this->CLIQUE_LIMIT = 1;
+    this->CLIQUE_LIMIT = 1729;
     this->TIME_LIMIT = 100;
 }
 
-graph::graph(size_t n_vert, size_t n_edges, vector<set<size_t> >& edges,
-             size_t clique_lim)
-    : graph()
+graph::graph(size_t n_vert, size_t n_edges, vector<set<size_t>>& edges) : graph()
 {
     this->n_vert = n_vert + 1;
     // Therefore the 0th graph vertex is always a sentinel, remember the offset
-    this->CLIQUE_LIMIT = clique_lim;
-
     this->vertices = vector<vertex>(this->n_vert);
     this->edge_list = vector<size_t>(this->n_vert + 2 * n_edges);
 
@@ -52,8 +44,30 @@ graph::graph(size_t n_vert, size_t n_edges, vector<set<size_t> >& edges,
         this->vertices[i].load_external(i, edges[i].size(), el_size, eb_size);
         this->max_degree = max_degree > edges[i].size() ? max_degree : edges[i].size();
         this->el_size += edges[i].size();
-        this->eb_size += 1 + edges[i].size() / 32;
+        this->eb_size += (edges[i].size() % 32 != 0) + edges[i].size() / 32;
         edges[i].erase(i);
+    }
+
+    this->edge_bits = vector<u32>(eb_size);
+    this->set_vertices();
+}
+
+graph::graph(size_t n_vert, size_t n_edges, vector<pair<size_t, size_t>>& edges)
+    : graph()
+{
+    this->n_vert = n_vert + 1;
+    this->vertices = vector<vertex>(this->n_vert);
+    this->edge_list = vector<size_t>(edges.size());
+
+    std::size_t i, j;
+    for (i = 0; i < this->n_vert; i++)
+    {
+        for (j = 0; el_size + j < edges.size() && edges[el_size + j].first == i; j++)
+            this->edge_list[this->el_size + j] = edges[this->el_size + j].second;
+        this->vertices[i].load_external(i, j, this->el_size, this->eb_size);
+        this->max_degree = max_degree > j ? max_degree : j;
+        this->el_size += j;
+        this->eb_size += (j % 32 != 0) + j / 32;
     }
 
     this->edge_bits = vector<u32>(eb_size);
