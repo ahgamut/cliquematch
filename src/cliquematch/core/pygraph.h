@@ -21,9 +21,6 @@ class pygraph
     bool ans_found;
     void find_max_clique();
     std::vector<std::size_t> ans_clique;
-
-   protected:
-    void load_graph(std::size_t, std::size_t, std::vector<std::set<std::size_t>>);
     bool finished_heur;
 
    public:
@@ -36,7 +33,6 @@ class pygraph
     std::size_t current_vertex;
 
     pygraph();
-    pygraph(std::size_t, std::size_t, std::vector<std::set<std::size_t>>);
     void continue_search();
     void reset_search();
     std::vector<std::size_t> get_max_clique();
@@ -47,6 +43,9 @@ class pygraph
     std::vector<std::set<std::size_t>> to_adj_list();
     void to_file(std::string filename);
 
+    void load_graph(std::size_t, std::size_t, std::vector<std::set<std::size_t>>);
+    void load_graph(std::size_t, std::size_t,
+                    std::vector<std::pair<std::size_t, std::size_t>>);
     friend std::vector<std::set<std::size_t>> iso_edges(std::size_t&, std::size_t&,
                                                         const pygraph&, const pygraph&);
 };

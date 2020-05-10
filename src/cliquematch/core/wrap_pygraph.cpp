@@ -32,12 +32,13 @@ void init_pygraph(p::module& m)
              return_value_policy::copy)
         .def("continue_search", &pygraph::continue_search)
         .def("reset_search", &pygraph::reset_search)
-        .def_static("from_file", &from_file, arg("filename"))
+        .def_static("from_file", &from_file, arg("filename"), return_value_policy::move)
         .def_static("from_edgelist", &from_edgelist, arg("edgelist"),
-                    arg("num_vertices"))
-        .def_static("from_matrix", &from_adj_matrix, arg("adjmat"))
+                    arg("num_vertices"), return_value_policy::move)
+        .def_static("from_matrix", &from_adj_matrix, arg("adjmat"),
+                    return_value_policy::move)
         .def_static("from_adjlist", &from_adj_list, arg("num_vertices"),
-                    arg("num_edges"), arg("edges"))
+                    arg("num_edges"), arg("edges"), return_value_policy::move)
         .def("to_file", &pygraph::to_file, arg("filename"))
         .def("to_edgelist", &pygraph::to_edgelist)
         .def("to_matrix", &pygraph::to_adj_matrix)

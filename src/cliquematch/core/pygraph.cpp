@@ -21,15 +21,16 @@ pygraph::pygraph()
     finished_all = false;
     ans_found = false;
 }
-pygraph::pygraph(std::size_t n_vertices, std::size_t n_edges,
-                 std::vector<std::set<std::size_t>> edges)
-    : pygraph()
-{
-    this->load_graph(n_vertices, n_edges, edges);
-}
-// Separate method to make exporting pygraph easier
+
 void pygraph::load_graph(std::size_t n_vertices, std::size_t n_edges,
                          std::vector<std::set<std::size_t>> edges)
+{
+    this->nvert = n_vertices;
+    this->nedges = n_edges;
+    this->G = graph(this->nvert, this->nedges, edges);
+}
+void pygraph::load_graph(std::size_t n_vertices, std::size_t n_edges,
+                         std::vector<std::pair<std::size_t, std::size_t>> edges)
 {
     this->nvert = n_vertices;
     this->nedges = n_edges;
@@ -105,14 +106,15 @@ std::string pygraph::showdata()
 pygraph from_file(std::string filename)
 {
     std::string fname = filename;
-    std::vector<std::set<std::size_t>> edges;
-    std::size_t nvert, nedges;
-    edges = mmio2_reader(fname.c_str(), nvert, nedges);
+    std::size_t no_of_vertices, no_of_edges;
+    pygraph pg;
+    auto edges = mmio3_reader(fname.c_str(), no_of_vertices, no_of_edges);
 
     if (edges.data() == NULL || edges.size() == 0)
         throw CM_ERROR("Could not extract edges!!\n");
 
-    return pygraph(nvert, nedges, edges);
+    pg.load_graph(no_of_vertices, no_of_edges, edges);
+    return pg;
 }
 
 pygraph from_edgelist(ndarray<std::size_t> edge_list1, std::size_t no_of_vertices)
@@ -122,6 +124,7 @@ pygraph from_edgelist(ndarray<std::size_t> edge_list1, std::size_t no_of_vertice
     std::size_t v1, v2;
     std::vector<std::set<std::size_t>> edges(no_of_vertices + 1);
     auto edge_list = edge_list1.unchecked<2>();
+    pygraph pg;
 
     for (auto i = 0; i < edge_list.shape(0); i++)
     {
@@ -143,7 +146,8 @@ pygraph from_edgelist(ndarray<std::size_t> edge_list1, std::size_t no_of_vertice
 
     for (std::size_t i = 0; i < edges.size(); i++) no_of_edges += edges[i].size();
     no_of_edges /= 2;
-    return pygraph(no_of_vertices, no_of_edges, edges);
+    pg.load_graph(no_of_vertices, no_of_edges, edges);
+    return pg;
 }
 
 pygraph from_adj_matrix(ndarray<bool> adjmat1)
@@ -156,6 +160,7 @@ pygraph from_adj_matrix(ndarray<bool> adjmat1)
     {
         std::size_t no_of_vertices = adjmat.shape(0);
         std::size_t no_of_edges = 0;
+        pygraph pg;
 
         std::vector<std::set<std::size_t>> edges(no_of_vertices + 1);
 
@@ -176,7 +181,8 @@ pygraph from_adj_matrix(ndarray<bool> adjmat1)
         if (edges.data() == NULL || edges.size() == 0)
             throw CM_ERROR("Could not extract edges!!\n");
 
-        return pygraph(no_of_vertices, no_of_edges, edges);
+        pg.load_graph(no_of_vertices, no_of_edges, edges);
+        return pg;
     }
 }
 
@@ -189,6 +195,7 @@ pygraph from_adj_list(std::size_t n_vertices, std::size_t n_edges,
     if (n_vertices != edges.size() - 1)
         throw CM_ERROR("Number of vertices don't match!\n");
 
+    pygraph pg;
     for (std::size_t i = 0; i < edges.size(); i++)
     {
         for (auto &j : edges[i])
@@ -200,7 +207,8 @@ pygraph from_adj_list(std::size_t n_vertices, std::size_t n_edges,
         }
     }
     if (e / 2 != n_edges) throw CM_ERROR("Number of edges don't match!\n");
-    return pygraph(n_vertices, n_edges, edges);
+    pg.load_graph(n_vertices, n_edges, edges);
+    return pg;
 }
 
 ndarray<std::size_t> pygraph::to_edgelist()
