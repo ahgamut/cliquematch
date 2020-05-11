@@ -110,7 +110,9 @@ bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges_condition
 {
     std::size_t no_of_vertices = pts1_len * pts2_len, no_of_edges = 0;
     std::size_t i1, i2, j1, j2, v1, v2;
-    std::vector<std::set<std::size_t>> edges(no_of_vertices + 1);
+    std::vector<std::pair<std::size_t, std::size_t>> edges(no_of_vertices + 1);
+
+    for (v1 = 0; v1 < edges.size(); v1++) edges[v1] = {v1, v1};
 
     for (i1 = 0; i1 < pts1_len; ++i1)
     {
@@ -124,14 +126,14 @@ bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges_condition
                     {
                         v1 = i1 * pts2_len + j1 + 1;
                         v2 = i2 * pts2_len + j2 + 1;
-                        edges[v1].insert(v2);
-                        edges[v2].insert(v1);
+                        edges.push_back(std::make_pair(v1, v2));
+                        edges.push_back(std::make_pair(v2, v1));
 
                         // ouch
                         v1 = i2 * pts2_len + j1 + 1;
                         v2 = i1 * pts2_len + j2 + 1;
-                        edges[v1].insert(v2);
-                        edges[v2].insert(v1);
+                        edges.push_back(std::make_pair(v1, v2));
+                        edges.push_back(std::make_pair(v2, v1));
 
                         no_of_edges += 2;
                     }
@@ -139,6 +141,7 @@ bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges_condition
             }
         }
     }
+    this->load_graph(no_of_vertices, no_of_edges, edges);
     return true;
 }
 
@@ -216,11 +219,9 @@ std::string GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::showdata()
 
 template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
-std::vector<std::set<std::size_t>> edges_from_relsets(std::size_t& n_vert,
-                                                      std::size_t& n_edges,
-                                                      const relset<List1, Delta1>& s1,
-                                                      const relset<List2, Delta2>& s2,
-                                                      const EpsType epsilon)
+std::vector<std::pair<std::size_t, std::size_t>> edges_from_relsets(
+    std::size_t& n_vert, std::size_t& n_edges, const relset<List1, Delta1>& s1,
+    const relset<List2, Delta2>& s2, const EpsType epsilon)
 {
     std::size_t M = s1.N, N = s2.N;
     std::size_t i, j;
@@ -228,14 +229,10 @@ std::vector<std::set<std::size_t>> edges_from_relsets(std::size_t& n_vert,
     n_edges = 0;
 
     if (M == 0 || N == 0)
-    {
-        throw std::runtime_error("One of the sets is empty (initialization error)\n" +
-                                 std::string(__FILE__) + "  " +
-                                 std::to_string(__LINE__) + "\n");
-    }
+        throw CM_ERROR("One of the sets is empty (initialization error)\n");
 
-    std::vector<std::set<std::size_t>> Edges(n_vert + 1);
-
+    std::vector<std::pair<std::size_t, std::size_t>> Edges(n_vert + 1);
+    for (i = 0; i < Edges.size(); i++) Edges[i] = {i, i};
     std::size_t v1, v2;
 
     auto base = s2.dists.data();
@@ -257,20 +254,14 @@ std::vector<std::set<std::size_t>> edges_from_relsets(std::size_t& n_vert,
         found2 = binary_find2(base, len2, cur_ub, ub_loc);
         if (found2 == -1) ub_loc = len2 - 1;
 
-        if (lb_loc > ub_loc)
-        {
-            cerr << "Overflow glitch?!?!\n";
-            break;
-        }
-
         for (j = lb_loc; j <= ub_loc; j++)
         {
             // if d(i,j) approx= d(i',j') then edge between (i,i') and (j,j')
             v1 = s1.dists[i].first * N + s2.dists[j].first + 1;
             v2 = s1.dists[i].second * N + s2.dists[j].second + 1;
 
-            Edges[v1].insert(v2);
-            Edges[v2].insert(v1);
+            Edges.push_back(std::make_pair(v1, v2));
+            Edges.push_back(std::make_pair(v2, v1));
             n_edges++;
 
             if (!s1.symmetric && !s2.symmetric) continue;
@@ -278,8 +269,8 @@ std::vector<std::set<std::size_t>> edges_from_relsets(std::size_t& n_vert,
             v1 = s1.dists[i].second * N + s2.dists[j].first + 1;
             v2 = s1.dists[i].first * N + s2.dists[j].second + 1;
 
-            Edges[v1].insert(v2);
-            Edges[v2].insert(v1);
+            Edges.push_back(std::make_pair(v1, v2));
+            Edges.push_back(std::make_pair(v2, v1));
             n_edges++;
         }
     }
@@ -289,7 +280,7 @@ std::vector<std::set<std::size_t>> edges_from_relsets(std::size_t& n_vert,
 
 template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
-std::vector<std::set<std::size_t>> efr_condition(
+std::vector<std::pair<std::size_t, std::size_t>> efr_condition(
     std::size_t& n_vert, std::size_t& n_edges, const relset<List1, Delta1>& s1,
     const relset<List2, Delta2>& s2, const EpsType epsilon,
     std::function<bool(std::size_t, std::size_t, std::size_t, std::size_t)> cfunc)
@@ -300,13 +291,10 @@ std::vector<std::set<std::size_t>> efr_condition(
     n_edges = 0;
 
     if (M == 0 || N == 0)
-    {
-        throw std::runtime_error("One of the sets is empty (initialization error)\n" +
-                                 std::string(__FILE__) + "  " +
-                                 std::to_string(__LINE__) + "\n");
-    }
+        throw CM_ERROR("One of the sets is empty (initialization error)\n");
 
-    std::vector<std::set<std::size_t>> Edges(n_vert + 1);
+    std::vector<std::pair<std::size_t, std::size_t>> Edges(n_vert + 1);
+    for (i = 0; i < Edges.size(); i++) Edges[i] = {i, i};
 
     std::size_t v1, v2;
 
@@ -329,12 +317,6 @@ std::vector<std::set<std::size_t>> efr_condition(
         found2 = binary_find2(base, len2, cur_ub, ub_loc);
         if (found2 == -1) ub_loc = len2 - 1;
 
-        if (lb_loc > ub_loc)
-        {
-            cerr << "Overflow glitch?!?!\n";
-            break;
-        }
-
         for (j = lb_loc; j <= ub_loc; j++)
         {
             // if d(i,j) approx= d(i',j') then edge between (i,i') and (j,j')
@@ -344,8 +326,8 @@ std::vector<std::set<std::size_t>> efr_condition(
             if (cfunc(s1.dists[i].first, s1.dists[i].second, s2.dists[j].first,
                       s2.dists[j].second))
             {
-                Edges[v1].insert(v2);
-                Edges[v2].insert(v1);
+                Edges.push_back(std::make_pair(v1, v2));
+                Edges.push_back(std::make_pair(v2, v1));
                 n_edges++;
             }
 
@@ -354,27 +336,13 @@ std::vector<std::set<std::size_t>> efr_condition(
             v1 = s1.dists[i].second * N + s2.dists[j].first + 1;
             v2 = s1.dists[i].first * N + s2.dists[j].second + 1;
 
-            if (s1.symmetric)
+            // if either s1 or s2 is symmetric, the alternate mapping is valid
+            if (cfunc(s1.dists[i].first, s1.dists[i].second, s2.dists[j].second,
+                      s2.dists[j].first))
             {
-                if (cfunc(s1.dists[i].second, s1.dists[i].first, s2.dists[j].first,
-                          s2.dists[j].second))
-                {
-                    Edges[v1].insert(v2);
-                    Edges[v2].insert(v1);
-                    n_edges++;
-                }
-            }
-
-            else
-            {
-                // s2 has to be symmetric
-                if (cfunc(s1.dists[i].first, s1.dists[i].second, s2.dists[j].second,
-                          s2.dists[j].first))
-                {
-                    Edges[v1].insert(v2);
-                    Edges[v2].insert(v1);
-                    n_edges++;
-                }
+                Edges.push_back(std::make_pair(v1, v2));
+                Edges.push_back(std::make_pair(v2, v1));
+                n_edges++;
             }
         }
     }

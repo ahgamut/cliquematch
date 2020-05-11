@@ -37,15 +37,13 @@ vector<pair<size_t, size_t>> mmio3_reader(const char* filename, size_t& n_vert,
             Edges[j] = {0, 0};
             Edges[j + 1] = {0, 0};
         }
-        Edges[j] = {v1, v2};
-        Edges[j + 1] = {v2, v1};
+        else
+        {
+            Edges[j] = {v1, v2};
+            Edges[j + 1] = {v2, v1};
+        }
     }
     f.close();
-
-    std::sort(Edges.begin(), Edges.end());
-    auto it = std::unique(Edges.begin(), Edges.end());
-    Edges.resize(std::distance(Edges.begin(), it));
-    n_edges = (Edges.size() - (n_vert + 1)) / 2;
 
     if (n_invalids != 0)
         cerr << "Warning: " << n_invalids

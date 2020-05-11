@@ -4,10 +4,18 @@
 
 using namespace std;
 
-short graph::find_if_neighbors(const vertex& v1, std::size_t v2_id,
+void clean_edges(vector<pair<size_t, size_t>>& edges)
+{
+    std::sort(edges.begin(), edges.end());
+    auto it = std::unique(edges.begin(), edges.end());
+    edges.resize(std::distance(edges.begin(), it));
+}
+
+short graph::find_if_neighbors(std::size_t v1_id, std::size_t v2_id,
                                std::size_t& v2_position) const
 {
-    return binary_find(&(this->edge_list[v1.elo]), v1.N, v2_id, v2_position);
+    return binary_find(&(this->edge_list[this->vertices[v1_id].elo]),
+                       this->vertices[v1_id].N, v2_id, v2_position);
 }
 double graph::elapsed_time() const
 {
@@ -55,6 +63,7 @@ graph::graph(size_t n_vert, size_t n_edges, vector<set<size_t>>& edges) : graph(
 graph::graph(size_t n_vert, size_t n_edges, vector<pair<size_t, size_t>>& edges)
     : graph()
 {
+    clean_edges(edges);
     this->n_vert = n_vert + 1;
     this->vertices = vector<vertex>(this->n_vert);
     this->edge_list = vector<size_t>(edges.size());
@@ -147,4 +156,48 @@ void graph::send_data(std::function<void(size_t, size_t)> dfunc) const
         for (size_t k = this->vertices[i].spos + 1; k < this->vertices[i].N; k++)
             dfunc(i, this->edge_list[this->vertices[i].elo + k]);
     }
+}
+
+std::vector<std::pair<std::size_t, std::size_t>> iso_edges(std::size_t& num_vertices,
+                                                           std::size_t& num_edges,
+                                                           const graph& g1,
+                                                           const graph& g2)
+{
+    num_vertices = (g1.n_vert - 1) * (g2.n_vert - 1);
+    num_edges = 0;
+    std::vector<std::pair<std::size_t, std::size_t>> edges(num_vertices + 1);
+
+    std::size_t i1, i2, j1, j2, v1, v2;
+    std::size_t k, l;
+    short f1, f2;
+
+    for (l = 0; l < edges.size(); l++) edges[l] = {l, l};
+    for (i1 = 1; i1 < g1.n_vert; ++i1)
+    {
+        for (i2 = i1 + 1; i2 < g1.n_vert; i2++)
+        {
+            f1 = g1.find_if_neighbors(i1, i2, k);
+            for (j1 = 1; j1 < g2.n_vert; ++j1)
+            {
+                for (j2 = j1 + 1; j2 < g2.n_vert; ++j2)
+                {
+                    f2 = g2.find_if_neighbors(j1, j2, l);
+                    if ((f1 != 1) && (f2 == 1)) continue;
+
+                    v1 = (i1 - 1) * (g2.n_vert - 1) + (j1 - 1) + 1;
+                    v2 = (i2 - 1) * (g2.n_vert - 1) + (j2 - 1) + 1;
+                    edges.push_back(std::make_pair(v1, v2));
+                    edges.push_back(std::make_pair(v2, v1));
+
+                    v1 = (i2 - 1) * (g2.n_vert - 1) + (j1 - 1) + 1;
+                    v2 = (i1 - 1) * (g2.n_vert - 1) + (j2 - 1) + 1;
+                    edges.push_back(std::make_pair(v1, v2));
+                    edges.push_back(std::make_pair(v2, v1));
+
+                    num_edges += 2;
+                }
+            }
+        }
+    }
+    return edges;
 }

@@ -40,15 +40,16 @@ void pygraph::load_graph(std::size_t n_vertices, std::size_t n_edges,
 //' Helper function to find maximum clique, does not return anything
 void pygraph::find_max_clique()
 {
-    if (G.n_vert == 0) throw CM_ERROR("Graph is not initialized!!\n");
+    if (this->G.n_vert == 0) throw CM_ERROR("Graph is not initialized!!\n");
 
     //	std::cerr<<"Finding cliques\n";
     this->G.CUR_MAX_CLIQUE_SIZE = this->lower_bound > this->G.CUR_MAX_CLIQUE_SIZE
                                       ? this->lower_bound
                                       : this->G.CUR_MAX_CLIQUE_SIZE;
     this->G.CLIQUE_LIMIT = this->upper_bound;
-    G.find_max_cliques(current_vertex, finished_heur, use_heur, use_dfs, time_lim);
-    ans_clique = G.get_max_clique();
+    this->G.find_max_cliques(current_vertex, finished_heur, use_heur, use_dfs,
+                             time_lim);
+    ans_clique = this->G.get_max_clique();
     ans_found = true;
     finished_all = finished_heur && (current_vertex >= nvert);
 }
@@ -116,16 +117,16 @@ pygraph from_file(std::string filename)
     pg.load_graph(no_of_vertices, no_of_edges, edges);
     return pg;
 }
-
 pygraph from_edgelist(ndarray<std::size_t> edge_list1, std::size_t no_of_vertices)
 {
     //	std::cout<<"Constructing graph from the list of edges (Nx2 matrix)\n";
     std::size_t no_of_edges = 0;
     std::size_t v1, v2;
-    std::vector<std::set<std::size_t>> edges(no_of_vertices + 1);
     auto edge_list = edge_list1.unchecked<2>();
+    std::vector<std::pair<std::size_t, std::size_t>> edges(no_of_vertices + 1);
     pygraph pg;
 
+    for (std::size_t i = 0; i < edges.size(); i++) edges[i] = {i, i};
     for (auto i = 0; i < edge_list.shape(0); i++)
     {
         v1 = edge_list(i, 0);
@@ -137,19 +138,17 @@ pygraph from_edgelist(ndarray<std::size_t> edge_list1, std::size_t no_of_vertice
             throw CM_ERROR(
                 "Vertex numbers must begin at 1, 0 is used as a sentinel value\n");
         }
-        edges[v1].insert(v2);
-        edges[v2].insert(v1);
+        edges.push_back(std::make_pair(v1, v2));
+        edges.push_back(std::make_pair(v2, v1));
+        no_of_edges++;
     }
 
     if (edges.data() == NULL || edges.size() == 0)
         throw CM_ERROR("Could not extract edges!!\n");
 
-    for (std::size_t i = 0; i < edges.size(); i++) no_of_edges += edges[i].size();
-    no_of_edges /= 2;
     pg.load_graph(no_of_vertices, no_of_edges, edges);
     return pg;
 }
-
 pygraph from_adj_matrix(ndarray<bool> adjmat1)
 {
     //	std::cout<<"Constructing graph from the adjacency matrix\n";
@@ -162,17 +161,17 @@ pygraph from_adj_matrix(ndarray<bool> adjmat1)
         std::size_t no_of_edges = 0;
         pygraph pg;
 
-        std::vector<std::set<std::size_t>> edges(no_of_vertices + 1);
+        std::vector<std::pair<std::size_t, std::size_t>> edges;
 
         for (std::size_t i = 0; i < no_of_vertices; i++)
         {
             for (std::size_t j = 0; j < no_of_vertices; j++)
             {
-                if (adjmat(i, j) && i != j)
+                if (adjmat(i, j) || i == j)
                 {
-                    edges[i + 1].insert(j + 1);
-                    edges[j + 1].insert(i + 1);
-                    no_of_edges++;
+                    edges.push_back(std::make_pair(i + 1, j + 1));
+                    edges.push_back(std::make_pair(j + 1, i + 1));
+                    no_of_edges += (i != j);
                 }
             }
         }
@@ -185,7 +184,6 @@ pygraph from_adj_matrix(ndarray<bool> adjmat1)
         return pg;
     }
 }
-
 pygraph from_adj_list(std::size_t n_vertices, std::size_t n_edges,
                       std::vector<std::set<std::size_t>> edges)
 {
@@ -198,7 +196,7 @@ pygraph from_adj_list(std::size_t n_vertices, std::size_t n_edges,
     pygraph pg;
     for (std::size_t i = 0; i < edges.size(); i++)
     {
-        for (auto &j : edges[i])
+        for (auto& j : edges[i])
         {
             if (j == 0 || j > n_vertices || j == i ||
                 edges[j].find(i) == edges[j].end())
@@ -225,7 +223,6 @@ ndarray<std::size_t> pygraph::to_edgelist()
     });
     return elist1;
 }
-
 void pygraph::to_file(std::string filename)
 {
     std::ofstream f(filename, std::ios::out);
@@ -244,7 +241,6 @@ void pygraph::to_file(std::string filename)
         [&f](std::size_t i, std::size_t j) { f << i << " " << j << "\n"; });
     f.close();
 }
-
 ndarray<bool> pygraph::to_adj_matrix()
 {
     ndarray<bool> adjmat1(this->nvert * this->nvert);
@@ -263,7 +259,6 @@ ndarray<bool> pygraph::to_adj_matrix()
     });
     return adjmat1;
 }
-
 std::vector<std::set<std::size_t>> pygraph::to_adj_list()
 {
     std::vector<std::set<std::size_t>> edges(this->nvert + 1);
@@ -272,4 +267,12 @@ std::vector<std::set<std::size_t>> pygraph::to_adj_list()
         edges[j].insert(i);
     });
     return edges;
+}
+
+std::vector<std::pair<std::size_t, std::size_t>> iso_edges(std::size_t& nv,
+                                                           std::size_t& ne,
+                                                           const pygraph& g1,
+                                                           const pygraph& g2)
+{
+    return iso_edges(nv, ne, g1.G, g2.G);
 }

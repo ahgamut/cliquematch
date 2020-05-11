@@ -22,7 +22,7 @@ class graph
     std::size_t eb_size;
     std::chrono::time_point<std::chrono::steady_clock> start_time;
 
-    short find_if_neighbors(const vertex&, std::size_t, std::size_t&) const;
+    short find_if_neighbors(std::size_t, std::size_t, std::size_t&) const;
     double elapsed_time() const;
     void set_vertices();
 
@@ -69,8 +69,10 @@ class graph
     void dfs_other_clique(std::size_t cur, std::size_t limit);
     std::vector<std::size_t> possible_others();
 
-    friend std::vector<std::set<std::size_t>> iso_edges(std::size_t&, std::size_t&,
-                                                        const graph&, const graph&);
+    friend std::vector<std::pair<std::size_t, std::size_t>> iso_edges(std::size_t&,
+                                                                      std::size_t&,
+                                                                      const graph&,
+                                                                      const graph&);
 };
 
 #endif /* GRAPH_H */

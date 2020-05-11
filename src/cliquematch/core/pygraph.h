@@ -46,8 +46,10 @@ class pygraph
     void load_graph(std::size_t, std::size_t, std::vector<std::set<std::size_t>>);
     void load_graph(std::size_t, std::size_t,
                     std::vector<std::pair<std::size_t, std::size_t>>);
-    friend std::vector<std::set<std::size_t>> iso_edges(std::size_t&, std::size_t&,
-                                                        const pygraph&, const pygraph&);
+    friend std::vector<std::pair<std::size_t, std::size_t>> iso_edges(std::size_t&,
+                                                                      std::size_t&,
+                                                                      const pygraph&,
+                                                                      const pygraph&);
 };
 
 pygraph from_adj_matrix(ndarray<bool> adjmat);
