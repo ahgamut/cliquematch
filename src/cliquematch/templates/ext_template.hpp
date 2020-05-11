@@ -4,6 +4,7 @@
 #include <templates/ext_template.h>
 #include <cstring>
 #include <iostream>
+#include <algorithm>
 
 namespace py = pybind11;
 // template syntax brain hurty
@@ -216,11 +217,9 @@ std::string GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::showdata()
 
 template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
-std::vector<std::set<std::size_t>> edges_from_relsets(std::size_t& n_vert,
-                                                      std::size_t& n_edges,
-                                                      const relset<List1, Delta1>& s1,
-                                                      const relset<List2, Delta2>& s2,
-                                                      const EpsType epsilon)
+std::vector<std::pair<std::size_t, std::size_t>> edges_from_relsets(
+    std::size_t& n_vert, std::size_t& n_edges, const relset<List1, Delta1>& s1,
+    const relset<List2, Delta2>& s2, const EpsType epsilon)
 {
     std::size_t M = s1.N, N = s2.N;
     std::size_t i, j;
@@ -234,8 +233,8 @@ std::vector<std::set<std::size_t>> edges_from_relsets(std::size_t& n_vert,
                                  std::to_string(__LINE__) + "\n");
     }
 
-    std::vector<std::set<std::size_t>> Edges(n_vert + 1);
-
+    std::vector<std::pair<std::size_t, std::size_t>> Edges(n_vert + 1);
+    for (i = 0; i < Edges.size(); i++) Edges[i] = {i, i};
     std::size_t v1, v2;
 
     auto base = s2.dists.data();
@@ -269,8 +268,8 @@ std::vector<std::set<std::size_t>> edges_from_relsets(std::size_t& n_vert,
             v1 = s1.dists[i].first * N + s2.dists[j].first + 1;
             v2 = s1.dists[i].second * N + s2.dists[j].second + 1;
 
-            Edges[v1].insert(v2);
-            Edges[v2].insert(v1);
+            Edges.push_back(std::make_pair(v1, v2));
+            Edges.push_back(std::make_pair(v2, v1));
             n_edges++;
 
             if (!s1.symmetric && !s2.symmetric) continue;
@@ -278,18 +277,22 @@ std::vector<std::set<std::size_t>> edges_from_relsets(std::size_t& n_vert,
             v1 = s1.dists[i].second * N + s2.dists[j].first + 1;
             v2 = s1.dists[i].first * N + s2.dists[j].second + 1;
 
-            Edges[v1].insert(v2);
-            Edges[v2].insert(v1);
+            Edges.push_back(std::make_pair(v1, v2));
+            Edges.push_back(std::make_pair(v2, v1));
             n_edges++;
         }
     }
 
+    std::sort(Edges.begin(), Edges.end());
+    auto it = std::unique(Edges.begin(), Edges.end());
+    Edges.resize(std::distance(Edges.begin(), it));
+    n_edges = (Edges.size() - (n_vert + 1)) / 2;
     return Edges;
 }
 
 template <typename List1, typename List2, typename Delta1, typename Delta2,
           typename EpsType>
-std::vector<std::set<std::size_t>> efr_condition(
+std::vector<std::pair<std::size_t, std::size_t>> efr_condition(
     std::size_t& n_vert, std::size_t& n_edges, const relset<List1, Delta1>& s1,
     const relset<List2, Delta2>& s2, const EpsType epsilon,
     std::function<bool(std::size_t, std::size_t, std::size_t, std::size_t)> cfunc)
@@ -305,8 +308,8 @@ std::vector<std::set<std::size_t>> efr_condition(
                                  std::string(__FILE__) + "  " +
                                  std::to_string(__LINE__) + "\n");
     }
-
-    std::vector<std::set<std::size_t>> Edges(n_vert + 1);
+    std::vector<std::pair<std::size_t, std::size_t>> Edges(n_vert + 1);
+    for (i = 0; i < Edges.size(); i++) Edges[i] = {i, i};
 
     std::size_t v1, v2;
 
@@ -344,8 +347,8 @@ std::vector<std::set<std::size_t>> efr_condition(
             if (cfunc(s1.dists[i].first, s1.dists[i].second, s2.dists[j].first,
                       s2.dists[j].second))
             {
-                Edges[v1].insert(v2);
-                Edges[v2].insert(v1);
+                Edges.push_back(std::make_pair(v1, v2));
+                Edges.push_back(std::make_pair(v2, v1));
                 n_edges++;
             }
 
@@ -354,31 +357,21 @@ std::vector<std::set<std::size_t>> efr_condition(
             v1 = s1.dists[i].second * N + s2.dists[j].first + 1;
             v2 = s1.dists[i].first * N + s2.dists[j].second + 1;
 
-            if (s1.symmetric)
+            // if either s1 or s2 is symmetric, the alternate mapping is valid
+            if (cfunc(s1.dists[i].first, s1.dists[i].second, s2.dists[j].second,
+                      s2.dists[j].first))
             {
-                if (cfunc(s1.dists[i].second, s1.dists[i].first, s2.dists[j].first,
-                          s2.dists[j].second))
-                {
-                    Edges[v1].insert(v2);
-                    Edges[v2].insert(v1);
-                    n_edges++;
-                }
-            }
-
-            else
-            {
-                // s2 has to be symmetric
-                if (cfunc(s1.dists[i].first, s1.dists[i].second, s2.dists[j].second,
-                          s2.dists[j].first))
-                {
-                    Edges[v1].insert(v2);
-                    Edges[v2].insert(v1);
-                    n_edges++;
-                }
+                Edges.push_back(std::make_pair(v1, v2));
+                Edges.push_back(std::make_pair(v2, v1));
+                n_edges++;
             }
         }
     }
 
+    std::sort(Edges.begin(), Edges.end());
+    auto it = std::unique(Edges.begin(), Edges.end());
+    Edges.resize(std::distance(Edges.begin(), it));
+    n_edges = (Edges.size() - (n_vert + 1)) / 2;
     return Edges;
 }
 

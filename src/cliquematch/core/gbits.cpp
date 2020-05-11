@@ -109,14 +109,12 @@ void graphBits::toggle(std::size_t i)
 void graphBits::clear(std::size_t N)
 {
     std::size_t i = 0;
-    if (N == 0 || N == this->valid_len || N / 32 == this->dlen)
-    {
-        for (i = 0; i < this->dlen; i++) this->data[i] = 0;
-    }
+    std::size_t clear_len;
+    if (N == 0 || N >= this->valid_len || 1 + (N / 32) >= this->dlen)
+        clear_len = this->dlen;
     else
-    {
-        this->data[i] &= (ALL_ONES >> N % 32);
-    }
+        clear_len = 1 + N / 32;
+    for (i = 0; i < clear_len; i++) this->data[i] = 0;
 }
 
 std::size_t graphBits::count() const

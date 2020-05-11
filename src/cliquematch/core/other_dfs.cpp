@@ -52,8 +52,7 @@ void graph::dfs_other_search(size_t cur, const graphBits& prev_cand,
                 for (k = 0; k < this->vertices[vert].N; k++)
                 {
                     f = this->find_if_neighbors(
-                        this->vertices[cur],
-                        this->edge_list[this->vertices[vert].elo + k], ans);
+                        cur, this->edge_list[this->vertices[vert].elo + k], ans);
                     if (f == -1)
                         break;
                     else if (f == 1 && cand[ans])

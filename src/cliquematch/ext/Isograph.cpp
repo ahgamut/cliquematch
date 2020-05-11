@@ -18,12 +18,12 @@ std::vector<std::set<std::size_t>> iso_edges(std::size_t& num_vertices,
     {
         for (i2 = i1 + 1; i2 < g1.n_vert; i2++)
         {
-            f1 = g1.find_if_neighbors(g1.vertices[i1], i2, k);
+            f1 = g1.find_if_neighbors(i1, i2, k);
             for (j1 = 1; j1 < g2.n_vert; ++j1)
             {
                 for (j2 = j1 + 1; j2 < g2.n_vert; ++j2)
                 {
-                    f2 = g2.find_if_neighbors(g2.vertices[j1], j2, l);
+                    f2 = g2.find_if_neighbors(j1, j2, l);
                     if ((f1 != 1) && (f2 == 1)) continue;
 
                     v1 = (i1 - 1) * (g2.n_vert - 1) + (j1 - 1) + 1;

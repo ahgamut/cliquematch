@@ -72,8 +72,7 @@ void graph::dfs_one_clique(std::size_t cur)
                     for (k = 0; k < this->vertices[vert].N; k++)
                     {
                         f = this->find_if_neighbors(
-                            this->vertices[cur],
-                            this->edge_list[this->vertices[vert].elo + k], ans);
+                            cur, this->edge_list[this->vertices[vert].elo + k], ans);
                         // break if no more common neighbors
                         if (f == -1) break;
 

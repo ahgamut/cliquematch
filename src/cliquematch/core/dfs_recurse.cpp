@@ -61,9 +61,8 @@ void graph::dfs_one_search(size_t cur, const graphBits& prev_cand,
         // (apart from each other)
         for (k = 0; k < this->vertices[vert].N; k++)
         {
-            f = this->find_if_neighbors(this->vertices[cur],
-                                        this->edge_list[this->vertices[vert].elo + k],
-                                        ans);
+            f = this->find_if_neighbors(
+                cur, this->edge_list[this->vertices[vert].elo + k], ans);
             // break if no more common neighbors
             if (f == -1) break;
 

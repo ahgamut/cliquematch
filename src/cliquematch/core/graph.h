@@ -22,7 +22,7 @@ class graph
     std::size_t eb_size;
     std::chrono::time_point<std::chrono::steady_clock> start_time;
 
-    short find_if_neighbors(const vertex&, std::size_t, std::size_t&) const;
+    short find_if_neighbors(std::size_t, std::size_t, std::size_t&) const;
     double elapsed_time() const;
     void set_vertices();
 

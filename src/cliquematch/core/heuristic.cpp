@@ -17,8 +17,8 @@ void graph::heur_one_clique(size_t cur, vector<vtriple>& neighbors, graphBits& r
     // more likely to be part of a clique
     // so it goes through them in O(N^2) to find a clique
     // (dfs is exponential complexity)
-    res.clear();
-    cand.clear();
+    res.clear(this->vertices[cur].N);
+    cand.clear(this->vertices[cur].N);
     res.set(this->vertices[cur].spos);
 
     size_t ans;
@@ -60,8 +60,7 @@ void graph::heur_one_clique(size_t cur, vector<vtriple>& neighbors, graphBits& r
         // modify candidate list using neib's neighbors
         for (j = i + 1; j < cand_max; j++)
         {
-            if (find_if_neighbors(this->vertices[neighbors[j].id], neighbors[i].id,
-                                  ans) == 1)
+            if (find_if_neighbors(neighbors[j].id, neighbors[i].id, ans) == 1)
                 continue;
             else
             {

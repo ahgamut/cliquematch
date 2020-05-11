@@ -4,10 +4,11 @@
 
 using namespace std;
 
-short graph::find_if_neighbors(const vertex& v1, std::size_t v2_id,
+short graph::find_if_neighbors(std::size_t v1_id, std::size_t v2_id,
                                std::size_t& v2_position) const
 {
-    return binary_find(&(this->edge_list[v1.elo]), v1.N, v2_id, v2_position);
+    return binary_find(&(this->edge_list[this->vertices[v1_id].elo]),
+                       this->vertices[v1_id].N, v2_id, v2_position);
 }
 double graph::elapsed_time() const
 {
