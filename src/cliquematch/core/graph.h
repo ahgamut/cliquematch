@@ -7,6 +7,8 @@
 #include <set>
 #include <utility>
 
+struct vtriple;
+
 class graph
 {
    private:
@@ -57,7 +59,8 @@ class graph
     std::size_t dfs_all_cliques(std::size_t start_vertex = 0, double time_limit = 1000);
 
     // using the heuristic for finding ONE clique
-    void heur_one_clique(std::size_t cur);
+    void heur_one_clique(std::size_t cur, std::vector<vtriple>& neighbors, graphBits&,
+                         graphBits&);
     std::size_t heur_all_cliques(std::size_t start_vertex = 0, double time_limit = 100);
 
     // finding OTHER max cliques
