@@ -43,6 +43,7 @@ void init_pygraph(p::module& m)
         .def("to_edgelist", &pygraph::to_edgelist)
         .def("to_matrix", &pygraph::to_adj_matrix)
         .def("to_adjlist", &pygraph::to_adj_list)
-        .def("__repr__", [](pygraph& zz) { return zz.showdata(); })
-        .def("__str__", [](pygraph& zz) { return zz.showdata(); });
+        .def("__repr__", &pygraph::showdata)
+        .def("__str__", &pygraph::showdata)
+        .def("__del__", &pygraph::cleaner);
 }

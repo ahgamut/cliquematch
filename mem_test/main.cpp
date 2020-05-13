@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     std::cout << "Testing cliquematch core with sample... \n";
     if (argc < 2)
@@ -22,12 +22,13 @@ int main(int argc, char *argv[])
         use_dfs = false;
     }
     auto edges = mmio3_reader(argv[1], no_of_vertices, no_of_edges);
-    graph G(no_of_vertices, no_of_edges, edges);
-    G.find_max_cliques(start_vertex, heur_done, use_heur, use_dfs, limit);
-    auto ans = G.get_max_clique();
+    graph* G = new graph(no_of_vertices, no_of_edges, edges);
+    G->find_max_cliques(start_vertex, heur_done, use_heur, use_dfs, limit);
+    auto ans = G->get_max_clique();
 
-    std::cout << G.duration << "s: clique of size: " << G.CUR_MAX_CLIQUE_SIZE << "\n";
+    std::cout << G->duration << "s: clique of size: " << G->CUR_MAX_CLIQUE_SIZE << "\n";
     for (auto x : ans) { std::cout << x << " "; }
     std::cout << "\n";
+    delete G;
     return 0;
 }
