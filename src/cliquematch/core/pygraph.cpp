@@ -8,6 +8,8 @@
 
 namespace py = pybind11;
 
+// Initialization and Destruction
+
 pygraph::pygraph()
 {
     nvert = 0;
@@ -23,16 +25,12 @@ pygraph::pygraph()
     ans_found = false;
     inited = false;
 }
-void pygraph::cleaner()
+void pygraphDeleter::operator()(pygraph* pg)
 {
-    if (this->inited)
-    {
-        std::cout << "cleaning out " << this << std::endl;
-        delete this->G;
-    }
-    this->inited = false;
+    if (pg->inited) delete pg->G;
+    pg->inited = false;
+    delete pg;
 }
-
 void pygraph::load_graph(std::size_t n_vertices, std::size_t n_edges,
                          std::vector<std::set<std::size_t>> edges)
 {
@@ -52,7 +50,8 @@ void pygraph::load_graph(std::size_t n_vertices, std::size_t n_edges,
     this->inited = true;
 }
 
-//' Helper function to find maximum clique, does not return anything
+// Computation
+
 void pygraph::find_max_clique()
 {
     if (this->G->n_vert == 0) throw CM_ERROR("Graph is not initialized!!\n");
@@ -68,7 +67,6 @@ void pygraph::find_max_clique()
     ans_found = true;
     finished_all = finished_heur && (current_vertex >= nvert);
 }
-
 // Finds the maximum clique and returns it as a std::vector
 std::vector<std::size_t> pygraph::get_max_clique()
 {
@@ -77,7 +75,6 @@ std::vector<std::size_t> pygraph::get_max_clique()
         throw CM_ERROR("Unable to find maximum clique with given bounds\n");
     return this->ans_clique;
 }
-
 void pygraph::continue_search()
 {
     if (!finished_all)
@@ -90,7 +87,6 @@ void pygraph::continue_search()
         std::cerr << "Search is complete.\n";
     }
 }
-
 //' The clique search can be reset in case the current set of parameters were
 // not optimal
 void pygraph::reset_search()
@@ -102,6 +98,8 @@ void pygraph::reset_search()
     this->G->CUR_MAX_CLIQUE_SIZE = 1;
     this->G->CUR_MAX_CLIQUE_LOC = 0;
 }
+
+// IO
 
 std::string pygraph::showdata()
 {
@@ -118,7 +116,6 @@ std::string pygraph::showdata()
     ss << ")";
     return ss.str();
 }
-
 pygraph from_file(std::string filename)
 {
     std::string fname = filename;
@@ -284,6 +281,7 @@ std::vector<std::set<std::size_t>> pygraph::to_adj_list()
     return edges;
 }
 
+// Subgraph isomorphisms
 std::vector<std::pair<std::size_t, std::size_t>> iso_edges(std::size_t& nv,
                                                            std::size_t& ne,
                                                            const pygraph& g1,

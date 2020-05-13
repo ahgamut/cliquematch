@@ -11,7 +11,8 @@ void init_GraphTemplate(py::module& m, std::string classname)
 {
     using namespace pybind11;
     using GClass = GraphTemplate<List1, List2, Delta1, Delta2, EpsType>;
-    class_<GClass, pygraph>(m, classname.c_str())
+    class_<GClass, std::unique_ptr<GClass, pygraphDeleter>, pygraph>(m,
+                                                                     classname.c_str())
         .def(init<>())
         .def_readwrite("epsilon", &GClass::pts_epsilon,
                        "Set error bound for edge construction with metrics")

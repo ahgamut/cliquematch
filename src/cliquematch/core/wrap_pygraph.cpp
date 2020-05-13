@@ -7,7 +7,7 @@ using namespace pybind11;
 
 void init_pygraph(p::module& m)
 {
-    class_<pygraph>(m, "Graph")
+    class_<pygraph, std::unique_ptr<pygraph, pygraphDeleter>>(m, "Graph")
         .def(init<>())
         .def_readwrite("use_heuristic", &pygraph::use_heur,
                        "Search using the heuristic if true")
@@ -44,6 +44,5 @@ void init_pygraph(p::module& m)
         .def("to_matrix", &pygraph::to_adj_matrix)
         .def("to_adjlist", &pygraph::to_adj_list)
         .def("__repr__", &pygraph::showdata)
-        .def("__str__", &pygraph::showdata)
-        .def("__del__", &pygraph::cleaner);
+        .def("__str__", &pygraph::showdata);
 }

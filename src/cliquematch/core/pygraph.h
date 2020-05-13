@@ -17,6 +17,7 @@ using ndarray =
     pybind11::array_t<dtype, pybind11::array::c_style | pybind11::array::forcecast>;
 
 class graph;
+
 class pygraph
 {
    private:
@@ -37,7 +38,6 @@ class pygraph
     std::size_t current_vertex;
 
     pygraph();
-    void cleaner();
     void continue_search();
     void reset_search();
     std::vector<std::size_t> get_max_clique();
@@ -55,8 +55,14 @@ class pygraph
                                                                       std::size_t&,
                                                                       const pygraph&,
                                                                       const pygraph&);
+    friend class pygraphDeleter;
 };
 
+class pygraphDeleter
+{
+   public:
+    void operator()(pygraph* pg);
+};
 pygraph from_adj_matrix(ndarray<bool> adjmat);
 pygraph from_edgelist(ndarray<std::size_t> edge_list, std::size_t no_of_vertices);
 pygraph from_file(std::string filename);
