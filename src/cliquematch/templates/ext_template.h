@@ -35,7 +35,8 @@ class GraphTemplate : public SlowTemplate<List1, List2>
         std::function<bool(List1&, std::size_t, std::size_t, List2&, std::size_t,
                            std::size_t)>
             cfunc);
-
+    // overloads are defined as such because default arguments to pybind11
+    // does not allow dummy_comparison<List, Delta>
     bool build_edges(List1& pts1, std::size_t pts1_len, List2& pts2,
                      std::size_t pts2_len,
                      std::function<bool(List1&, std::size_t, std::size_t, List2&,
