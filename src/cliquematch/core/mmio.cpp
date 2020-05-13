@@ -45,11 +45,6 @@ vector<pair<size_t, size_t>> mmio3_reader(const char* filename, size_t& n_vert,
     }
     f.close();
 
-    std::sort(Edges.begin(), Edges.end());
-    auto it = std::unique(Edges.begin(), Edges.end());
-    Edges.resize(std::distance(Edges.begin(), it));
-    n_edges = (Edges.size() - (n_vert + 1)) / 2;
-
     if (n_invalids != 0)
         cerr << "Warning: " << n_invalids
              << " invalid edges ignored while reading file\n";

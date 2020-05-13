@@ -198,7 +198,7 @@ pygraph from_adj_list(std::size_t n_vertices, std::size_t n_edges,
     pygraph pg;
     for (std::size_t i = 0; i < edges.size(); i++)
     {
-        for (auto &j : edges[i])
+        for (auto& j : edges[i])
         {
             if (j == 0 || j > n_vertices || j == i ||
                 edges[j].find(i) == edges[j].end())
@@ -272,4 +272,12 @@ std::vector<std::set<std::size_t>> pygraph::to_adj_list()
         edges[j].insert(i);
     });
     return edges;
+}
+
+std::vector<std::pair<std::size_t, std::size_t>> iso_edges(std::size_t& nv,
+                                                           std::size_t& ne,
+                                                           const pygraph& g1,
+                                                           const pygraph& g2)
+{
+    return iso_edges(nv, ne, g1.G, g2.G);
 }

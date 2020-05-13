@@ -4,7 +4,6 @@
 #include <templates/ext_template.h>
 #include <cstring>
 #include <iostream>
-#include <algorithm>
 
 namespace py = pybind11;
 // template syntax brain hurty
@@ -111,7 +110,9 @@ bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges_condition
 {
     std::size_t no_of_vertices = pts1_len * pts2_len, no_of_edges = 0;
     std::size_t i1, i2, j1, j2, v1, v2;
-    std::vector<std::set<std::size_t>> edges(no_of_vertices + 1);
+    std::vector<std::pair<std::size_t, std::size_t>> edges(no_of_vertices + 1);
+
+    for (v1 = 0; v1 < edges.size(); v1++) edges[v1] = {v1, v1};
 
     for (i1 = 0; i1 < pts1_len; ++i1)
     {
@@ -125,14 +126,14 @@ bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges_condition
                     {
                         v1 = i1 * pts2_len + j1 + 1;
                         v2 = i2 * pts2_len + j2 + 1;
-                        edges[v1].insert(v2);
-                        edges[v2].insert(v1);
+                        edges.push_back(std::make_pair(v1, v2));
+                        edges.push_back(std::make_pair(v2, v1));
 
                         // ouch
                         v1 = i2 * pts2_len + j1 + 1;
                         v2 = i1 * pts2_len + j2 + 1;
-                        edges[v1].insert(v2);
-                        edges[v2].insert(v1);
+                        edges.push_back(std::make_pair(v1, v2));
+                        edges.push_back(std::make_pair(v2, v1));
 
                         no_of_edges += 2;
                     }
@@ -140,6 +141,7 @@ bool GraphTemplate<List1, List2, Delta1, Delta2, EpsType>::build_edges_condition
             }
         }
     }
+    this->load_graph(no_of_vertices, no_of_edges, edges);
     return true;
 }
 
@@ -227,11 +229,7 @@ std::vector<std::pair<std::size_t, std::size_t>> edges_from_relsets(
     n_edges = 0;
 
     if (M == 0 || N == 0)
-    {
-        throw std::runtime_error("One of the sets is empty (initialization error)\n" +
-                                 std::string(__FILE__) + "  " +
-                                 std::to_string(__LINE__) + "\n");
-    }
+        throw CM_ERROR("One of the sets is empty (initialization error)\n");
 
     std::vector<std::pair<std::size_t, std::size_t>> Edges(n_vert + 1);
     for (i = 0; i < Edges.size(); i++) Edges[i] = {i, i};
@@ -255,12 +253,6 @@ std::vector<std::pair<std::size_t, std::size_t>> edges_from_relsets(
         if (found1 == -1) break;
         found2 = binary_find2(base, len2, cur_ub, ub_loc);
         if (found2 == -1) ub_loc = len2 - 1;
-
-        if (lb_loc > ub_loc)
-        {
-            cerr << "Overflow glitch?!?!\n";
-            break;
-        }
 
         for (j = lb_loc; j <= ub_loc; j++)
         {
@@ -283,10 +275,6 @@ std::vector<std::pair<std::size_t, std::size_t>> edges_from_relsets(
         }
     }
 
-    std::sort(Edges.begin(), Edges.end());
-    auto it = std::unique(Edges.begin(), Edges.end());
-    Edges.resize(std::distance(Edges.begin(), it));
-    n_edges = (Edges.size() - (n_vert + 1)) / 2;
     return Edges;
 }
 
@@ -303,11 +291,8 @@ std::vector<std::pair<std::size_t, std::size_t>> efr_condition(
     n_edges = 0;
 
     if (M == 0 || N == 0)
-    {
-        throw std::runtime_error("One of the sets is empty (initialization error)\n" +
-                                 std::string(__FILE__) + "  " +
-                                 std::to_string(__LINE__) + "\n");
-    }
+        throw CM_ERROR("One of the sets is empty (initialization error)\n");
+
     std::vector<std::pair<std::size_t, std::size_t>> Edges(n_vert + 1);
     for (i = 0; i < Edges.size(); i++) Edges[i] = {i, i};
 
@@ -331,12 +316,6 @@ std::vector<std::pair<std::size_t, std::size_t>> efr_condition(
         if (found1 == -1) break;
         found2 = binary_find2(base, len2, cur_ub, ub_loc);
         if (found2 == -1) ub_loc = len2 - 1;
-
-        if (lb_loc > ub_loc)
-        {
-            cerr << "Overflow glitch?!?!\n";
-            break;
-        }
 
         for (j = lb_loc; j <= ub_loc; j++)
         {
@@ -368,10 +347,6 @@ std::vector<std::pair<std::size_t, std::size_t>> efr_condition(
         }
     }
 
-    std::sort(Edges.begin(), Edges.end());
-    auto it = std::unique(Edges.begin(), Edges.end());
-    Edges.resize(std::distance(Edges.begin(), it));
-    n_edges = (Edges.size() - (n_vert + 1)) / 2;
     return Edges;
 }
 
