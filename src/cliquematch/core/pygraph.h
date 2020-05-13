@@ -5,7 +5,9 @@
     std::runtime_error((x) + std::string(__FILE__) + " " + std::to_string(__LINE__) + \
                        "\n")
 
-#include <core/graph.h>
+#include <set>
+#include <vector>
+#include <utility>
 #include <cmath>
 // need to #include<cmath> before pybind11/numpy otherwise issues with ::hypot
 #include <pybind11/numpy.h>
@@ -14,10 +16,13 @@ template <typename dtype>
 using ndarray =
     pybind11::array_t<dtype, pybind11::array::c_style | pybind11::array::forcecast>;
 
+class graph;
+
 class pygraph
 {
    private:
-    graph G;
+    graph* G;
+    bool inited;
     bool ans_found;
     void find_max_clique();
     std::vector<std::size_t> ans_clique;
@@ -50,8 +55,14 @@ class pygraph
                                                                       std::size_t&,
                                                                       const pygraph&,
                                                                       const pygraph&);
+    friend class pygraphDeleter;
 };
 
+class pygraphDeleter
+{
+   public:
+    void operator()(pygraph* pg);
+};
 pygraph from_adj_matrix(ndarray<bool> adjmat);
 pygraph from_edgelist(ndarray<std::size_t> edge_list, std::size_t no_of_vertices);
 pygraph from_file(std::string filename);

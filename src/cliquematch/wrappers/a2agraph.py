@@ -3,7 +3,7 @@
    cliquematch.A2AGraph
    ~~~~~~~~~~~~~~~~~~~~
 
-   A convenience wrapper over cliquematchcliquematch.core.A2AGraph
+   A convenience wrapper over cliquematch.core.A2AGraph
 
    :copyright: (c) 2019 by gnv3.
    :license: see LICENSE for more details.
@@ -46,22 +46,22 @@ class A2AGraph(_A2AGraph):
             args = args + [self.d1, self.is_d1_symmetric]
             if self.d2:
                 args = args + [self.d2, self.is_d2_symmetric]
-        return _A2AGraph.build_edges_metric_only(*args)
+        return _A2AGraph._build_edges_metric_only(*args)
 
     def build_edges_with_condition(self, condition_func, use_cfunc_only):
         args = [self, self.S1, len(self.S1), self.S2, len(self.S2), condition_func]
         if use_cfunc_only:
-            return _A2AGraph.build_edges_condition_only(*args)
+            return _A2AGraph._build_edges_condition_only(*args)
         else:
             if self.d1:
                 args = args + [self.d1, self.is_d1_symmetric]
                 if self.d2:
                     args = args + [self.d2, self.is_d2_symmetric]
-            return _A2AGraph.build_edges(*args)
+            return _A2AGraph._build_edges(*args)
 
     def get_correspondence(self, return_indices=True):
         """
-        Wrapper over cm_base.A2AGraph.get_correspondence
+        Wrapper over core.A2AGraph._get_correspondence
 
         :return_indices: bool
             if true, returns the indices of the corresponding points
@@ -69,7 +69,7 @@ class A2AGraph(_A2AGraph):
         :returns: List[ndarray, ndarray]
 
         """
-        indices = _A2AGraph.get_correspondence(self, len(self.S1), len(self.S2))
+        indices = _A2AGraph._get_correspondence(self, len(self.S1), len(self.S2))
         if not return_indices:
             answer = [self.S1[indices[0], :], self.S2[indices[1], :]]
         else:

@@ -20,10 +20,10 @@ bool Isograph::build_edges(pygraph& s1, pygraph& s2)
 void init_Isograph(py::module& m)
 {
     using namespace pybind11;
-    class_<Isograph, pygraph>(m, "IsoGraph")
+    class_<Isograph, std::unique_ptr<Isograph, pygraphDeleter>, pygraph>(m, "IsoGraph")
         .def(init<>())
-        .def("build_edges", &Isograph::build_edges, "g1"_a, "g2"_a)
-        .def("get_correspondence", &Isograph::get_correspondence)
+        .def("_build_edges", &Isograph::build_edges, "g1"_a, "g2"_a)
+        .def("_get_correspondence", &Isograph::get_correspondence)
         .def("__repr__", [](Isograph& zz) { return zz.showdata(); })
         .def("__str__", [](Isograph& zz) { return zz.showdata(); });
 }

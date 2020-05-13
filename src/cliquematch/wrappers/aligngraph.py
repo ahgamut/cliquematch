@@ -3,7 +3,7 @@
     cliquematch.AlignGraph
     ~~~~~~~~~~~~~~~~~~~~~~
 
-    a wrapper over cliquematchcliquematch.core.AlignGraph
+    a wrapper over cliquematch.core.AlignGraph
     to maintain ndarrays
 
     :copyright: (c) 2020 by Gautham Venkatasubramanian.
@@ -83,14 +83,14 @@ class AlignGraph(_AlignGraph):
 
     def build_edges(self):
         args = [self, self.S1, len(self.S1), self.S2, len(self.S2)]
-        return _AlignGraph.build_edges_metric_only(*args)
+        return _AlignGraph._build_edges_metric_only(*args)
 
     def build_edges_with_condition(self, condition_func, use_cfunc_only):
         args = [self, self.S1, len(self.S1), self.S2, len(self.S2), condition_func]
         if use_cfunc_only:
-            return _AlignGraph.build_edges_condition_only(*args)
+            return _AlignGraph._build_edges_condition_only(*args)
         else:
-            return _AlignGraph.build_edges(*args)
+            return _AlignGraph._build_edges(*args)
 
     def build_edges_with_filter(self, control_points, filter_mask, percentage):
         args = [
@@ -103,7 +103,7 @@ class AlignGraph(_AlignGraph):
             filter_mask,
             percentage,
         ]
-        _AlignGraph.build_edges_with_filter(*args)
+        _AlignGraph._build_edges_with_filter(*args)
 
     def get_correspondence(self):
         """
@@ -117,7 +117,7 @@ class AlignGraph(_AlignGraph):
             to transform `S1` to `S2`
             (obtained via `Kabsch Algorithm <https://en.wikipedia.org/wiki/Kabsch_algorithm>`)
         """
-        indices = _AlignGraph.get_correspondence(self, len(self.S1), len(self.S2))
+        indices = _AlignGraph._get_correspondence(self, len(self.S1), len(self.S2))
         ans = [self.S1[indices[0], :], self.S2[indices[1], :]]
         # I want to find R, T such that S1*R + T = S2
 

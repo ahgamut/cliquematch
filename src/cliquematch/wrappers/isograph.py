@@ -3,7 +3,7 @@
     cliquematch.IsoGraph
     ~~~~~~~~~~~~~~~~~~~~
 
-    A wrapper class over cliquematchcliquematch.core.L2LGraph
+    A wrapper class over cliquematch.core.IsoGraph
     to find subgraph isomorphisms using cliques in a
     product graph
 
@@ -24,11 +24,11 @@ class IsoGraph(_IsoGraph):
         self.S2 = G2
 
     def build_edges(self):
-        _IsoGraph.build_edges(self, self.S1, self.S2)
+        _IsoGraph._build_edges(self, self.S1, self.S2)
 
     def get_correspondence(self):
         """
-        Wrapper over cm_base.L2LGraph.get_correspondence
+        Wrapper over core.IsoGraph._get_correspondence
 
         :return_indices: bool
             if true, returns the indices of the corresponding graph vertices
@@ -36,7 +36,7 @@ class IsoGraph(_IsoGraph):
         :returns: List
 
         """
-        indices = _IsoGraph.get_correspondence(
+        indices = _IsoGraph._get_correspondence(
             self, self.S1.n_vertices, self.S2.n_vertices
         )
         offset = lambda l: [x + 1 for x in l]

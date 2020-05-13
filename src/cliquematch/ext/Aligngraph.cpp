@@ -38,9 +38,11 @@ double inline filter_score(Eigen::Ref<DoubleMatrixR> control,
     rot_con.rowwise() += c;
 
     RCU = rot_con.cast<std::size_t>();
+    // assumption is M1, M2, control_pts and therefore RCU all are in the same
+    // coordinate system, i.e. (x,y) or (col, row)
     for (k = 0; k < static_cast<std::size_t>(rot_con.rows()); k++)
     {
-        if (RCU(k, 0) < m_r && RCU(k, 1) < m_c && msk(RCU(k, 0), RCU(k, 1)))
+        if (RCU(k, 1) < m_r && RCU(k, 0) < m_c && msk(RCU(k, 1), RCU(k, 0)))
             msk_score++;
     }
     msk_score /= rot_con.rows();
@@ -71,5 +73,5 @@ void init_Aligngraph(pybind11::module& mm)
     using a2a = GraphTemplate<Eigen::Ref<DoubleMatrixR>, Eigen::Ref<DoubleMatrixR>>;
     class_<Aligngraph, a2a>(mm, "AlignGraph")
         .def(init<>())
-        .def("build_edges_with_filter", &Aligngraph::build_edges_with_filter);
+        .def("_build_edges_with_filter", &Aligngraph::build_edges_with_filter);
 }
