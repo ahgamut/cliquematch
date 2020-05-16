@@ -13,7 +13,7 @@ template struct relset<Eigen::Ref<DoubleMatrixR>, double>;
 template struct GraphTemplate<Eigen::Ref<DoubleMatrixR>, Eigen::Ref<DoubleMatrixR>>;
 
 // required for wrapper template to instantiate
-// for calling from cm_base.cpp
+// for calling from core.cpp
 void init_A2Agraph(pybind11::module& mm)
 {
     init_GraphTemplate<Eigen::Ref<DoubleMatrixR>, Eigen::Ref<DoubleMatrixR>>(
