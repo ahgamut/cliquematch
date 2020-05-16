@@ -31,7 +31,7 @@ void graph::dfs_one_search(size_t cur, const graphBits& prev_cand,
     // so go through them recursively
     graphBits cand(prev_cand);
     graphBits res(prev_res);
-    graphBits future_cand(this->vertices[cur].N);
+    graphBits future_cand(prev_cand);
 
     size_t i, k;
     short f = 0;
@@ -49,32 +49,28 @@ void graph::dfs_one_search(size_t cur, const graphBits& prev_cand,
         // offset thru the edge list to get the neighbor vertex
         vert = this->edge_list[this->vertices[cur].elo + i];
         cand.reset(i);
-
-        // clear the list of future candidates so that we can try with a
-        // new set
-        future_cand.clear();
+        future_cand.reset(i);
 
         // assume vert is part of the clique
         res.set(i);
-
-        // Check if vert has any common neighbors to cur
-        // (apart from each other)
-        for (k = 0; k < this->vertices[vert].N; k++)
+        // Check if the remaining candidates in cur are neighbors to vert
+        for (k = i + 1; k < this->vertices[cur].N; k++)
         {
-            f = this->find_if_neighbors(
-                cur, this->edge_list[this->vertices[vert].elo + k], ans);
-            // break if no more common neighbors
-            if (f == -1) break;
-
-            // if there is a common neighbor,
-            // add it to the list of candidates for the recursive call
-            else if (f == 1 && cand[ans])
+            if (future_cand.block_empty(k))
             {
-                future_cand.set(ans);
-                // cerr<<this->edge_list[this->vertices[cur].elo+ans]<<"@"<<ans<<"\n";
+                k += (31 - k % 32);
+                continue;
+            }
+            if (!future_cand[k]) continue;
+            f = this->find_if_neighbors(
+                vert, this->edge_list[this->vertices[cur].elo + k], ans);
+            if (f != 1)
+            {
+                future_cand.reset(k);
                 f = 0;
             }
         }
+
         dfs_one_search(cur, future_cand, res);
 
         // we need to remove vert from clique consideration (undo
@@ -90,7 +86,7 @@ void graph::dfs_one_clique(size_t cur)
 {
     graphBits res(this->vertices[cur].N);
     graphBits cand(this->vertices[cur].N);
-    std::size_t i, vert;
+    std::size_t i, vert, mcs_potential = 1;
     res.set(this->vertices[cur].spos);
     // only search thru neighbors with greater degrees
     // (this amortizes the search cost because
@@ -102,8 +98,9 @@ void graph::dfs_one_clique(size_t cur)
         vert = this->edge_list[this->vertices[cur].elo + i];
         if (vert == cur || this->vertices[vert].N < this->vertices[cur].N) continue;
         cand.set(i);
+        mcs_potential++;
     }
-    dfs_one_search(cur, cand, res);
+    if (mcs_potential > CUR_MAX_CLIQUE_SIZE) dfs_one_search(cur, cand, res);
 }
 #endif
 

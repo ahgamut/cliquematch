@@ -11,18 +11,21 @@ using namespace std;
 
 void graph::dfs_one_clique(std::size_t cur)
 {
-    std::stack<SearchState> states;
-    std::size_t candidates_left, mcs_potential;
+    std::size_t candidates_left, mcs_potential = 1;
     std::size_t vert, ans;
     std::size_t i, k;
-    short f = 0;
     SearchState x(this->vertices[cur]);
     for (i = 0; i < this->vertices[cur].N; i++)
     {
         vert = this->edge_list[this->vertices[cur].elo + i];
         if (vert == cur || this->vertices[vert].N < this->vertices[cur].N) continue;
         x.cand.set(i);
+        mcs_potential++;
     }
+    if (mcs_potential <= this->CUR_MAX_CLIQUE_SIZE) return;
+
+    short f = 0;
+    std::stack<SearchState> states;
     states.push(x);
     while (!states.empty())
     {
@@ -33,10 +36,7 @@ void graph::dfs_one_clique(std::size_t cur)
         SearchState& cur_state = states.top();
         candidates_left = cur_state.cand.count();
         mcs_potential = candidates_left + cur_state.res.count();
-        /*
-                std::cout << cur << " " << candidates_left << ":" << mcs_potential << "
-           "; cur_state.res.show(&this->edge_list[this->vertices[cur].elo],
-                                   this->vertices[cur].N);*/
+
         if (mcs_potential > this->CUR_MAX_CLIQUE_SIZE)
         {
             if (candidates_left == 0)
@@ -62,36 +62,35 @@ void graph::dfs_one_clique(std::size_t cur)
 
                     // offset thru the edge list to get the neighbor vertex
                     vert = this->edge_list[this->vertices[cur].elo + i];
-                    cur_state.cand.reset(i);
 
                     // assume vert is part of the clique
                     future_state.res.set(i);
+                    future_state.cand.reset(i);
+                    future_state.start_at = i + 1;
 
-                    // Check if vert has any common neighbors to cur
-                    // (apart from each other)
-                    for (k = 0; k < this->vertices[vert].N; k++)
+                    // Check if the remaining candidates in cur are neighbors to vert
+                    for (k = i + 1; k < this->vertices[cur].N; k++)
                     {
-                        f = this->find_if_neighbors(
-                            cur, this->edge_list[this->vertices[vert].elo + k], ans);
-                        // break if no more common neighbors
-                        if (f == -1) break;
-
-                        // if there is a common neighbor,
-                        // add it to the list of candidates for the recursive
-                        // call
-                        else if (f == 1 && cur_state.cand[ans])
+                        if (future_state.cand.block_empty(k))
                         {
-                            future_state.cand.set(ans);
-                            // cerr<<this->edge_list[this->vertices[cur].elo+ans]<<"@"<<ans<<"\n";
+                            k += (31 - k % 32);
+                            continue;
+                        }
+                        if (!future_state.cand[k]) continue;
+                        f = this->find_if_neighbors(
+                            vert, this->edge_list[this->vertices[cur].elo + k], ans);
+                        if (f != 1)
+                        {
+                            future_state.cand.reset(k);
                             f = 0;
                         }
                     }
-                    future_state.cand.reset(i);
                     // next time we return to this state, we can start searching
                     // using ONLY the vertices after vert, because vert will get
                     // covered by future_state and its descendants
-                    cur_state.res.reset(i);
                     states.push(future_state);
+                    cur_state.cand.reset(i);
+                    cur_state.res.reset(i);
                     break;
                 }
             }
