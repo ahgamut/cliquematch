@@ -13,7 +13,7 @@ void graph::dfs_one_search(size_t cur, const graphBits& prev_cand,
 #if BENCHMARKING == 0
     if (this->elapsed_time() > this->TIME_LIMIT) return;
 #endif
-    if (CUR_MAX_CLIQUE_SIZE > CLIQUE_LIMIT) return;
+    if (CUR_MAX_CLIQUE_SIZE >= CLIQUE_LIMIT) return;
     if (mcs_potential <= this->CUR_MAX_CLIQUE_SIZE) return;
 
     // no candidates left => clique cannot grow

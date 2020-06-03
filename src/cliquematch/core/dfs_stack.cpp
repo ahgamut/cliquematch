@@ -29,7 +29,7 @@ void graph::dfs_one_clique(std::size_t cur)
     states.push(x);
     while (!states.empty())
     {
-        if (this->CUR_MAX_CLIQUE_SIZE > this->CLIQUE_LIMIT) return;
+        if (this->CUR_MAX_CLIQUE_SIZE >= this->CLIQUE_LIMIT) return;
 #if BENCHMARKING == 0
         if (this->elapsed_time() > this->TIME_LIMIT) return;
 #endif

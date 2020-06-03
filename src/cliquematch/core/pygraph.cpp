@@ -60,7 +60,9 @@ void pygraph::find_max_clique()
     this->G->CUR_MAX_CLIQUE_SIZE = this->lower_bound > this->G->CUR_MAX_CLIQUE_SIZE
                                        ? this->lower_bound
                                        : this->G->CUR_MAX_CLIQUE_SIZE;
-    this->G->CLIQUE_LIMIT = this->upper_bound;
+    this->G->CLIQUE_LIMIT = this->upper_bound < this->G->max_degree
+                                ? this->upper_bound
+                                : this->G->max_degree;
     this->G->find_max_cliques(current_vertex, finished_heur, use_heur, use_dfs,
                               time_lim);
     ans_clique = this->G->get_max_clique();

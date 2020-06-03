@@ -87,6 +87,7 @@ void graph::set_vertices()
 {
     for (size_t i = 0; i < vertices.size(); i++)
         vertices[i].set_spos(this->edge_list.data(), this->edge_bits.data());
+    this->CLIQUE_LIMIT = this->max_degree;
 }
 
 void graph::find_max_cliques(size_t& start_vert, bool& heur_done, bool use_heur,
@@ -122,7 +123,7 @@ size_t graph::dfs_all_cliques(size_t start_vertex, double time_limit)
     for (; i < vertices.size(); i++)
     {
         if (this->vertices[i].N <= CUR_MAX_CLIQUE_SIZE ||
-            CUR_MAX_CLIQUE_SIZE > CLIQUE_LIMIT)
+            CUR_MAX_CLIQUE_SIZE >= CLIQUE_LIMIT)
             continue;
 #if BENCHMARKING == 0
         if (this->elapsed_time() > TIME_LIMIT) break;

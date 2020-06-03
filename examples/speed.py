@@ -4,28 +4,30 @@ import argparse
 import time
 
 BENCHMARK_GRAPHS = {
-    "ca-AstroPh": ("", False),
-    "ca-CondMat": ("", False),
-    "ca-GrQc": ("", False),
-    "ca-HepPh": ("", False),
-    "ca-HepTh": ("", False),
-    "Erdos02": ("", False),
-    "Erdos972": ("", False),
-    "fe_body": ("", False),
-    "fe_sphere": ("", False),
-    "cti": ("", False),
-    "delaunay_n13": ("", False),
-    "cond-mat-2003": ("", True),
+    "Erdos02": "https://sparse.tamu.edu/Pajek/Erdos02",
+    "Erdos972": "https://sparse.tamu.edu/Pajek/Erdos972",
+    "Erdos982": "https://sparse.tamu.edu/Pajek/Erdos982",
+    "Erdos992": "https://sparse.tamu.edu/Pajek/Erdos992",
+    "ca-AstroPh": "https://sparse.tamu.edu/SNAP/ca-AstroPh",
+    "ca-CondMat": "https://sparse.tamu.edu/SNAP/ca-CondMat",
+    "ca-GrQc": "https://sparse.tamu.edu/SNAP/ca-GrQc",
+    "ca-HepPh": "https://sparse.tamu.edu/SNAP/ca-HepPh",
+    "ca-HepTh": "https://sparse.tamu.edu/SNAP/ca-HepTh",
+    "caidaRouterLevel": "https://sparse.tamu.edu/DIMACS10/caidaRouterLevel",
+    "coPapersCiteseer": "https://sparse.tamu.edu/DIMACS10/coPapersCiteseer",
+    "cond-mat-2003": "https://sparse.tamu.edu/Newman/cond-mat-2003",
+    "cti": "https://sparse.tamu.edu/DIMACS10/cti",
 }
 HELP_STRING = (
-    "Check speed of cliquematch for various benchmark graph(s):\n\n\t"
-    + "\n\t".join(["%s \t %s" % (k, v[0]) for k, v in BENCHMARK_GRAPHS.items()])
+    "Check speed of cliquematch for various benchmark graph(s).\n"
+    "It requires .mtx files downloaded and extracted from the following links:\n\n\t"
+    + "\n\t".join(["%s \t %s" % (k, v) for k, v in BENCHMARK_GRAPHS.items()])
 )
 
 
 def runner(name_list, use_dfs, use_heuristic):
     print(
-        "{:<15s}{:>15s}{:>15s}{:>15s}{:>15s}".format(
+        "{:<18s}{:>18s}{:>18s}{:>18s}{:>18s}".format(
             "Name", "#Vertices", "#Edges", "Clique Size", "Time"
         )
     )
@@ -39,7 +41,7 @@ def runner(name_list, use_dfs, use_heuristic):
         ans = G.get_max_clique()
         t = time.time() - start
         print(
-            "{:<15s}{:>15d}{:>15d}{:>15d}{:>15.5f}".format(
+            "{:<18s}{:>18d}{:>18d}{:>18d}{:>18.5f}".format(
                 x, G.n_vertices, G.n_edges, len(ans), t
             )
         )
@@ -67,6 +69,12 @@ def main():
     a = parser.parse_args()
     if a.names == []:
         a.names = sorted(list(BENCHMARK_GRAPHS.keys()))
+    else:
+        for x in a.names:
+            assert (
+                x in BENCHMARK_GRAPHS.keys()
+            ), "%s is invalid benchmark graph name" % (x)
+
     runner(a.names, bool(a.use_dfs), bool(a.use_heuristic))
 
 

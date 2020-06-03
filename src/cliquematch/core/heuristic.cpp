@@ -103,7 +103,7 @@ size_t graph::heur_all_cliques(size_t start_vertex, double TIME_LIMIT)
     graphBits res(this->max_degree);
     graphBits cand(this->max_degree);
 
-    for (i = 0; i < vertices.size() && CUR_MAX_CLIQUE_SIZE <= CLIQUE_LIMIT; i++)
+    for (i = 0; i < vertices.size() && CUR_MAX_CLIQUE_SIZE < CLIQUE_LIMIT; i++)
     {
 #if BENCHMARKING == 0
         if (this->elapsed_time() > TIME_LIMIT) break;
