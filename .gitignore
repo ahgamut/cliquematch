@@ -19,6 +19,11 @@ papers/
 *.mtx
 !tests/*.mtx
 
+# ignore data needed for applications
+examples/*.ppm
+examples/*.sd
+examples/*.png
+
 # C extensions
 *.so
 *.o
