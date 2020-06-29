@@ -6,6 +6,8 @@ quickly as possible. It also provides a framework with generic classes for imple
 maximum clique problem: finding a (sub)set of corresponding elements between two sets *S*<sub>1</sub> and
 *S*<sub>2</sub>.
 
+Licensed under MIT License.
+
 ## Installation Instructions
 
 ### Installing from a wheel
