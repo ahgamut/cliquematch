@@ -49,10 +49,13 @@ double inline filter_score(Eigen::Ref<DoubleMatrixR> control,
     return msk_score;
 }
 
-void Aligngraph::build_edges_with_filter(
-    Eigen::Ref<DoubleMatrixR>& pts1, size_t pts1_len, Eigen::Ref<DoubleMatrixR>& pts2,
-    size_t pts2_len, Eigen::Ref<DoubleMatrixR> control_pts,
-    Eigen::Ref<BoolMatrixR> mask, double percentage)
+void Aligngraph::build_edges_with_filter(Eigen::Ref<DoubleMatrixR>& pts1,
+                                         std::size_t pts1_len,
+                                         Eigen::Ref<DoubleMatrixR>& pts2,
+                                         std::size_t pts2_len,
+                                         Eigen::Ref<DoubleMatrixR> control_pts,
+                                         Eigen::Ref<BoolMatrixR> mask,
+                                         double percentage)
 {
     Eigen::RowVector2d _c;
     DoubleMatrixR _rot_con(control_pts.rows(), control_pts.cols());
@@ -71,7 +74,9 @@ void init_Aligngraph(pybind11::module& mm)
 {
     using namespace pybind11;
     using a2a = GraphTemplate<Eigen::Ref<DoubleMatrixR>, Eigen::Ref<DoubleMatrixR>>;
-    class_<Aligngraph, a2a>(mm, "AlignGraph")
+    class_<Aligngraph, a2a>(
+        mm, "AlignGraph",
+        "perform alignment of images with interest points with a special filter")
         .def(init<>())
         .def("_build_edges_with_filter", &Aligngraph::build_edges_with_filter);
 }

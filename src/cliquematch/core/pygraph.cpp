@@ -1,6 +1,6 @@
+#include <core/pygraph.h>
 #include <core/mmio.h>
 #include <core/graph.h>
-#include <core/pygraph.h>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>

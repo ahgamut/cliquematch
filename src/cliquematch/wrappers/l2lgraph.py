@@ -25,8 +25,6 @@ class L2LGraph(_L2LGraph):
         A simple wrapper over the base class, just to avoid copying
         """
         _L2LGraph.__init__(self)
-        assert isinstance(set1, list)
-        assert isinstance(set2, list)
         self.S1 = set1
         self.S2 = set2
         self.d1 = None

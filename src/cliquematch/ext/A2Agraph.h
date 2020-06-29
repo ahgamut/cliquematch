@@ -14,7 +14,7 @@ double dummy_comparison<Eigen::Ref<DoubleMatrixR>, double>(
 
 extern template struct relset<Eigen::Ref<DoubleMatrixR>, double>;
 
-extern template struct GraphTemplate<Eigen::Ref<DoubleMatrixR>,
+extern template class GraphTemplate<Eigen::Ref<DoubleMatrixR>,
                                      Eigen::Ref<DoubleMatrixR>>;
 
 #endif /* A2AGRAPH_H */

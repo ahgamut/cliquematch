@@ -1,0 +1,38 @@
+# modified sample from https://packaging.python.org/guides/supporting-windows-using-appveyor/
+version: 1.0.0a{build}
+branches:
+  only:
+    - master
+max_jobs: 3
+clone_depth: 3
+build: off
+
+environment:
+  matrix:
+    - PYTHON: "C:\\Python35"
+    - PYTHON: "C:\\Python36"
+    - PYTHON: "C:\\Python37"
+    - PYTHON: "C:\\Python38"
+    - PYTHON: "C:\\Python35-x64"
+    - PYTHON: "C:\\Python36-x64"
+    - PYTHON: "C:\\Python37-x64"
+    - PYTHON: "C:\\Python38-x64"
+
+install:
+  - "git submodule update --init --recursive"
+  - "%PYTHON%\\python.exe -m pip install -U -q pip wheel setuptools"
+  - "%PYTHON%\\Scripts\\pip install -q numpy>=1.15 --prefer-binary"
+  - "%PYTHON%\\Scripts\\pip install -q pybind11>=2.2 pytest"
+
+test_script:
+  - "%PYTHON%\\python.exe setup.py install"
+  - "%PYTHON%\\Scripts\\pytest"
+
+after_test:
+  - "%PYTHON%\\python.exe setup.py bdist_wheel"
+
+artifacts:
+  - path: dist\*.whl
+
+#on_success:
+

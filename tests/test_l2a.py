@@ -69,9 +69,6 @@ class TestL2AGraph(object):
         S1 = np.float64(np.random.uniform(0, 100, (20, 2)))
         S2 = np.float64(np.random.uniform(0, 100, (20, 2)))
 
-        with pytest.raises(AssertionError):
-            G0 = cliquematch.L2AGraph(S1, S2)
-
         S1 = S1.tolist()
 
         ds1 = dummy(2)

@@ -4,11 +4,11 @@
 
 using namespace std;
 
-void graph::dfs_one_search(size_t cur, const graphBits& prev_cand,
+void graph::dfs_one_search(std::size_t cur, const graphBits& prev_cand,
                            const graphBits& prev_res)
 {
-    size_t candidates_left = prev_cand.count();
-    size_t mcs_potential = candidates_left + prev_res.count();
+    std::size_t candidates_left = prev_cand.count();
+    std::size_t mcs_potential = candidates_left + prev_res.count();
 
 #if BENCHMARKING == 0
     if (this->elapsed_time() > this->TIME_LIMIT) return;
@@ -33,9 +33,9 @@ void graph::dfs_one_search(size_t cur, const graphBits& prev_cand,
     graphBits res(prev_res);
     graphBits future_cand(prev_cand);
 
-    size_t i, k;
+    std::size_t i, k;
     short f = 0;
-    size_t vert, ans;
+    std::size_t vert, ans;
     for (i = 0; i < this->vertices[cur].N; i++)
     {
         // keep going until a candidate exists
@@ -82,7 +82,7 @@ void graph::dfs_one_search(size_t cur, const graphBits& prev_cand,
 
 #if STACK_DFS == 0
 #pragma message("Using recursion for DFS")
-void graph::dfs_one_clique(size_t cur)
+void graph::dfs_one_clique(std::size_t cur)
 {
     graphBits res(this->vertices[cur].N);
     graphBits cand(this->vertices[cur].N);

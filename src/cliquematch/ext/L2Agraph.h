@@ -6,7 +6,7 @@
 
 // In L2Agraph.cpp
 
-extern template struct GraphTemplate<py::list, Eigen::Ref<DoubleMatrixR>>;
+extern template class GraphTemplate<py::object, Eigen::Ref<DoubleMatrixR>>;
 
 #endif /* L2AGRAPH_H */
 

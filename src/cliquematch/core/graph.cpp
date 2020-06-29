@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void clean_edges(vector<pair<size_t, size_t>>& edges)
+void clean_edges(vector<pair<std::size_t, std::size_t>>& edges)
 {
     std::sort(edges.begin(), edges.end());
     auto it = std::unique(edges.begin(), edges.end());
@@ -38,14 +38,14 @@ graph::graph()
     this->TIME_LIMIT = 100;
 }
 
-graph::graph(size_t n_vert, size_t n_edges, vector<set<size_t>>& edges) : graph()
+graph::graph(std::size_t n_vert, std::size_t n_edges, vector<set<std::size_t>>& edges) : graph()
 {
     this->n_vert = n_vert + 1;
     // Therefore the 0th graph vertex is always a sentinel, remember the offset
     this->vertices = vector<vertex>(this->n_vert);
-    this->edge_list = vector<size_t>(this->n_vert + 2 * n_edges);
+    this->edge_list = vector<std::size_t>(this->n_vert + 2 * n_edges);
 
-    for (size_t i = 0; i < edges.size(); i++)
+    for (std::size_t i = 0; i < edges.size(); i++)
     {
         edges[i].insert(i);
         std::copy(edges[i].begin(), edges[i].end(), this->edge_list.begin() + el_size);
@@ -60,13 +60,13 @@ graph::graph(size_t n_vert, size_t n_edges, vector<set<size_t>>& edges) : graph(
     this->set_vertices();
 }
 
-graph::graph(size_t n_vert, size_t n_edges, vector<pair<size_t, size_t>>& edges)
+graph::graph(std::size_t n_vert, std::size_t n_edges, vector<pair<std::size_t, std::size_t>>& edges)
     : graph()
 {
     clean_edges(edges);
     this->n_vert = n_vert + 1;
     this->vertices = vector<vertex>(this->n_vert);
-    this->edge_list = vector<size_t>(edges.size());
+    this->edge_list = vector<std::size_t>(edges.size());
 
     std::size_t i, j;
     for (i = 0; i < this->n_vert; i++)
@@ -85,12 +85,12 @@ graph::graph(size_t n_vert, size_t n_edges, vector<pair<size_t, size_t>>& edges)
 
 void graph::set_vertices()
 {
-    for (size_t i = 0; i < vertices.size(); i++)
+    for (std::size_t i = 0; i < vertices.size(); i++)
         vertices[i].set_spos(this->edge_list.data(), this->edge_bits.data());
     this->CLIQUE_LIMIT = this->max_degree;
 }
 
-void graph::find_max_cliques(size_t& start_vert, bool& heur_done, bool use_heur,
+void graph::find_max_cliques(std::size_t& start_vert, bool& heur_done, bool use_heur,
                              bool use_dfs, double time_limit)
 {
     if (start_vert != 0)
@@ -116,9 +116,9 @@ void graph::find_max_cliques(size_t& start_vert, bool& heur_done, bool use_heur,
     duration = this->elapsed_time();
 }
 
-size_t graph::dfs_all_cliques(size_t start_vertex, double time_limit)
+std::size_t graph::dfs_all_cliques(std::size_t start_vertex, double time_limit)
 {
-    size_t i = start_vertex;
+    std::size_t i = start_vertex;
     TIME_LIMIT = time_limit;
     for (; i < vertices.size(); i++)
     {
@@ -134,27 +134,27 @@ size_t graph::dfs_all_cliques(size_t start_vertex, double time_limit)
     return i;
 }
 
-vector<size_t> graph::get_max_clique() const
+vector<std::size_t> graph::get_max_clique() const
 {
     return this->get_max_clique(this->CUR_MAX_CLIQUE_LOC);
 }
 
-vector<size_t> graph::get_max_clique(size_t i) const
+vector<std::size_t> graph::get_max_clique(std::size_t i) const
 {
     return this->vertices[i].give_clique(this->edge_list.data());
 }
 
 void graph::disp() const
 {
-    for (size_t i = 0; i < this->n_vert; i++)
+    for (std::size_t i = 0; i < this->n_vert; i++)
         this->vertices[i].disp(this->edge_list.data());
 }
 
-void graph::send_data(std::function<void(size_t, size_t)> dfunc) const
+void graph::send_data(std::function<void(std::size_t, std::size_t)> dfunc) const
 {
-    for (size_t i = 0; i < this->n_vert; i++)
+    for (std::size_t i = 0; i < this->n_vert; i++)
     {
-        for (size_t k = this->vertices[i].spos + 1; k < this->vertices[i].N; k++)
+        for (std::size_t k = this->vertices[i].spos + 1; k < this->vertices[i].N; k++)
             dfunc(i, this->edge_list[this->vertices[i].elo + k]);
     }
 }

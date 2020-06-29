@@ -28,21 +28,34 @@ void init_pygraph(p::module& m)
         .def_readonly("n_edges", &pygraph::nedges,
                       "Number of edges in the graph (Readonly)")
         .def("get_max_clique", &pygraph::get_max_clique,
+             "Finds a maximum clique in graph within the given bounds",
              p::call_guard<p::scoped_ostream_redirect, p::scoped_estream_redirect>(),
              return_value_policy::copy)
-        .def("continue_search", &pygraph::continue_search)
-        .def("reset_search", &pygraph::reset_search)
-        .def_static("from_file", &from_file, arg("filename"), return_value_policy::move)
-        .def_static("from_edgelist", &from_edgelist, arg("edgelist"),
-                    arg("num_vertices"), return_value_policy::move)
-        .def_static("from_matrix", &from_adj_matrix, arg("adjmat"),
+        .def("continue_search", &pygraph::continue_search,
+             "Continue the clique search if the entire graph has not been searched")
+        .def("reset_search", &pygraph::reset_search,
+             "Reset the search for maximum cliques")
+        .def_static("from_file", &from_file,
+                    "Constructs `Graph` instance from reading a Matrix Market file",
+                    arg("filename"), return_value_policy::move)
+        .def_static("from_edgelist", &from_edgelist,
+                    "Constructs `Graph` instance from the given edge list",
+                    arg("edgelist"), arg("num_vertices"), return_value_policy::move)
+        .def_static("from_matrix", &from_adj_matrix,
+                    "Constructs `Graph` instance from the given adjacency matrix",
+                    arg("adjmat"), return_value_policy::move)
+        .def_static("from_adjlist", &from_adj_list,
+                    "Constructs `Graph` instance from the given adjacency list",
+                    arg("num_vertices"), arg("num_edges"), arg("edges"),
                     return_value_policy::move)
-        .def_static("from_adjlist", &from_adj_list, arg("num_vertices"),
-                    arg("num_edges"), arg("edges"), return_value_policy::move)
-        .def("to_file", &pygraph::to_file, arg("filename"))
-        .def("to_edgelist", &pygraph::to_edgelist)
-        .def("to_matrix", &pygraph::to_adj_matrix)
-        .def("to_adjlist", &pygraph::to_adj_list)
+        .def("to_file", &pygraph::to_file,
+             "Exports `Graph` instance to a Matrix Market file", arg("filename"))
+        .def("to_edgelist", &pygraph::to_edgelist,
+             "Exports `Graph` instance to an edge list")
+        .def("to_matrix", &pygraph::to_adj_matrix,
+             "Exports `Graph` instance to a boolean matrix")
+        .def("to_adjlist", &pygraph::to_adj_list,
+             "Exports `Graph` instance to an adjacency list")
         .def("__repr__", &pygraph::showdata)
         .def("__str__", &pygraph::showdata);
 }

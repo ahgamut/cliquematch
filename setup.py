@@ -4,7 +4,6 @@ from distutils.command.build import build as _build
 import sys
 import os
 import platform
-import glob
 import distutils.log
 
 distutils.log.set_verbosity(distutils.log.DEBUG)
@@ -83,8 +82,8 @@ class BuildExt(_build_ext):
     """A custom build extension for adding compiler-specific options."""
 
     c_opts = {
-        "msvc": ["/EHsc", "/std:c++14"],  # msvc has c++11 by default
-        "unix": ["-Wall", "-Wno-unused-result", "-std=c++14"],
+        "msvc": ["/EHsc"],  # msvc has c++11 by default
+        "unix": ["-Wall", "-Wpedantic", "-Wno-unused-result", "-std=c++11"],
     }
 
     if platform.system() == "Windows":
@@ -110,6 +109,20 @@ class BuildExt(_build_ext):
             )
             opts = self.c_opts.get("unix")
 
+        eigen_dir = os.environ.get("EIGEN_DIR", "include")
+        sample_file = os.path.abspath(os.path.join(eigen_dir, "Eigen", "Dense"))
+        print("Checking for the Eigen Matrix Library at %s ..." % (sample_file))
+        if os.path.exists(sample_file):
+            print("File exists! Assuming the Eigen Matrix Library is available")
+        else:
+            err_str = (
+                "Could not find Eigen. Please download Eigen from:\n"
+                + "\t https://gitlab.com/libeigen/eigen/-/releases#3.3.7\n"
+                + "extract into a folder, and set the EIGEN_DIR environment variable accordingly"
+            )
+            print(err_str)
+            exit(1)
+
         for ext in self.extensions:
             ext.extra_compile_args = opts
             if "mingw" in ct:
@@ -125,12 +138,13 @@ class BuildExt(_build_ext):
 
 setup(
     name="cliquematch",
-    version="0.9.0",
+    version="0.9.9",
     author="Gautham Venkatasubramanian",
     author_email="ahgamut@gmail.com",
     description="Matching using cliques in large sparse graphs",
-    license="GPLv3",
+    license="MIT",
     long_description=open("README.md", "r").read(),
+    long_description_content_type="text/markdown",
     url="https://github.com/ahgamut/cliquematch",
     packages=find_packages("src"),
     package_dir={"": "src"},
@@ -138,10 +152,9 @@ setup(
         "Intended Audience :: Science/Research",
         "Programming Language :: C++",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 2",
     ],
     zip_safe=False,
-    install_requires=["pybind11>=2.2", "numpy>=1.11"],
+    install_requires=["pybind11>=2.2", "numpy>=1.14"],
     setup_requires=["pybind11>=2.2"],
     ext_modules=ext_modules,
     cmdclass={"build_ext": BuildExt},

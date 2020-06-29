@@ -6,7 +6,7 @@
 
 // In A2LGraph.cpp
 
-extern template struct GraphTemplate<Eigen::Ref<DoubleMatrixR>, py::list, double>;
+extern template class GraphTemplate<Eigen::Ref<DoubleMatrixR>, py::object, double>;
 
 #endif /* A2LGRAPH_H */
 

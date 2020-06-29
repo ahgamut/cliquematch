@@ -10,7 +10,7 @@ namespace py = pybind11;
 
 template <typename List1, typename List2>
 py::list SlowTemplate<List1, List2>::get_correspondence2(
-    size_t len1, size_t len2, std::vector<std::size_t> clique)
+    std::size_t len1, std::size_t len2, std::vector<std::size_t> clique)
 {
     py::list a1;
     py::list a2;
@@ -38,7 +38,8 @@ py::list SlowTemplate<List1, List2>::get_correspondence2(
 }
 
 template <typename List1, typename List2>
-py::list SlowTemplate<List1, List2>::get_correspondence(size_t len1, size_t len2)
+py::list SlowTemplate<List1, List2>::get_correspondence(std::size_t len1,
+                                                        std::size_t len2)
 {
     return this->get_correspondence2(len1, len2, this->get_max_clique());
 }

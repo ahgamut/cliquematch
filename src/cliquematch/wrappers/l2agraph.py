@@ -5,7 +5,6 @@
 
     A convenience wrapper over cliquematch.core.L2AGraph
 
-    :copyright: (c) 2019 by gnv3.
     :license: see LICENSE for more details.
 """
 from cliquematch.core import L2AGraph as _L2AGraph
@@ -23,7 +22,6 @@ class L2AGraph(_L2AGraph):
         """
         A simple wrapper over the base class, just to avoid copying the ndarrays
         """
-        assert isinstance(set1, list)
         _L2AGraph.__init__(self)
         self.S1 = set1
         self.S2 = np.float64(set2)

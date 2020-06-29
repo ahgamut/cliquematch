@@ -6,12 +6,12 @@
 
 // In L2LGraph.cpp
 
-extern template struct relset<py::list, double>;
+extern template struct relset<py::object, double>;
 
-extern template double dummy_comparison<py::list, double>(py::list&, std::size_t,
-                                                          std::size_t);
+extern template double dummy_comparison<py::object, double>(py::object&, std::size_t,
+                                                            std::size_t);
 
-extern template struct GraphTemplate<py::list, py::list>;
+extern template class GraphTemplate<py::object, py::object>;
 
 #endif /* L2LGRAPH_H */
 

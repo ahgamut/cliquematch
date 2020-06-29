@@ -23,9 +23,12 @@ class MaskFilter(object):
         self._pts = np.copy(control_pts)
         self._mask = img_mask
         self.percentage = percentage
-        self.tformed_pts = np.zeros(control_pts.shape, dtype=np.int64)
+        self.tformed_pts = np.zeros(control_pts.shape, dtype=np.uint)
         self.valids = np.zeros(len(self._pts), dtype=np.bool)
         self._ctx = 0
+        self.query = np.zeros((4, 4), np.float32)
+        self.rhs = np.zeros((4, 1), np.float32)
+        self.answer = np.zeros((4, 1), np.float32)
 
     def __call__(self, mat1, i1, j1, mat2, i2, j2):
         # get the points
@@ -35,19 +38,19 @@ class MaskFilter(object):
         # solve the linear equation
         # to get the required rotation and translation
         delta_s1 = s1[0] - s1[1]
-        delta_s2 = s2[0] - s2[1]
         den = np.sum(delta_s1 ** 2)
         if den == 0:
             return False
 
-        a = np.sum(delta_s1 * delta_s2) / den
-        b = np.sum(delta_s2 * delta_s1[::-1] * [-1, 1]) / den
-        c = np.array(
-            [
-                s2[0, 0] - a * s1[0, 0] + b * s1[0, 1],
-                s2[0, 1] - b * s1[0, 0] - a * s1[0, 1],
-            ]
-        )
+        self.query[0, :] = [s1[0, 0], -s1[0, 1], 1, 0]
+        self.query[1, :] = [s1[0, 1], s1[0, 0], 0, 1]
+        self.query[2, :] = [s1[1, 0], -s1[1, 1], 1, 0]
+        self.query[3, :] = [s1[1, 1], s1[1, 0], 0, 1]
+        self.rhs[:, 0] = [s2[0, 0], s2[0, 1], s2[1, 0], s2[1, 1]]
+        self.answer = np.linalg.solve(self.query, self.rhs)
+        a = self.answer[0]
+        b = self.answer[1]
+        c = self.answer[2:]
 
         # transform control points as per rotation and translation
         # this is slow because I have to convert floats to ints for indexing
@@ -55,17 +58,15 @@ class MaskFilter(object):
         self.tformed_pts[:, 1] = self._pts[:, 0] * b + self._pts[:, 1] * a + c[1]
 
         # check bounds
-        self.valids = (
-            (self.tformed_pts[:, 0] >= 0)
-            & (self.tformed_pts[:, 1] >= 0)
-            & (self.tformed_pts[:, 0] < self._mask.shape[0])
-            & (self.tformed_pts[:, 1] < self._mask.shape[1])
+        self.valids = (self.tformed_pts[:, 1] < self._mask.shape[0]) & (
+            self.tformed_pts[:, 0] < self._mask.shape[1]
         )
 
         bpts = self.tformed_pts[self.valids, :]
 
         # return true if percentage of control pts is enough
-        msk_score = np.sum(self._mask[bpts[:, 0], bpts[:, 1]]) / len(self._pts)
+        msk_score = 1.0 * np.sum(self._mask[bpts[:, 1], bpts[:, 0]])
+        msk_score = msk_score / len(self._pts)
         return msk_score >= self.percentage
 
 

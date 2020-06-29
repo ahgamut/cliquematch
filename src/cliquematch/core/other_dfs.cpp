@@ -7,12 +7,12 @@ using namespace std;
 // A version of dfs_one_search that
 // finds A maximum clique
 // containing the vertex cur
-void graph::dfs_other_search(size_t cur, const graphBits& prev_cand,
+void graph::dfs_other_search(std::size_t cur, const graphBits& prev_cand,
                              const graphBits& prev_res)
 {
     if (this->vertices[cur].mcs >= CLIQUE_LIMIT) return;
-    size_t candidates_left = prev_cand.count();
-    size_t mcs_potential = candidates_left + prev_res.count();
+    std::size_t candidates_left = prev_cand.count();
+    std::size_t mcs_potential = candidates_left + prev_res.count();
 
     if (mcs_potential >= this->vertices[cur].mcs)
     {
@@ -29,9 +29,9 @@ void graph::dfs_other_search(size_t cur, const graphBits& prev_cand,
             graphBits res(prev_res);
             graphBits future_cand(this->vertices[cur].N);
 
-            size_t i, k;
+            std::size_t i, k;
             short f = 0;
-            size_t vert, ans;
+            std::size_t vert, ans;
             for (i = 0; i < this->vertices[cur].N; i++)
             {
                 if (cand.block_empty(i))
@@ -70,26 +70,26 @@ void graph::dfs_other_search(size_t cur, const graphBits& prev_cand,
     }
 }
 
-void graph::dfs_other_clique(size_t cur, size_t limit)
+void graph::dfs_other_clique(std::size_t cur, std::size_t limit)
 {
     graphBits res(this->vertices[cur].bits);
     graphBits cand = ~(this->vertices[cur].bits);
-    size_t temp = this->CLIQUE_LIMIT;
+    std::size_t temp = this->CLIQUE_LIMIT;
     this->CLIQUE_LIMIT = limit;
     this->vertices[cur].mcs = 0;
     dfs_other_search(cur, cand, res);
     this->CLIQUE_LIMIT = temp;
 }
 
-void graph::dfs_other_clique(size_t cur)
+void graph::dfs_other_clique(std::size_t cur)
 {
     dfs_other_clique(cur, this->CUR_MAX_CLIQUE_SIZE);
 }
 
-vector<size_t> graph::possible_others()
+vector<std::size_t> graph::possible_others()
 {
-    size_t i;
-    vector<size_t> ans;
+    std::size_t i;
+    vector<std::size_t> ans;
     for (i = 0; i < this->n_vert; i++)
     {
         if (this->vertices[i].mcs == CUR_MAX_CLIQUE_SIZE) ans.push_back(i);

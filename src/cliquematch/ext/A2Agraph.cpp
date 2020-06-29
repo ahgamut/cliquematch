@@ -10,7 +10,7 @@ double dummy_comparison<Eigen::Ref<DoubleMatrixR>, double>(
 // required for relset to instantiate
 template struct relset<Eigen::Ref<DoubleMatrixR>, double>;
 
-template struct GraphTemplate<Eigen::Ref<DoubleMatrixR>, Eigen::Ref<DoubleMatrixR>>;
+template class GraphTemplate<Eigen::Ref<DoubleMatrixR>, Eigen::Ref<DoubleMatrixR>>;
 
 // required for wrapper template to instantiate
 // for calling from core.cpp

@@ -20,7 +20,10 @@ bool Isograph::build_edges(pygraph& s1, pygraph& s2)
 void init_Isograph(py::module& m)
 {
     using namespace pybind11;
-    class_<Isograph, std::unique_ptr<Isograph, pygraphDeleter>, pygraph>(m, "IsoGraph")
+    class_<Isograph, std::unique_ptr<Isograph, pygraphDeleter>, pygraph>(
+        m, "IsoGraph",
+        "specialized template subclass for subgraph isomorphism via correspondence "
+        "graph")
         .def(init<>())
         .def("_build_edges", &Isograph::build_edges, "g1"_a, "g2"_a)
         .def("_get_correspondence", &Isograph::get_correspondence)

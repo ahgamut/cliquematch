@@ -5,13 +5,13 @@
     std::runtime_error((x) + std::string(__FILE__) + " " + std::to_string(__LINE__) + \
                        "\n")
 
+#include <pybind11/pybind11.h>
 #include <set>
 #include <vector>
 #include <utility>
 #include <cmath>
 // need to #include<cmath> before pybind11/numpy otherwise issues with ::hypot
 #include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
 template <typename dtype>
 using ndarray =
     pybind11::array_t<dtype, pybind11::array::c_style | pybind11::array::forcecast>;

@@ -7,7 +7,7 @@ Python/`pybind11` is not required.
 ## Usage ##
 
 1. Clone the `cliquematch` repo
-2. Download the graph (`cond-mat-2003.mtx`)[https://sparse.tamu.edu/Newman/cond-mat-2003] to this folder
+2. Download the graph [`cond-mat-2003.mtx`](https://sparse.tamu.edu/Newman/cond-mat-2003) to this folder
 3. Run `make` to compile the sample program in `main.cpp`.
 4. Run `make test` which calls `valgrind` on the sample program twice (once with the heuristic, once without).
 5. Check that `valgrind` does not report any memory leaks.

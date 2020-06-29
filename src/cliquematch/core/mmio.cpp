@@ -6,8 +6,8 @@
 
 using namespace std;
 
-vector<pair<size_t, size_t>> mmio3_reader(const char* filename, size_t& n_vert,
-                                          size_t& n_edges)
+vector<pair<std::size_t, std::size_t>> mmio3_reader(const char* filename, std::size_t& n_vert,
+                                          std::size_t& n_edges)
 {
     ifstream f(filename, ios::in);
     if (!f.is_open())
@@ -17,14 +17,14 @@ vector<pair<size_t, size_t>> mmio3_reader(const char* filename, size_t& n_vert,
     }
     while (f.peek() == '%' || f.peek() == '#') f.ignore(2048, '\n');
 
-    size_t n_loops = 0, n_invalids = 0, dummy, i, j;
-    size_t v1, v2;
+    std::size_t n_loops = 0, n_invalids = 0, dummy, i, j;
+    std::size_t v1, v2;
 
     f >> n_vert;
     f >> dummy;
     f >> n_edges;
 
-    vector<pair<size_t, size_t>> Edges(2 * n_edges + n_vert + 1);
+    vector<pair<std::size_t, std::size_t>> Edges(2 * n_edges + n_vert + 1);
 
     for (j = 0; j < n_vert + 1; j++) Edges[j] = {j, j};
     for (i = 0, j = n_vert + 1; i < n_edges && !f.eof(); i++, j += 2)

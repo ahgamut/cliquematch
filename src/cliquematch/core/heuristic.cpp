@@ -10,7 +10,7 @@ struct vtriple
     inline bool operator>(const vtriple& b) const { return (this->N > b.N); }
 };
 
-void graph::heur_one_clique(size_t cur, vector<vtriple>& neighbors, graphBits& res,
+void graph::heur_one_clique(std::size_t cur, vector<vtriple>& neighbors, graphBits& res,
                             graphBits& cand)
 {
     // heuristic assumes that higher degree neighbors are
@@ -21,9 +21,9 @@ void graph::heur_one_clique(size_t cur, vector<vtriple>& neighbors, graphBits& r
     cand.clear(this->vertices[cur].N);
     res.set(this->vertices[cur].spos);
 
-    size_t ans;
-    size_t i, j;
-    size_t mcs_potential, candidates_left = 0, cur_clique_size = 1, cand_max;
+    std::size_t ans;
+    std::size_t i, j;
+    std::size_t mcs_potential, candidates_left = 0, cur_clique_size = 1, cand_max;
 
     // find all neighbors of cur and sort by decreasing degree
     for (i = 0, j = 0; i < this->vertices[cur].N; i++)
@@ -96,9 +96,9 @@ void graph::heur_one_clique(size_t cur, vector<vtriple>& neighbors, graphBits& r
     }
 }
 
-size_t graph::heur_all_cliques(size_t start_vertex, double TIME_LIMIT)
+std::size_t graph::heur_all_cliques(std::size_t start_vertex, double TIME_LIMIT)
 {
-    size_t i;
+    std::size_t i;
     vector<vtriple> neibs(this->max_degree);
     graphBits res(this->max_degree);
     graphBits cand(this->max_degree);

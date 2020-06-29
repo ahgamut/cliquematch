@@ -25,7 +25,6 @@ class A2LGraph(_A2LGraph):
         """
         _A2LGraph.__init__(self)
         self.S1 = np.float64(set1)
-        assert isinstance(set2, list)
         self.S2 = set2
         self.d1 = None
         self.d2 = None

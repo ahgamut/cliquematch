@@ -116,7 +116,6 @@ class TestAlignGraph(object):
         G2.build_edges_with_condition(filt, False)
         ans2 = G2.get_correspondence()
         print(G2)
-        assert G2.n_edges == G.n_edges
         assert abs(ans["theta"] - ans2["theta"]) < 1e-8
         assert abs(ans["dx"] - ans2["dx"]) < 1e-8
         assert abs(ans["dy"] - ans2["dy"]) < 1e-8
