@@ -138,10 +138,10 @@ class BuildExt(_build_ext):
 
 setup(
     name="cliquematch",
-    version="0.9.9",
+    version="1.0.0",
     author="Gautham Venkatasubramanian",
     author_email="ahgamut@gmail.com",
-    description="Matching using cliques in large sparse graphs",
+    description="Finding correspondence via maximum cliques in large graphs",
     license="MIT",
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",

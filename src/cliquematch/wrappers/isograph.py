@@ -1,40 +1,28 @@
 # -*- coding: utf-8 -*-
-"""
-    cliquematch.IsoGraph
-    ~~~~~~~~~~~~~~~~~~~~
-
-    A wrapper class over cliquematch.core.IsoGraph
-    to find subgraph isomorphisms using cliques in a
-    product graph
-
-    :copyright: (c) 2019 by gnv3.
-    :license: see LICENSE for more details.
-"""
 from cliquematch.core import IsoGraph as _IsoGraph
 from warnings import warn
 
 
 class IsoGraph(_IsoGraph):
+    """Correspondence graph for finding subgraph isomorphisms.
+
+    Attributes:
+        S1 ( `cliquematch.Graph` ):
+        S2 ( `cliquematch.Graph` ):
+    """
+
     def __init__(self, G1, G2):
-        """
-        A simple wrapper over the base class, just to save the Graphs here
-        """
         _IsoGraph.__init__(self)
         self.S1 = G1
         self.S2 = G2
 
     def build_edges(self):
+        """Build edges of the correspondence graph.
+        """
         _IsoGraph._build_edges(self, self.S1, self.S2)
 
     def get_correspondence(self):
-        """
-        Wrapper over core.IsoGraph._get_correspondence
-
-        :return_indices: bool
-            if true, returns the indices of the corresponding graph vertices
-            else it returns the corresponding graphs themselves
-        :returns: List
-
+        """Obtain indices of the corresponding vertices in the subgraph isomorphism.
         """
         indices = _IsoGraph._get_correspondence(
             self, self.S1.n_vertices, self.S2.n_vertices

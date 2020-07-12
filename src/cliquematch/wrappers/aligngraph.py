@@ -1,34 +1,36 @@
 # -*- coding: utf-8 -*-
-"""
-    cliquematch.AlignGraph
-    ~~~~~~~~~~~~~~~~~~~~~~
-
-    a wrapper over cliquematch.core.AlignGraph
-    to maintain ndarrays
-
-    :copyright: (c) 2020 by Gautham Venkatasubramanian.
-    :license: see LICENSE for more details.
-"""
 from cliquematch.core import AlignGraph as _AlignGraph
 import numpy as np
 
 
 class MaskFilter(object):
-    """
-    A class containing the required members to filter edges via
-    steve's rule for considering the validity of an alignment
+    """Custom condition to filter invalid alignments in `.AlignGraph` .
+
+    C++ implementation of this function is called by default by
+    `.AlignGraph.build_edges_with_filter`.  Checks if each possible edge in the
+    correspondence graph produces a mapping of points such that a high
+    ``percentage`` of ``control points`` fall entirely within a ``mask`` of the
+    target image.
+
+    Attributes:
+        pts ( `numpy.array` ) : control points to use in every alignment test
+        mask ( `numpy.array` ): a boolean mask showing valid regions in the
+                                target image
+        percentage ( `float` ): an alignment is valid if the number of control
+                                points that fall within the mask are greater
+                                than this value
     """
 
     def __init__(self, control_pts, img_mask, percentage=0.8):
-        self._pts = np.copy(control_pts)
-        self._mask = img_mask
+        self.pts = np.copy(control_pts)
+        self.mask = img_mask
         self.percentage = percentage
-        self.tformed_pts = np.zeros(control_pts.shape, dtype=np.uint)
-        self.valids = np.zeros(len(self._pts), dtype=np.bool)
+        self._tformed_pts = np.zeros(control_pts.shape, dtype=np.uint)
+        self._valids = np.zeros(len(self.pts), dtype=np.bool)
         self._ctx = 0
-        self.query = np.zeros((4, 4), np.float32)
-        self.rhs = np.zeros((4, 1), np.float32)
-        self.answer = np.zeros((4, 1), np.float32)
+        self._query = np.zeros((4, 4), np.float32)
+        self._rhs = np.zeros((4, 1), np.float32)
+        self._answer = np.zeros((4, 1), np.float32)
 
     def __call__(self, mat1, i1, j1, mat2, i2, j2):
         # get the points
@@ -42,42 +44,47 @@ class MaskFilter(object):
         if den == 0:
             return False
 
-        self.query[0, :] = [s1[0, 0], -s1[0, 1], 1, 0]
-        self.query[1, :] = [s1[0, 1], s1[0, 0], 0, 1]
-        self.query[2, :] = [s1[1, 0], -s1[1, 1], 1, 0]
-        self.query[3, :] = [s1[1, 1], s1[1, 0], 0, 1]
-        self.rhs[:, 0] = [s2[0, 0], s2[0, 1], s2[1, 0], s2[1, 1]]
-        self.answer = np.linalg.solve(self.query, self.rhs)
-        a = self.answer[0]
-        b = self.answer[1]
-        c = self.answer[2:]
+        self._query[0, :] = [s1[0, 0], -s1[0, 1], 1, 0]
+        self._query[1, :] = [s1[0, 1], s1[0, 0], 0, 1]
+        self._query[2, :] = [s1[1, 0], -s1[1, 1], 1, 0]
+        self._query[3, :] = [s1[1, 1], s1[1, 0], 0, 1]
+        self._rhs[:, 0] = [s2[0, 0], s2[0, 1], s2[1, 0], s2[1, 1]]
+        self._answer = np.linalg.solve(self._query, self._rhs)
+        a = self._answer[0]
+        b = self._answer[1]
+        c = self._answer[2:]
 
         # transform control points as per rotation and translation
         # this is slow because I have to convert floats to ints for indexing
-        self.tformed_pts[:, 0] = self._pts[:, 0] * a - self._pts[:, 1] * b + c[0]
-        self.tformed_pts[:, 1] = self._pts[:, 0] * b + self._pts[:, 1] * a + c[1]
+        self._tformed_pts[:, 0] = self.pts[:, 0] * a - self.pts[:, 1] * b + c[0]
+        self._tformed_pts[:, 1] = self.pts[:, 0] * b + self.pts[:, 1] * a + c[1]
 
         # check bounds
-        self.valids = (self.tformed_pts[:, 1] < self._mask.shape[0]) & (
-            self.tformed_pts[:, 0] < self._mask.shape[1]
+        self._valids = (self._tformed_pts[:, 1] < self.mask.shape[0]) & (
+            self._tformed_pts[:, 0] < self.mask.shape[1]
         )
 
-        bpts = self.tformed_pts[self.valids, :]
+        bpts = self._tformed_pts[self._valids, :]
 
         # return true if percentage of control pts is enough
-        msk_score = 1.0 * np.sum(self._mask[bpts[:, 1], bpts[:, 0]])
-        msk_score = msk_score / len(self._pts)
+        msk_score = 1.0 * np.sum(self.mask[bpts[:, 1], bpts[:, 0]])
+        msk_score = msk_score / len(self.pts)
         return msk_score >= self.percentage
 
 
 class AlignGraph(_AlignGraph):
+    """Correspondence graph for aligning images using obtained interest points.
 
-    """Wrapper class adding functionality for keeping ndarrays"""
+    Uses a mask-based filtering method as a conditon function during
+    construction of the graph. Default Euclidean metrics are used as distance
+    metrics.
+
+    Attributes:
+        S1 ( `numpy.array` ): array elements are converted to `numpy.float64`
+        S2 ( `numpy.array` ): array elements are converted to `numpy.float64`
+    """
 
     def __init__(self, set1, set2):
-        """
-        A simple wrapper over the base class, just to avoid copying the ndarrays
-        """
         self.S1 = np.float64(set1)
         self.S2 = np.float64(set2)
         _AlignGraph.__init__(self)
@@ -94,6 +101,20 @@ class AlignGraph(_AlignGraph):
             return _AlignGraph._build_edges(*args)
 
     def build_edges_with_filter(self, control_points, filter_mask, percentage):
+        """Uses control points and a binary mask to filter out invalid mappings
+        and construct a correspondence graph.
+
+        Args:
+            control_points ( `numpy.array` ) :
+                            control points to use in every alignment test
+            filter_mask ( `numpy.array` ):
+                            a boolean mask showing valid regions in the
+                            target image
+            percentage ( `float` ):
+                            an alignment is valid if the number of control
+                            points that fall within the mask are greater
+                            than this value
+        """
         args = [
             self,
             self.S1,
@@ -107,13 +128,12 @@ class AlignGraph(_AlignGraph):
         _AlignGraph._build_edges_with_filter(*args)
 
     def get_correspondence(self):
-        """
-        Find correspondence between the sets of points `S1` and `S2`.
+        """Find correspondence between the sets of points ``S1`` and ``S2``.
 
         Returns
         -------
 
-        dict(ndarray, ndarray, float, float, float, ndarray)
+        `dict`
             The two sets of corresponding points and the rotation/translation required
             to transform `S1` to `S2`
             (obtained via `Kabsch Algorithm <https://en.wikipedia.org/wiki/Kabsch_algorithm>`)
