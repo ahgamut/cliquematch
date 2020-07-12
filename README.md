@@ -13,7 +13,7 @@ maximum clique problem: finding a (sub)set of corresponding elements between two
 
 ## Usage
 
-`cliquematch` is mainly used for loading a large graph and finding a maximum clique in it. 
+`cliquematch` is used for loading a large graph and finding a maximum clique in it. 
 For example, we load [`cond-mat-2003.mtx`][cond2003], and find a maximum clique.
 
 ```python
@@ -33,22 +33,27 @@ G.get_max_clique()
 The search can be tuned in terms of size/time bounds, and reset if necessary. 
 If required, `use_heuristic` can be set to `True` to find a large clique quickly.
 
+### Correspondence graphs
 
-`cliquematch` also contains classes for correspondence graphs, which can be used to find corresponding subsets
-between two given sets:
+Many applications of maximum cliques involve construction of a correspondence graph to find corresponding subsets
+between two given sets. `cliquematch` also contains classes for correspondence graphs:
 
 * [This image matching algorithm][ccmm] can be implemented using `cliquematch` [like this][ccmmapp].
 * [Simple molecular alignment][molecule] can be implemented [like this][moleculeapp].
+
+The correspondence graph classes are generated using C++ template programming.  `cliquematch` can be extended
+with custom correspondence graphs: they can be prototyped using the existing classes, and/or implemented in
+C++ for performance.
 
 ## Installation Instructions
 
 ### Installing from a wheel
 
-PyPI wheels are available for Linux and Windows (currently on [testPyPI][test]). 
+PyPI wheels are available for Linux and Windows. 
 MacOS builds are tested but wheels are not provided.
 
 ```bash
-pip install -i https://test.pypi.org/simple/ cliquematch
+pip install cliquematch
 ```
 
 ### Installing from source

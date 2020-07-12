@@ -1,1 +1,2 @@
 graft src
+recursive-exclude src/ *.pyc
