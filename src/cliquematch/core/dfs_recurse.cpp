@@ -96,7 +96,9 @@ void graph::dfs_one_clique(std::size_t cur)
     for (i = 0; i < this->vertices[cur].N; i++)
     {
         vert = this->edge_list[this->vertices[cur].elo + i];
-        if (vert == cur || this->vertices[vert].N < this->vertices[cur].N) continue;
+        if (vert == cur || this->vertices[vert].N < this->vertices[cur].N ||
+            (this->vertices[vert].N == this->vertices[cur].N && vert < cur))
+            continue;
         cand.set(i);
         mcs_potential++;
     }
