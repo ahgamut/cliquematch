@@ -57,26 +57,42 @@ def plot(d1, d2, filename=None):
     G.use_heuristic = True
     G.build_edges_with_condition(cfunc, False)
     sub1, sub2 = G.get_correspondence(return_indices=True)
+
     fig = plt.figure(figsize=(12.1, 6.1))
     axs = fig.subplots(1, 2)
-    img0 = Draw.MolToImage(
+    mdraw = Draw.rdMolDraw2D.MolDraw2DCairo(600, 600)
+    mdraw.drawOptions().fillHighlights = False
+
+    Draw.rdMolDraw2D.PrepareAndDrawMolecule(
+        mdraw,
         d1._mol,
-        size=(600, 600),
         highlightAtoms=sub1.tolist(),
-        highlightMap={int(x): (0.05 * i, 0.7, 0) for i, x in enumerate(sub1)},
+        highlightAtomColors={
+            int(x): (0.05 * i, 1.0 - 0.05 * i, 0.0) for i, x in enumerate(sub1)
+        },
     )
+    mdraw.WriteDrawingText("./mol1.png")
+    img0 = plt.imread("./mol1.png")
+    mdraw.ClearDrawing()
     axs[0].imshow(np.array(img0))
     axs[0].set_xticks([])
     axs[0].set_yticks([])
-    img1 = Draw.MolToImage(
+
+    Draw.rdMolDraw2D.PrepareAndDrawMolecule(
+        mdraw,
         d2._mol,
-        size=(600, 600),
         highlightAtoms=sub2.tolist(),
-        highlightMap={int(x): (0.05 * i, 0.7, 0) for i, x in enumerate(sub2)},
+        highlightAtomColors={
+            int(x): (0.05 * i, 1.0 - 0.05 * i, 0.0) for i, x in enumerate(sub2)
+        },
     )
+    mdraw.WriteDrawingText("./mol2.png")
+    mdraw.ClearDrawing()
+    img1 = plt.imread("./mol2.png")
     axs[1].imshow(np.array(img1))
     axs[1].set_xticks([])
     axs[1].set_yticks([])
+
     fig.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
     fig.savefig(filename)
     plt.close()
