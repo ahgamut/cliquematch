@@ -31,14 +31,15 @@ void graph::heur_one_clique(std::size_t cur, vector<vtriple>& neighbors, graphBi
         neighbors[j].id = this->edge_list[this->vertices[cur].elo + i];
         neighbors[j].N = 0;
         neighbors[j].pos = i;
-        if (neighbors[j].id != cur &&
-            this->vertices[neighbors[j].id].N >= this->vertices[cur].N)
-        {
-            neighbors[j].N = this->vertices[neighbors[j].id].N;
-            cand.set(i);
-            j++;
-            candidates_left++;
-        }
+        if (neighbors[j].id == cur ||
+            this->vertices[neighbors[j].id].N < this->vertices[cur].N ||
+            (this->vertices[neighbors[j].id].N == this->vertices[cur].N &&
+             neighbors[j].id < cur))
+            continue;
+        neighbors[j].N = this->vertices[neighbors[j].id].N;
+        cand.set(i);
+        j++;
+        candidates_left++;
     }
     sort(neighbors.begin(), neighbors.begin() + candidates_left,
          std::greater<vtriple>());
