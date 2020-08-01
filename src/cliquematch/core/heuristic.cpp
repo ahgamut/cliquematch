@@ -1,48 +1,65 @@
-#include <core/graph.h>
+#include <core/heuristic.h>
 #include <algorithm>
 #include <iostream>
 
 using namespace std;
-struct vtriple
-{
-    std::size_t id, N, pos;
-    inline bool operator<(const vtriple& b) const { return (this->N < b.N); }
-    inline bool operator>(const vtriple& b) const { return (this->N > b.N); }
-};
 
-void graph::heur_one_clique(std::size_t cur, vector<vtriple>& neighbors, graphBits& res,
-                            graphBits& cand)
+std::size_t DegreeHeuristic::process_graph(graph& G, std::size_t start_vertex,
+                                           double time_limit)
+{
+    std::size_t i;
+    neighbors.reserve(G.max_degree);
+    graphBits res(G.max_degree);
+    graphBits cand(G.max_degree);
+    this->TIME_LIMIT = time_limit;
+
+    process_vertex(G, G.md_vert, res, cand);
+    for (i = 0; i < G.vertices.size() && G.CUR_MAX_CLIQUE_SIZE < G.CLIQUE_LIMIT; i++)
+    {
+#if BENCHMARKING == 0
+        if (G.elapsed_time() > TIME_LIMIT) break;
+#endif
+        if (G.vertices[i].N <= G.CUR_MAX_CLIQUE_SIZE || i == G.md_vert) continue;
+        process_vertex(G, i, res, cand);
+    }
+    return i;
+}
+
+void DegreeHeuristic::process_vertex(graph& G, std::size_t cur, graphBits& res,
+                                     graphBits& cand)
 {
     // heuristic assumes that higher degree neighbors are
     // more likely to be part of a clique
     // so it goes through them in O(N^2) to find a clique
     // (dfs is exponential complexity)
-    res.clear(this->vertices[cur].N);
-    cand.clear(this->vertices[cur].N);
-    res.set(this->vertices[cur].spos);
+    res.clear(G.vertices[cur].N);
+    cand.clear(G.vertices[cur].N);
+    res.set(G.vertices[cur].spos);
 
     std::size_t ans;
     std::size_t i, j;
-    std::size_t mcs_potential, candidates_left = 0, cur_clique_size = 1, cand_max;
+    candidates_left = 0;
+    cur_clique_size = 1;
 
     // find all neighbors of cur and sort by decreasing degree
-    for (i = 0, j = 0; i < this->vertices[cur].N; i++)
+    for (i = 0, j = 0; i < G.vertices[cur].N; i++)
     {
-        neighbors[j].id = this->edge_list[this->vertices[cur].elo + i];
+        neighbors[j].id = G.edge_list[G.vertices[cur].elo + i];
         neighbors[j].N = 0;
         neighbors[j].pos = i;
         if (neighbors[j].id == cur ||
-            this->vertices[neighbors[j].id].N < this->vertices[cur].N ||
-            (this->vertices[neighbors[j].id].N == this->vertices[cur].N &&
+            G.vertices[neighbors[j].id].N < G.vertices[cur].N ||
+            (G.vertices[neighbors[j].id].N == G.vertices[cur].N &&
              neighbors[j].id < cur))
             continue;
-        neighbors[j].N = this->vertices[neighbors[j].id].N;
+        neighbors[j].N = G.vertices[neighbors[j].id].N;
         cand.set(i);
         j++;
         candidates_left++;
     }
-    sort(neighbors.begin(), neighbors.begin() + candidates_left,
-         std::greater<vtriple>());
+    if (candidates_left <= G.CUR_MAX_CLIQUE_SIZE) return;
+    std::sort(neighbors.begin(), neighbors.begin() + candidates_left,
+              std::greater<vtriple>());
 
     cand_max = candidates_left;
     // let neib be a high-degree neighbor of cur that hasn't been searched earlier
@@ -61,7 +78,7 @@ void graph::heur_one_clique(std::size_t cur, vector<vtriple>& neighbors, graphBi
         // modify candidate list using neib's neighbors
         for (j = i + 1; j < cand_max; j++)
         {
-            if (find_if_neighbors(neighbors[j].id, neighbors[i].id, ans) == 1)
+            if (G.find_if_neighbors(neighbors[j].id, neighbors[i].id, ans) == 1)
                 continue;
             else
             {
@@ -72,7 +89,7 @@ void graph::heur_one_clique(std::size_t cur, vector<vtriple>& neighbors, graphBi
 
         mcs_potential = cur_clique_size + candidates_left;
 
-        if (mcs_potential <= this->CUR_MAX_CLIQUE_SIZE)
+        if (mcs_potential <= G.CUR_MAX_CLIQUE_SIZE)
         {
             // heuristic assumption was not useful, because
             // potential clique with neib cannot beat the maximum
@@ -83,10 +100,10 @@ void graph::heur_one_clique(std::size_t cur, vector<vtriple>& neighbors, graphBi
             // there are no candidates left =>
             // potential has been realized and beaten the current maximum
             // so save the clique's data as the new global maximum
-            this->vertices[cur].mcs = cur_clique_size;
-            this->CUR_MAX_CLIQUE_SIZE = cur_clique_size;
-            this->CUR_MAX_CLIQUE_LOC = cur;
-            this->vertices[cur].bits |= res;
+            G.vertices[cur].mcs = cur_clique_size;
+            G.CUR_MAX_CLIQUE_SIZE = cur_clique_size;
+            G.CUR_MAX_CLIQUE_LOC = cur;
+            G.vertices[cur].bits.copy_from(res);
             // cerr << "Heuristic in " << cur << " updated max_clique to "
             //  << this->vertices[cur].mcs << "\n";
 
@@ -97,20 +114,3 @@ void graph::heur_one_clique(std::size_t cur, vector<vtriple>& neighbors, graphBi
     }
 }
 
-std::size_t graph::heur_all_cliques(std::size_t start_vertex, double TIME_LIMIT)
-{
-    std::size_t i;
-    vector<vtriple> neibs(this->max_degree);
-    graphBits res(this->max_degree);
-    graphBits cand(this->max_degree);
-
-    for (i = 0; i < vertices.size() && CUR_MAX_CLIQUE_SIZE < CLIQUE_LIMIT; i++)
-    {
-#if BENCHMARKING == 0
-        if (this->elapsed_time() > TIME_LIMIT) break;
-#endif
-        if (this->vertices[i].N <= CUR_MAX_CLIQUE_SIZE) continue;
-        heur_one_clique(i, neibs, res, cand);
-    }
-    return i;
-}

@@ -8,7 +8,7 @@ struct SearchState
     graphBits cand, res;
 
     SearchState(const vertex&);
-    SearchState(graphBits, graphBits);
+    SearchState(const graphBits&, const graphBits&);
 };
 
 #endif /* SEARCHSTATE_H */

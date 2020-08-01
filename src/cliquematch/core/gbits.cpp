@@ -85,6 +85,11 @@ void swap(graphBits& me, graphBits& other)
     }
 }
 
+void graphBits::copy_from(const graphBits& other)
+{
+    std::copy(other.data, other.data + this->dlen, this->data);
+}
+
 void graphBits::set(std::size_t i)
 {
     // assert(i < this->valid_len);

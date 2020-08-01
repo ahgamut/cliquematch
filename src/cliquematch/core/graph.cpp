@@ -17,28 +17,29 @@ short graph::find_if_neighbors(std::size_t v1_id, std::size_t v2_id,
     return binary_find(&(this->edge_list[this->vertices[v1_id].elo]),
                        this->vertices[v1_id].N, v2_id, v2_position);
 }
+
+void graph::start_clock() { this->start_time = std::chrono::steady_clock::now(); }
+
 double graph::elapsed_time() const
 {
     auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
         std::chrono::steady_clock::now() - this->start_time);
     return static_cast<double>(elapsed.count()) / 1e6;
 }
-
 graph::graph()
 {
-    this->n_vert = 0;
-    this->el_size = 0;
-    this->eb_size = 0;
-    this->max_degree = 0;
-    this->duration = 0.0;
-
-    this->CUR_MAX_CLIQUE_SIZE = 1;
-    this->CUR_MAX_CLIQUE_LOC = 0;
-    this->CLIQUE_LIMIT = 1729;
-    this->TIME_LIMIT = 100;
+    n_vert = 0;
+    el_size = 0;
+    eb_size = 0;
+    max_degree = 0;
+    md_vert = 0;
+    CUR_MAX_CLIQUE_LOC = 0;
+    CUR_MAX_CLIQUE_SIZE = 0;
+    CLIQUE_LIMIT = 0xFFFF;
 }
 
-graph::graph(std::size_t n_vert, std::size_t n_edges, vector<set<std::size_t>>& edges) : graph()
+graph::graph(std::size_t n_vert, std::size_t n_edges, vector<set<std::size_t>>& edges)
+    : graph()
 {
     this->n_vert = n_vert + 1;
     // Therefore the 0th graph vertex is always a sentinel, remember the offset
@@ -60,7 +61,8 @@ graph::graph(std::size_t n_vert, std::size_t n_edges, vector<set<std::size_t>>& 
     this->set_vertices();
 }
 
-graph::graph(std::size_t n_vert, std::size_t n_edges, vector<pair<std::size_t, std::size_t>>& edges)
+graph::graph(std::size_t n_vert, std::size_t n_edges,
+             vector<pair<std::size_t, std::size_t>>& edges)
     : graph()
 {
     clean_edges(edges);
@@ -74,7 +76,11 @@ graph::graph(std::size_t n_vert, std::size_t n_edges, vector<pair<std::size_t, s
         for (j = 0; el_size + j < edges.size() && edges[el_size + j].first == i; j++)
             this->edge_list[this->el_size + j] = edges[this->el_size + j].second;
         this->vertices[i].load_external(i, j, this->el_size, this->eb_size);
-        this->max_degree = max_degree > j ? max_degree : j;
+        if (this->max_degree < j)
+        {
+            this->max_degree = j;
+            this->md_vert = i;
+        }
         this->el_size += j;
         this->eb_size += (j % 32 != 0) + j / 32;
     }
@@ -88,60 +94,6 @@ void graph::set_vertices()
     for (std::size_t i = 0; i < vertices.size(); i++)
         vertices[i].set_spos(this->edge_list.data(), this->edge_bits.data());
     this->CLIQUE_LIMIT = this->max_degree;
-}
-
-void graph::find_max_cliques(std::size_t& start_vert, bool& heur_done, bool use_heur,
-                             bool use_dfs, double time_limit)
-{
-    if (start_vert != 0)
-    {
-#ifndef NDEBUG
-        cerr << "Continuing at " << start_vert << " off of a previous search ";
-        if (!heur_done)
-            cerr << "(heuristic)\n";
-        else
-            cerr << "(DFS)\n";
-#endif
-    }
-    this->start_time = std::chrono::steady_clock::now();
-    if (!heur_done && use_heur) start_vert = heur_all_cliques(start_vert, time_limit);
-
-    if (this->elapsed_time() < time_limit)
-    {
-        if (!heur_done) start_vert = 0;
-        heur_done = true;
-        if (use_dfs) start_vert = dfs_all_cliques(start_vert, time_limit);
-    }
-
-    duration = this->elapsed_time();
-}
-
-std::size_t graph::dfs_all_cliques(std::size_t start_vertex, double time_limit)
-{
-    std::size_t i = start_vertex;
-    TIME_LIMIT = time_limit;
-    for (; i < vertices.size(); i++)
-    {
-        if (this->vertices[i].N <= CUR_MAX_CLIQUE_SIZE ||
-            CUR_MAX_CLIQUE_SIZE >= CLIQUE_LIMIT)
-            continue;
-#if BENCHMARKING == 0
-        if (this->elapsed_time() > TIME_LIMIT) break;
-#endif
-        dfs_one_clique(i);
-    }
-    // If we pause midway, I want to know where we stopped
-    return i;
-}
-
-vector<std::size_t> graph::get_max_clique() const
-{
-    return this->get_max_clique(this->CUR_MAX_CLIQUE_LOC);
-}
-
-vector<std::size_t> graph::get_max_clique(std::size_t i) const
-{
-    return this->vertices[i].give_clique(this->edge_list.data());
 }
 
 void graph::disp() const

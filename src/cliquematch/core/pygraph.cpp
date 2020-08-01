@@ -118,6 +118,7 @@ std::string pygraph::showdata()
     ss << ")";
     return ss.str();
 }
+
 pygraph from_file(std::string filename)
 {
     std::string fname = filename;
@@ -131,6 +132,7 @@ pygraph from_file(std::string filename)
     pg.load_graph(no_of_vertices, no_of_edges, edges);
     return pg;
 }
+
 pygraph from_edgelist(ndarray<std::size_t> edge_list1, std::size_t no_of_vertices)
 {
     //	std::cout<<"Constructing graph from the list of edges (Nx2 matrix)\n";
@@ -163,6 +165,7 @@ pygraph from_edgelist(ndarray<std::size_t> edge_list1, std::size_t no_of_vertice
     pg.load_graph(no_of_vertices, no_of_edges, edges);
     return pg;
 }
+
 pygraph from_adj_matrix(ndarray<bool> adjmat1)
 {
     //	std::cout<<"Constructing graph from the adjacency matrix\n";
@@ -237,6 +240,7 @@ ndarray<std::size_t> pygraph::to_edgelist()
     });
     return elist1;
 }
+
 void pygraph::to_file(std::string filename)
 {
     std::ofstream f(filename, std::ios::out);
@@ -255,6 +259,7 @@ void pygraph::to_file(std::string filename)
         [&f](std::size_t i, std::size_t j) { f << i << " " << j << "\n"; });
     f.close();
 }
+
 ndarray<bool> pygraph::to_adj_matrix()
 {
     ndarray<bool> adjmat1(this->nvert * this->nvert);
@@ -273,6 +278,7 @@ ndarray<bool> pygraph::to_adj_matrix()
     });
     return adjmat1;
 }
+
 std::vector<std::set<std::size_t>> pygraph::to_adj_list()
 {
     std::vector<std::set<std::size_t>> edges(this->nvert + 1);

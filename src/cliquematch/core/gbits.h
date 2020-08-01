@@ -22,6 +22,8 @@ class graphBits
     graphBits(std::size_t n_bits);
     virtual ~graphBits();
     void load_external(u32* ext_data, std::size_t n_bits, bool cleanout = true);
+
+    void copy_from(const graphBits& other);
     void set(std::size_t i);
     void reset(std::size_t i);
     void toggle(std::size_t i);
