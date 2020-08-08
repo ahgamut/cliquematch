@@ -4,11 +4,16 @@
 // Distance functions for 2D Numpy arrays/Eigen Matrices
 #include <ext/eigen_wrap.h>
 
-template <typename DerivedMat>
-double euc_dist0(const Eigen::MatrixBase<DerivedMat>& p,
-                 const Eigen::MatrixBase<DerivedMat>& q)
+namespace cliquematch
 {
-    return (p - q).norm();
-}
-
+namespace ext
+{
+    template <typename DerivedMat>
+    double euc_dist0(const Eigen::MatrixBase<DerivedMat>& p,
+                     const Eigen::MatrixBase<DerivedMat>& q)
+    {
+        return (p - q).norm();
+    }
+}  // namespace ext
+}  // namespace cliquematch
 #endif /* EIGEN_DISTANCE_H */

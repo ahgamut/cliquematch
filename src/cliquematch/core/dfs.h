@@ -3,27 +3,32 @@
 #include <core/clique.h>
 #include <core/searchstate.h>
 
-class StackDFS : public CliqueOperator
+namespace cliquematch
 {
-   private:
-    std::vector<SearchState> states;
-    std::size_t candidates_left, mcs_potential;
-    std::size_t i, j, k, vert, ans;
-    short f;
-
-   public:
-    void process_vertex(graph&, std::size_t);
-    std::size_t process_graph(graph&, std::size_t, double);
-    ~StackDFS() = default;
-};
-
-class RecursionDFS : public CliqueOperator
+namespace detail
 {
-   public:
-    void process_vertex(graph&, std::size_t);
-    void search_vertex(graph&, std::size_t, const graphBits&, const graphBits&);
-    std::size_t process_graph(graph&, std::size_t, double);
-    ~RecursionDFS() = default;
-};
+    class StackDFS : public CliqueOperator
+    {
+       private:
+        std::vector<SearchState> states;
+        std::size_t candidates_left, mcs_potential;
+        std::size_t i, j, k, vert, ans;
+        short f;
 
+       public:
+        void process_vertex(graph&, std::size_t);
+        std::size_t process_graph(graph&, std::size_t, double);
+        ~StackDFS() = default;
+    };
+
+    class RecursionDFS : public CliqueOperator
+    {
+       public:
+        void process_vertex(graph&, std::size_t);
+        void search_vertex(graph&, std::size_t, const graphBits&, const graphBits&);
+        std::size_t process_graph(graph&, std::size_t, double);
+        ~RecursionDFS() = default;
+    };
+}  // namespace detail
+}  // namespace cliquematch
 #endif /* DFS_CLIQUE_H */

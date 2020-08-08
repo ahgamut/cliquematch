@@ -4,11 +4,16 @@
 #include <templates/pair_dist.h>
 #include <iostream>
 
-template <class T>
-void pair_dist<T>::disp()
+namespace cliquematch
 {
-    std::cerr << this->first << " " << this->second << " " << this->dist << "\n";
-}
-
+namespace ext
+{
+    template <class T>
+    void pair_dist<T>::disp()
+    {
+        std::cerr << this->first << " " << this->second << " " << this->dist << "\n";
+    }
+}  // namespace ext
+}  // namespace cliquematch
 #endif /* PAIR_DIST_HPP */
 

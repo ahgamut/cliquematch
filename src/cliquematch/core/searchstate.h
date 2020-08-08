@@ -2,13 +2,18 @@
 #define SEARCHSTATE_H
 #include <core/vertex.h>
 
-struct SearchState
+namespace cliquematch
 {
-    std::size_t start_at;
-    graphBits cand, res;
+namespace detail
+{
+    struct SearchState
+    {
+        std::size_t start_at;
+        graphBits cand, res;
 
-    SearchState(const vertex&);
-    SearchState(const graphBits&, const graphBits&);
-};
-
+        SearchState(const vertex&);
+        SearchState(const graphBits&, const graphBits&);
+    };
+}  // namespace detail
+}  // namespace cliquematch
 #endif /* SEARCHSTATE_H */

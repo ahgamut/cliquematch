@@ -2,13 +2,17 @@
 #include <pybind11/iostream.h>
 #include <pybind11/stl.h>
 
-namespace p = pybind11;
-using namespace pybind11;
-
-void init_pygraph(p::module& m)
+namespace cliquematch
 {
-    class_<pygraph, std::unique_ptr<pygraph, pygraphDeleter>>(m, "Graph")
-        .def(init<>())
+void init_pygraph(pybind11::module& m)
+{
+    namespace py = pybind11;
+    namespace cm_core = cliquematch::core;
+    using namespace pybind11;
+    using cliquematch::core::pygraph;
+
+    class_<pygraph, std::unique_ptr<pygraph, cm_core::pygraphDeleter>>(m, "Graph")
+        .def(py::init<>())
         .def_readwrite("use_heuristic", &pygraph::use_heur,
                        "Search using the heuristic if true")
         .def_readwrite("use_dfs", &pygraph::use_dfs,
@@ -29,25 +33,25 @@ void init_pygraph(p::module& m)
                       "Number of edges in the graph (Readonly)")
         .def("get_max_clique", &pygraph::get_max_clique,
              "Finds a maximum clique in graph within the given bounds",
-             p::call_guard<p::scoped_ostream_redirect, p::scoped_estream_redirect>(),
-             return_value_policy::copy)
+             py::call_guard<py::scoped_ostream_redirect, py::scoped_estream_redirect>(),
+             py::return_value_policy::copy)
         .def("continue_search", &pygraph::continue_search,
              "Continue the clique search if the entire graph has not been searched")
         .def("reset_search", &pygraph::reset_search,
              "Reset the search for maximum cliques")
-        .def_static("from_file", &from_file,
+        .def_static("from_file", &cm_core::from_file,
                     "Constructs `Graph` instance from reading a Matrix Market file",
-                    arg("filename"), return_value_policy::move)
-        .def_static("from_edgelist", &from_edgelist,
+                    arg("filename"), py::return_value_policy::move)
+        .def_static("from_edgelist", &cm_core::from_edgelist,
                     "Constructs `Graph` instance from the given edge list",
-                    arg("edgelist"), arg("num_vertices"), return_value_policy::move)
-        .def_static("from_matrix", &from_adj_matrix,
+                    arg("edgelist"), arg("num_vertices"), py::return_value_policy::move)
+        .def_static("from_matrix", &cm_core::from_adj_matrix,
                     "Constructs `Graph` instance from the given adjacency matrix",
-                    arg("adjmat"), return_value_policy::move)
-        .def_static("from_adjlist", &from_adj_list,
+                    arg("adjmat"), py::return_value_policy::move)
+        .def_static("from_adjlist", &cm_core::from_adj_list,
                     "Constructs `Graph` instance from the given adjacency list",
                     arg("num_vertices"), arg("num_edges"), arg("edges"),
-                    return_value_policy::move)
+                    py::return_value_policy::move)
         .def("to_file", &pygraph::to_file,
              "Exports `Graph` instance to a Matrix Market file", arg("filename"))
         .def("to_edgelist", &pygraph::to_edgelist,
@@ -59,3 +63,4 @@ void init_pygraph(p::module& m)
         .def("__repr__", &pygraph::showdata)
         .def("__str__", &pygraph::showdata);
 }
+}  // namespace cliquematch

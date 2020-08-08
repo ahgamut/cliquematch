@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-
+TRAVIS_TAG=$(git tag -l --contains HEAD)
+echo "git cmd gave $TRAVIS_TAG"
 if [[ -z "$TRAVIS_TAG" ]]; then
 	echo "No tag; not uploading to PyPI"
 else

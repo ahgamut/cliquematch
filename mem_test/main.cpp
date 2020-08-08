@@ -4,6 +4,8 @@
 #include <chrono>
 #include <iostream>
 
+namespace cmd = cliquematch::detail;
+
 int main(int argc, char* argv[])
 {
     std::cout << "Testing cliquematch core with sample... \n";
@@ -24,14 +26,14 @@ int main(int argc, char* argv[])
     }
 
     auto start = std::chrono::steady_clock::now();
-    auto edges = mmio3_reader(argv[1], no_of_vertices, no_of_edges);
+    auto edges = cmd::mmio3_reader(argv[1], no_of_vertices, no_of_edges);
     auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
         std::chrono::steady_clock::now() - start);
     double diff = static_cast<double>(elapsed.count()) / 1e6;
     std::cout << "File reading took " << diff << "s" << std::endl;
 
     start = std::chrono::steady_clock::now();
-    graph* G = new graph(no_of_vertices, no_of_edges, edges);
+    cmd::graph* G = new cmd::graph(no_of_vertices, no_of_edges, edges);
     elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
         std::chrono::steady_clock::now() - start);
     diff = static_cast<double>(elapsed.count()) / 1e6;

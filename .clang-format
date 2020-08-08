@@ -1,6 +1,7 @@
 ---
 Language:        Cpp
 BasedOnStyle:  Google
+NamespaceIndentation: Inner
 AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: true
 AllowShortFunctionsOnASingleLine: All

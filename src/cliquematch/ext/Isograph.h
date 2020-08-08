@@ -3,10 +3,15 @@
 
 #include <templates/ext_template.hpp>
 
-class Isograph : public SlowTemplate<pygraph, pygraph>
+namespace cliquematch
 {
-   public:
-    bool build_edges(pygraph&, pygraph&);
-};
-
+namespace ext
+{
+    class IsoGraph : public SlowTemplate<pygraph, pygraph>
+    {
+       public:
+        bool build_edges(pygraph&, pygraph&);
+    };
+}  // namespace ext
+}  // namespace cliquematch
 #endif /* ISOGRAPH_H */

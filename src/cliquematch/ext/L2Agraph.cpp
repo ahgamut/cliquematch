@@ -1,10 +1,14 @@
 #include <ext/L2Agraph.h>
 
-template class GraphTemplate<py::object, Eigen::Ref<DoubleMatrixR>>;
-
-// required for wrapper template to instantiate
-// for calling from core.cpp
+namespace cliquematch
+{
+namespace ext
+{
+    template class GraphTemplate<py::object, Eigen::Ref<DoubleMatrixR>>;
+}
 void init_L2Agraph(pybind11::module& mm)
 {
-    init_GraphTemplate<py::object, Eigen::Ref<DoubleMatrixR>>(mm, "L2AGraph");
+    ext::init_GraphTemplate<pybind11::object, Eigen::Ref<DoubleMatrixR>>(mm,
+                                                                         "L2AGraph");
 }
+}  // namespace cliquematch
