@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext as _build_ext
-from distutils.command.build import build as _build
 import sys
 import os
 import platform
@@ -138,7 +137,7 @@ class BuildExt(_build_ext):
 
 setup(
     name="cliquematch",
-    version="1.2.0",
+    version="1.3.0",
     author="Gautham Venkatasubramanian",
     author_email="ahgamut@gmail.com",
     description="Finding correspondence via maximum cliques in large graphs",

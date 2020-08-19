@@ -31,8 +31,7 @@ namespace detail
     {
         f = 0;
         SearchState x(G.vertices[cur]);
-
-        this->mcs_potential = 1;
+        this->clique_potential = 1;
         for (j = 0; j < G.vertices[cur].N; j++)
         {
             vert = G.edge_list[G.vertices[cur].elo + j];
@@ -40,11 +39,12 @@ namespace detail
                 (G.vertices[vert].N == G.vertices[cur].N && vert < cur))
                 continue;
             x.cand.set(j);
-            this->mcs_potential++;
+            this->clique_potential++;
         }
-        if (this->mcs_potential <= G.CUR_MAX_CLIQUE_SIZE) return;
+        if (this->clique_potential <= G.CUR_MAX_CLIQUE_SIZE) return;
 
         states.push_back(std::move(x));
+        clique_size = 1;
         while (!states.empty())
         {
             if (G.CUR_MAX_CLIQUE_SIZE >= G.CLIQUE_LIMIT) return;
@@ -52,72 +52,58 @@ namespace detail
             if (G.elapsed_time() > this->TIME_LIMIT) return;
 #endif
             SearchState& cur_state = states.back();
-            this->candidates_left = cur_state.cand.count();
-            this->mcs_potential = candidates_left + cur_state.res.count();
+            candidates_left = cur_state.cand.count();
+            clique_potential = candidates_left + clique_size;
 
-            if (this->mcs_potential > G.CUR_MAX_CLIQUE_SIZE)
+            for (j = cur_state.start_at; j < G.vertices[cur].N; j++)
             {
-                if (this->candidates_left == 0)
+                if (!cur_state.cand[j]) continue;
+                vert = G.edge_list[G.vertices[cur].elo + j];
+                cur_state.cand.reset(j);
+                cur_state.start_at = j + 1;
+
+                to_remove.clear();
+                for (k = j + 1;
+                     k < G.vertices[cur].N && clique_potential > G.CUR_MAX_CLIQUE_SIZE;
+                     k++)
                 {
-                    G.vertices[cur].bits.copy_from(cur_state.res);
-                    G.vertices[cur].mcs = mcs_potential;
-                    G.CUR_MAX_CLIQUE_SIZE = mcs_potential;
-                    G.CUR_MAX_CLIQUE_LOC = cur;
-                    states.pop_back();
+                    if (!cur_state.cand[k]) continue;
+                    f = G.find_if_neighbors(vert, G.edge_list[G.vertices[cur].elo + k],
+                                            ans);
+                    if (f != 1) to_remove.emplace_back(k);
+                    f = 0;
+                    clique_potential =
+                        (candidates_left - to_remove.size()) + clique_size;
                 }
 
-                else
+                if (clique_potential > G.CUR_MAX_CLIQUE_SIZE)
                 {
-                    SearchState future_state(cur_state.cand, cur_state.res);
-                    for (j = cur_state.start_at; j < G.vertices[cur].N; j++)
+                    if (candidates_left == to_remove.size() + 1)
                     {
-                        if (cur_state.cand.block_empty(j))
-                        {
-                            j += (31 - j % 32);
-                            continue;
-                        }
-                        if (!cur_state.cand[j]) continue;
-
-                        // offset thru the edge list to get the neighbor vertex
-                        vert = G.edge_list[G.vertices[cur].elo + j];
-
-                        // assume vert is part of the clique
-                        future_state.res.set(j);
-                        future_state.cand.reset(j);
-                        future_state.start_at = j + 1;
-
-                        // Check if the remaining candidates in cur are neighbors to
-                        // vert
-                        for (k = j + 1; k < G.vertices[cur].N; k++)
-                        {
-                            if (future_state.cand.block_empty(k))
-                            {
-                                k += (31 - k % 32);
-                                continue;
-                            }
-                            if (!future_state.cand[k]) continue;
-                            f = G.find_if_neighbors(
-                                vert, G.edge_list[G.vertices[cur].elo + k], ans);
-                            if (f != 1)
-                            {
-                                future_state.cand.reset(k);
-                                f = 0;
-                            }
-                        }
-                        // next time we return to this state, we can start searching
-                        // using ONLY the vertices after vert, because vert will get
-                        // covered by future_state and its descendants
-                        cur_state.cand.reset(j);
+                        cur_state.res.set(j);
+                        G.vertices[cur].bits.copy_data(cur_state.res);
+                        G.vertices[cur].mcs = clique_potential;
+                        G.CUR_MAX_CLIQUE_SIZE = clique_potential;
+                        G.CUR_MAX_CLIQUE_LOC = cur;
                         cur_state.res.reset(j);
+                    }
+
+                    else
+                    {
+                        SearchState future_state;
+                        future_state.refer_from(cur_state.cand, cur_state.res, j);
+                        for (auto k : to_remove) future_state.cand.reset(k);
                         states.push_back(std::move(future_state));
+                        clique_size++;
                         break;
                     }
                 }
             }
-            else
+            if (j == G.vertices[cur].N)
             {
-                // this subtree cannot beat the current maximum clique
+                cur_state.res.reset(cur_state.id);
                 states.pop_back();
+                clique_size--;
             }
         }
     }

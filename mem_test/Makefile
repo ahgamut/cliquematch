@@ -1,4 +1,3 @@
-CXX=g++
 CXXFLAGS = -I../src/cliquematch/ -std=c++11 -O3 -c -g3 -Wall -Wpedantic -fno-omit-frame-pointer -DSTACK_DFS=1 -DBENCHMARKING=1
 LINKFLAGS= -fno-omit-frame-pointer
 VALFLAGS = --tool=memcheck --leak-check=full --leak-resolution=high --show-leak-kinds=all --errors-for-leak-kinds=all

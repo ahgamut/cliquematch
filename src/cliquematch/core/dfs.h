@@ -11,7 +11,8 @@ namespace detail
     {
        private:
         std::vector<SearchState> states;
-        std::size_t candidates_left, mcs_potential;
+        std::vector<std::size_t> to_remove;
+        std::size_t candidates_left, clique_size, clique_potential;
         std::size_t i, j, k, vert, ans;
         short f;
 
@@ -25,7 +26,7 @@ namespace detail
     {
        public:
         void process_vertex(graph&, std::size_t);
-        void search_vertex(graph&, std::size_t, const graphBits&, const graphBits&);
+        void search_vertex(graph&, std::size_t, const graphBits&, graphBits&);
         std::size_t process_graph(graph&, std::size_t, double);
         ~RecursionDFS() = default;
     };

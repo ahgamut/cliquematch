@@ -51,11 +51,10 @@ namespace detail
     }
 
     void RecursionDFS::search_vertex(graph& G, std::size_t cur,
-                                     const graphBits& prev_cand,
-                                     const graphBits& prev_res)
+                                     const graphBits& prev_cand, graphBits& res)
     {
         std::size_t candidates_left = prev_cand.count();
-        std::size_t mcs_potential = candidates_left + prev_res.count();
+        std::size_t mcs_potential = candidates_left + res.count();
 
 #if BENCHMARKING == 0
         if (G.elapsed_time() > this->TIME_LIMIT) return;
@@ -67,7 +66,7 @@ namespace detail
         // therefore mcs_potential is same as mcs
         if (candidates_left == 0)
         {
-            G.vertices[cur].bits.copy_from(prev_res);
+            G.vertices[cur].bits.copy_data(res);
             G.vertices[cur].mcs = mcs_potential;
             G.CUR_MAX_CLIQUE_SIZE = mcs_potential;
             G.CUR_MAX_CLIQUE_LOC = cur;
@@ -76,9 +75,8 @@ namespace detail
 
         // There exist candidates for possible clique expansion,
         // so go through them recursively
-        graphBits cand(prev_cand);
-        graphBits res(prev_res);
-        graphBits future_cand(prev_cand);
+        graphBits cand;
+        cand.copy_from(prev_cand);
 
         std::size_t i, k;
         short f = 0;
@@ -96,29 +94,28 @@ namespace detail
             // offset thru the edge list to get the neighbor vertex
             vert = G.edge_list[G.vertices[cur].elo + i];
             cand.reset(i);
-            future_cand.reset(i);
 
             // assume vert is part of the clique
             res.set(i);
             // Check if the remaining candidates in cur are neighbors to vert
             for (k = i + 1; k < G.vertices[cur].N; k++)
             {
-                if (future_cand.block_empty(k))
+                if (cand.block_empty(k))
                 {
                     k += (31 - k % 32);
                     continue;
                 }
-                if (!future_cand[k]) continue;
+                if (!cand[k]) continue;
                 f = G.find_if_neighbors(vert, G.edge_list[G.vertices[cur].elo + k],
                                         ans);
                 if (f != 1)
                 {
-                    future_cand.reset(k);
+                    cand.reset(k);
                     f = 0;
                 }
             }
 
-            search_vertex(G, cur, future_cand, res);
+            search_vertex(G, cur, cand, res);
 
             // we need to remove vert from clique consideration (undo
             // assumption) because the next (future) candidate may not have

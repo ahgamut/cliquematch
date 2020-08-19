@@ -8,11 +8,12 @@ namespace detail
 {
     struct SearchState
     {
-        std::size_t start_at;
+        std::size_t start_at, id;
         graphBits cand, res;
 
         SearchState(const vertex&);
-        SearchState(const graphBits&, const graphBits&);
+        SearchState() = default;
+        void refer_from(const graphBits&, const graphBits&, std::size_t);
     };
 }  // namespace detail
 }  // namespace cliquematch

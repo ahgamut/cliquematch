@@ -6,18 +6,15 @@ namespace cliquematch
 {
 namespace detail
 {
-    void clean_edges(std::vector<std::pair<std::size_t, std::size_t>>& edges)
+    void clean_edges(std::size_t n_vert,
+                     std::vector<std::pair<std::size_t, std::size_t>>& edges)
     {
+        using sp = std::pair<std::size_t, std::size_t>;
+        std::sort(edges.begin(), edges.end(), [](const sp& a, const sp& b) {
+            return a.first == b.first ? a.second < b.second : a.first < b.first;
+        });
         auto it = std::unique(edges.begin(), edges.end());
         edges.resize(std::distance(edges.begin(), it));
-        std::sort(edges.begin(), edges.end());
-    }
-
-    short graph::find_if_neighbors(std::size_t v1_id, std::size_t v2_id,
-                                   std::size_t& v2_position) const
-    {
-        return binary_find(&(this->edge_list[this->vertices[v1_id].elo]),
-                           this->vertices[v1_id].N, v2_id, v2_position);
     }
 
     void graph::start_clock() { this->start_time = std::chrono::steady_clock::now(); }
@@ -54,7 +51,7 @@ namespace detail
             edges[i].insert(i);
             std::copy(edges[i].begin(), edges[i].end(),
                       this->edge_list.begin() + el_size);
-            this->vertices[i].load_external(i, edges[i].size(), el_size, eb_size);
+            this->vertices[i].refer_from(i, edges[i].size(), el_size, eb_size);
             this->max_degree =
                 max_degree > edges[i].size() ? max_degree : edges[i].size();
             this->el_size += edges[i].size();
@@ -70,7 +67,7 @@ namespace detail
                  std::vector<std::pair<std::size_t, std::size_t>>& edges)
         : graph()
     {
-        clean_edges(edges);
+        clean_edges(n_vert + 1, edges);
         this->n_vert = n_vert + 1;
         this->vertices = std::vector<vertex>(this->n_vert);
         this->edge_list = std::vector<std::size_t>(edges.size());
@@ -81,7 +78,7 @@ namespace detail
             for (j = 0; el_size + j < edges.size() && edges[el_size + j].first == i;
                  j++)
                 this->edge_list[this->el_size + j] = edges[this->el_size + j].second;
-            this->vertices[i].load_external(i, j, this->el_size, this->eb_size);
+            this->vertices[i].refer_from(i, j, this->el_size, this->eb_size);
             if (this->max_degree < j)
             {
                 this->max_degree = j;
@@ -145,13 +142,13 @@ namespace detail
 
                         v1 = (i1 - 1) * (g2.n_vert - 1) + (j1 - 1) + 1;
                         v2 = (i2 - 1) * (g2.n_vert - 1) + (j2 - 1) + 1;
-                        edges.push_back(std::make_pair(v1, v2));
-                        edges.push_back(std::make_pair(v2, v1));
+                        edges.emplace_back(v1, v2);
+                        edges.emplace_back(v2, v1);
 
                         v1 = (i2 - 1) * (g2.n_vert - 1) + (j1 - 1) + 1;
                         v2 = (i1 - 1) * (g2.n_vert - 1) + (j2 - 1) + 1;
-                        edges.push_back(std::make_pair(v1, v2));
-                        edges.push_back(std::make_pair(v2, v1));
+                        edges.emplace_back(v1, v2);
+                        edges.emplace_back(v2, v1);
 
                         num_edges += 2;
                     }

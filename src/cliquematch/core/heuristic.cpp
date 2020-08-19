@@ -106,7 +106,7 @@ namespace detail
                 G.vertices[cur].mcs = cur_clique_size;
                 G.CUR_MAX_CLIQUE_SIZE = cur_clique_size;
                 G.CUR_MAX_CLIQUE_LOC = cur;
-                G.vertices[cur].bits.copy_from(res);
+                G.vertices[cur].bits.copy_data(res);
                 // cerr << "Heuristic in " << cur << " updated max_clique to "
                 //  << this->vertices[cur].mcs << "\n";
 

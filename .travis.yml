@@ -8,6 +8,13 @@ branches:
   only:
   - master
 
+deploy:
+  provider: script
+  script: bash travis/upload.sh
+  on:
+    tags: true
+    branch: master
+
 env:
   global:
   - secure: RsaS50aaL+dvUcmzicm75MB+15gDj/XuXxJ2j078virJG1I0EyTn0koPsvQQD6lD1nATPTn0hPG4uIjh5l0madlyCel/Q2cmtPGkBnZ0RX1C8dq0RUwVIzE0gghmsfMW+OxmxGjbdnwTWHiqtM8IFIk41oDMLCn5lMXYKhMsTLnyURjCJdDxySVZ+Q3JORcWgLV/YUnBL9IoElKSzVAdPLf2pDdtuvNmvkhaeaA0PkBLnNCed1LaGvwR8Rzc78+oEssYJUIUEH5TXQwxvmitSYd+VXxh7QzOJ6VK70wk14y7mj1dXDxJoPmpJnnPF8aGSr63vKLcgVYYH8n85jz3JNV1v7alSB1Vn9EOGgtRxVm1FMfXiaq/emvUZlonixC73AkcwhfV0lQX9Qs01hLBo6TdbsRX9DwNHSfLwUK41WXd5YNFY/Sswd2OTNUnFzGUlfZt05tURgh9inL1al4a7axxILH8y17d+n2UtDTZc/S01VF11wzKxavpSPQkOODuTbLczcX0x5E1LX54cE9htbK1FKlFRPAQ898DkeGadGI4n9G30OQ+ZWBe6m2TszaGuy6cZpeKZcQRin2ni/pdJfqAiqTqs+0i4G11VD7FQ0Z6U2GeKLPxJlZIMhpZdYlNVQ1JAMFyjcJeRl2TwP21gc76805XNfayhynTO4Xd7w0=
@@ -43,7 +50,3 @@ install:
 script:
   - travis/script.sh
   - ls wheelhouse/
-
-after_success:
-  - travis/upload.sh
-
