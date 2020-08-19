@@ -6,44 +6,15 @@
 [![travis build](https://travis-ci.com/ahgamut/cliquematch.svg?branch=master)][5]
 [![appveyor build](https://ci.appveyor.com/api/projects/status/27r2qy8mbog04bhg?svg=true)][6]
 
-The `cliquematch` package is used to to find a [maximum clique][wiki] in large sparse undirected graphs as
-quickly as possible. It also provides a framework with generic classes for implementing applications of the
-maximum clique problem: finding a (sub)set of corresponding elements between two sets *S*<sub>1</sub> and
-*S*<sub>2</sub>.
+The cliquematch package aims to do two specific things:
 
-## Usage
+1.  Find a [maximum clique][wiki] in large sparse undirected graphs, as quickly and efficiently as possible.
+	(cliquematch uses C++ internally to implement a really fast maximum clique algorithm).
 
-`cliquematch` is used for loading a large graph and finding a maximum clique in it. 
-For example, we load [`cond-mat-2003.mtx`][cond2003], and find a maximum clique.
+2.  Construct large sparse undirected graphs in-memory for the various applications of the maximum clique
+	problem.
 
-```python
-import cliquematch
-G = cliquematch.Graph.from_file("cond-mat-2003.mtx")
-G.time_limit = 1
-print(G)
-# cliquematch.core.Graph object at 0x559e7da730c0
-# (n_vertices=31163,n_edges=120029,lower_bound=1,upper_bound=4294967295,
-# time_limit=1,use_heuristic=False,use_dfs=True,search_done=False)
-G.get_max_clique()
-# [9986, 9987, 10066, 10068, 10071, 10072, 10074, 10076,
-# 10077, 10078, 10079, 10080, 10081, 10082, 10083, 10085,
-# 10287, 10902, 10903, 10904, 10905, 10906, 10907, 10908, 10909]
-```
-
-The search can be tuned in terms of size/time bounds, and reset if necessary. 
-If required, `use_heuristic` can be set to `True` to find a large clique quickly.
-
-### Correspondence graphs
-
-Many applications of maximum cliques involve construction of a correspondence graph to find corresponding subsets
-between two given sets. `cliquematch` also contains classes for correspondence graphs:
-
-* [This image matching algorithm][ccmm] can be implemented using `cliquematch` [like this][ccmmapp].
-* [Simple molecular alignment][molecule] can be implemented [like this][moleculeapp].
-
-The correspondence graph classes are generated using C++ template programming.  `cliquematch` can be extended
-with custom correspondence graphs: they can be prototyped using the existing classes, and/or implemented in
-C++ for performance.
+Licensed under MIT License. View the documentation at https://cliquematch.readthedocs.io
 
 ## Installation Instructions
 
@@ -75,13 +46,6 @@ pip3 install pybind11
 	* On Windows, Visual Studio 2015 Update 3 (MSVC 14.0 runtime) or later is needed.
 	* **Note:** Installing under Windows+MinGW has not been tested.
 
-4. Compilation Flags: `setup.py` compiles the `cliquematch` extension with two additional flags.
-	
-	* `STACK_DFS` (`1` by default): If nonzero, `cliquematch` uses an explicit stack for the depth-first clique
-	  search;  otherwise it uses recursive function calls. Primarily for debugging purposes.
-
-	* `BENCHMARKING` (`0` by default): Set to `1` when benchmarking the core cliquematch algorithm.
-
 [1]: https://github.com/pybind/pybind11/
 [2]: https://gitlab.com/libeigen/eigen/-/releases#3.3.7
 [3]: https://www.python.org/download/releases/3.5.0/
@@ -89,9 +53,4 @@ pip3 install pybind11
 [5]: https://travis-ci.com/ahgamut/cliquematch
 [6]: https://ci.appveyor.com/project/ahgamut/cliquematch
 [wiki]: https://en.wikipedia.org/wiki/Clique_(graph_theory)#Definitions
-[test]: https://test.pypi.org/project/cliquematch/
 [cond2003]: https://sparse.tamu.edu/Newman/cond-mat-2003
-[ccmm]: https://link.springer.com/article/10.1007/s10489-015-0646-1
-[ccmmapp]: https://github.com/ahgamut/cliquematch/blob/master/examples/ccmm.py
-[molecule]: https://www.sciencedirect.com/science/article/abs/pii/S1093326397000892
-[moleculeapp]: https://github.com/ahgamut/cliquematch/blob/master/examples/molecule.py

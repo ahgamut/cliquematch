@@ -13,8 +13,8 @@ class MaskFilter(object):
     target image.
 
     Attributes:
-        pts ( `numpy.array` ) : control points to use in every alignment test
-        mask ( `numpy.array` ): a boolean mask showing valid regions in the
+        pts ( `numpy.ndarray` ) : control points to use in every alignment test
+        mask ( `numpy.ndarray` ): a boolean mask showing valid regions in the
                                 target image
         percentage ( `float` ): an alignment is valid if the number of control
                                 points that fall within the mask are greater
@@ -80,8 +80,8 @@ class AlignGraph(_AlignGraph):
     metrics.
 
     Attributes:
-        S1 ( `numpy.array` ): array elements are converted to `numpy.float64`
-        S2 ( `numpy.array` ): array elements are converted to `numpy.float64`
+        S1 ( `numpy.ndarray` ): array elements are converted to `numpy.float64`
+        S2 ( `numpy.ndarray` ): array elements are converted to `numpy.float64`
     """
 
     def __init__(self, set1, set2):
@@ -105,9 +105,9 @@ class AlignGraph(_AlignGraph):
         and construct a correspondence graph.
 
         Args:
-            control_points ( `numpy.array` ) :
+            control_points ( `numpy.ndarray` ) :
                             control points to use in every alignment test
-            filter_mask ( `numpy.array` ):
+            filter_mask ( `numpy.ndarray` ):
                             a boolean mask showing valid regions in the
                             target image
             percentage ( `float` ):

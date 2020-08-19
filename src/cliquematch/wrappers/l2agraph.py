@@ -7,14 +7,16 @@ import numpy as np
 class L2AGraph(_L2AGraph):
     """Correspondence Graph wrapper for list-to-array mappings.
 
-    Any general object can be passed for ``S1``; the user is required to define
+    Any general object can be passed for `.S1`; the user is required to define
     how elements are accessed.
 
     Attributes:
         S1 ( `object` ):
-        S2 ( `numpy.array` ): array elements are converted to `numpy.float64`
-        d1 ( `Callable` ):  distance metric for elements in ``S1``
-        d2 ( `Callable` ):  distance metric for elements in ``S2``,
+        S2 ( `numpy.ndarray` ): array elements are converted to `numpy.float64`
+        d1 ( `callable` (`list`, `int`, `int`) -> `float`):
+                            distance metric for elements in `.S1`
+        d2 ( `callable` (`numpy.ndarray`, `int`, `int`) -> `float`):
+                            distance metric for elements in `.S2`,
                             defaults to Euclidean metric if `None`
         is_d1_symmetric ( `bool` ):
         is_d2_symmetric ( `bool` ):
@@ -45,7 +47,7 @@ class L2AGraph(_L2AGraph):
     def build_edges(self):
         """Build edges of the correspondence graph using distance metrics.
 
-        Checks ``d1`` and ``d2`` for defaults before passing to base class.
+        Checks `.d1` and `.d2` for defaults before passing to base class.
         """
         args = [self, self.S1, len(self.S1), self.S2, len(self.S2)]
         if self.d1:
@@ -59,7 +61,7 @@ class L2AGraph(_L2AGraph):
 
         Args:
             condition_func ( `callable` ): must take parameters corresponding
-                            to ``S1``, `int`, `int`, ``S2``,
+                            to `.S1`, `int`, `int`, `.S2`,
                             `int`, `int`, and return `bool`
             use_cfunc_only ( `bool` ): if `True`, the distance metrics will not
                             be used to filter out edges (slower)
@@ -78,7 +80,7 @@ class L2AGraph(_L2AGraph):
             return _L2AGraph._build_edges(*args)
 
     def get_correspondence(self, return_indices=True):
-        """Get corresponding subsets between the sets ``S1`` and ``S2``.
+        """Get corresponding subsets between the sets `.S1` and `.S2`.
 
         Args:
             return_indices ( `bool` ): if `True` return the indices of the
