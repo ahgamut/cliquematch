@@ -10,11 +10,9 @@ namespace cliquematch
 namespace ext
 {
     extern template struct relset<py::object, double>;
-    extern template double dummy_comparison<py::object, double>(py::object&,
-                                                                std::size_t,
-                                                                std::size_t);
-    extern template class GraphTemplate<py::object, py::object>;
-    using L2LGraph = GraphTemplate<py::object, py::object>;
+    extern template double dummy_comparison<py::object, double>(const py::object&,
+                                                                const std::size_t,
+                                                                const std::size_t);
 }  // namespace ext
 }  // namespace cliquematch
 

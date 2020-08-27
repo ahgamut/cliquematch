@@ -32,9 +32,7 @@ void init_pygraph(pybind11::module& m)
         .def_readonly("n_edges", &pygraph::nedges,
                       "Number of edges in the graph (Readonly)")
         .def("get_max_clique", &pygraph::get_max_clique,
-             "Finds a maximum clique in graph within the given bounds",
-             py::call_guard<py::scoped_ostream_redirect, py::scoped_estream_redirect>(),
-             py::return_value_policy::copy)
+             "Finds a maximum clique in graph within the given bounds")
         .def("continue_search", &pygraph::continue_search,
              "Continue the clique search if the entire graph has not been searched")
         .def("reset_search", &pygraph::reset_search,
@@ -60,6 +58,7 @@ void init_pygraph(pybind11::module& m)
              "Exports `Graph` instance to a boolean matrix")
         .def("to_adjlist", &pygraph::to_adj_list,
              "Exports `Graph` instance to an adjacency list")
+        .def("_get_correspondence", &pygraph::get_correspondence)
         .def("__repr__", &pygraph::showdata)
         .def("__str__", &pygraph::showdata);
 }

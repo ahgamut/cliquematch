@@ -31,9 +31,9 @@ namespace core
         detail::graph* G;
         bool inited;
         bool ans_found;
+        bool finished_heur;
         void find_max_clique();
         std::vector<std::size_t> ans_clique;
-        bool finished_heur;
 
        public:
         bool use_heur;
@@ -45,19 +45,28 @@ namespace core
         std::size_t current_vertex;
 
         pygraph();
+        pygraph(pygraph&&);
+        pygraph(const pygraph&) = delete;
+        pygraph& operator=(pygraph&) = delete;
+        virtual ~pygraph();
         void continue_search();
         void reset_search();
         std::vector<std::size_t> get_max_clique();
-        std::string showdata();
+        std::pair<std::vector<std::size_t>, std::vector<std::size_t>>
+        get_correspondence(std::size_t len1, std::size_t len2);
+        std::pair<std::vector<std::size_t>, std::vector<std::size_t>>
+        get_correspondence2(std::size_t len1, std::size_t len2,
+                            std::vector<std::size_t> clique);
 
-        ndarray<bool> to_adj_matrix();
-        ndarray<std::size_t> to_edgelist();
-        std::vector<std::set<std::size_t>> to_adj_list();
-        void to_file(std::string filename);
+        std::string showdata() const;
+        ndarray<bool> to_adj_matrix() const;
+        ndarray<std::size_t> to_edgelist() const;
+        std::vector<std::set<std::size_t>> to_adj_list() const;
+        void to_file(std::string filename) const;
 
-        void load_graph(std::size_t, std::size_t, std::vector<std::set<std::size_t>>);
+        void load_graph(std::size_t, std::size_t, std::vector<std::set<std::size_t>>&);
         void load_graph(std::size_t, std::size_t,
-                        std::vector<std::pair<std::size_t, std::size_t>>);
+                        std::vector<std::pair<std::size_t, std::size_t>>&);
         friend std::vector<std::pair<std::size_t, std::size_t>> iso_edges(
             std::size_t&, std::size_t&, const pygraph&, const pygraph&);
         friend class pygraphDeleter;

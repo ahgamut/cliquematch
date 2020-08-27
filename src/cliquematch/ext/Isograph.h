@@ -7,11 +7,7 @@ namespace cliquematch
 {
 namespace ext
 {
-    class IsoGraph : public SlowTemplate<pygraph, pygraph>
-    {
-       public:
-        bool build_edges(pygraph&, pygraph&);
-    };
+    bool build_edges_for_iso(pygraph&, const pygraph&, const pygraph&);
 }  // namespace ext
 }  // namespace cliquematch
 #endif /* ISOGRAPH_H */

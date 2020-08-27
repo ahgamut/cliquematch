@@ -22,7 +22,7 @@ namespace detail
         // (padded to ensure 32bit)
         std::vector<u32> edge_bits;
         std::size_t eb_size;
-        short find_if_neighbors(std::size_t v1_id, std::size_t v2_id,
+        short find_if_neighbors(const std::size_t v1_id, const std::size_t v2_id,
                                 std::size_t& v2_position) const
         {
             return binary_find(&(this->edge_list[this->vertices[v1_id].elo]),
@@ -45,9 +45,9 @@ namespace detail
 
         // basic functions
         graph();
-        graph(std::size_t n_vert, std::size_t n_edges,
+        graph(const std::size_t n_vert, const std::size_t n_edges,
               std::vector<std::set<std::size_t>>& edges);
-        graph(std::size_t n_vert, std::size_t n_edges,
+        graph(const std::size_t n_vert, const std::size_t n_edges,
               std::vector<std::pair<std::size_t, std::size_t>>& edges);
         void disp() const;
         void send_data(std::function<void(std::size_t, std::size_t)>) const;

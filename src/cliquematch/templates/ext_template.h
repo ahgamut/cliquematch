@@ -15,72 +15,11 @@ namespace ext
     namespace py = pybind11;
 
     template <typename List, typename Delta>
-    Delta dummy_comparison(List& ll, std::size_t i, std::size_t j)
+    Delta dummy_comparison(const List& ll, const std::size_t i, const std::size_t j)
     {
         throw CM_ERROR("Can't have a distance function for an unknown type ");
         return (Delta)(0);
     }
-
-    template <typename List1, typename List2>
-    class SlowTemplate : public pygraph
-    {
-       public:
-        bool build_edges(List1&, List2&);
-        std::string showdata();
-        pybind11::list get_correspondence(std::size_t len1, std::size_t len2);
-        pybind11::list get_correspondence2(std::size_t len1, std::size_t len2,
-                                           std::vector<std::size_t> clique);
-    };
-
-    template <typename List1, typename List2, typename Delta1 = double,
-              typename Delta2 = Delta1, typename EpsType = Delta1>
-    class GraphTemplate : public SlowTemplate<List1, List2>
-    {
-       public:
-        EpsType pts_epsilon;
-        bool build_edges_condition_only(
-            List1& pts1, std::size_t pts1_len, List2& pts2, std::size_t pts2_len,
-            std::function<bool(List1&, std::size_t, std::size_t, List2&, std::size_t,
-                               std::size_t)>
-                cfunc);
-        // overloads are defined as such because default arguments to pybind11
-        // does not allow dummy_comparison<List, Delta>
-        bool build_edges(List1& pts1, std::size_t pts1_len, List2& pts2,
-                         std::size_t pts2_len,
-                         std::function<bool(List1&, std::size_t, std::size_t, List2&,
-                                            std::size_t, std::size_t)>
-                             cfunc,
-                         std::function<Delta1(List1&, std::size_t, std::size_t)> d1,
-                         bool is_d1_symmetric,
-                         std::function<Delta2(List2&, std::size_t, std::size_t)> d2,
-                         bool is_d2_symmetric);
-        bool build_edges(List1& pts1, std::size_t pts1_len, List2& pts2,
-                         std::size_t pts2_len,
-                         std::function<bool(List1&, std::size_t, std::size_t, List2&,
-                                            std::size_t, std::size_t)>
-                             cfunc,
-                         std::function<Delta1(List1&, std::size_t, std::size_t)> d1,
-                         bool is_d1_symmetric);
-        bool build_edges(List1& pts1, std::size_t pts1_len, List2& pts2,
-                         std::size_t pts2_len,
-                         std::function<bool(List1&, std::size_t, std::size_t, List2&,
-                                            std::size_t, std::size_t)>
-                             cfunc);
-
-        bool build_edges_metric_only(
-            List1& pts1, std::size_t pts1_len, List2& pts2, std::size_t pts2_len,
-            std::function<Delta1(List1&, std::size_t, std::size_t)> d1,
-            bool is_d1_symmetric,
-            std::function<Delta2(List2&, std::size_t, std::size_t)> d2,
-            bool is_d2_symmetric);
-        bool build_edges_metric_only(
-            List1& pts1, std::size_t pts1_len, List2& pts2, std::size_t pts2_len,
-            std::function<Delta1(List1&, std::size_t, std::size_t)> d1,
-            bool is_d1_symmetric);
-        bool build_edges_metric_only(List1& pts1, std::size_t pts1_len, List2& pts2,
-                                     std::size_t pts2_len);
-        std::string showdata();
-    };
 
     /*
      * The below function takes two Lists, along with their subset relationships (ie
@@ -116,8 +55,48 @@ namespace ext
     std::vector<std::pair<std::size_t, std::size_t> > efr_condition(
         std::size_t& nvert, std::size_t& nedges, const relset<List1, Delta1>&,
         const relset<List2, Delta2>&, const EpsType epsilon,
-        std::function<bool(std::size_t, std::size_t, std::size_t, std::size_t)> cfunc);
+        const std::function<bool(const std::size_t, const std::size_t,
+                                 const std::size_t, const std::size_t)>
+            cfunc);
+
+    template <typename List1, typename List2, typename Delta1 = double,
+              typename Delta2 = Delta1, typename EpsType = Delta1>
+    bool build_edges_condition_only(
+        pygraph& pg, const List1& pts1, const std::size_t pts1_len, const List2& pts2,
+        const std::size_t pts2_len,
+        const std::function<bool(const List1&, const std::size_t, const std::size_t,
+                                 const List2&, const std::size_t, const std::size_t)>
+            cfunc);
+    // overloads are defined as such because default arguments to pybind11
+    // does not allow dummy_comparison<List, Delta>
+    template <typename List1, typename List2, typename Delta1 = double,
+              typename Delta2 = Delta1, typename EpsType = Delta1>
+    bool build_edges(
+        pygraph& pg, const List1& pts1, const std::size_t pts1_len, const List2& pts2,
+        const std::size_t pts2_len, const EpsType epsilon,
+        const std::function<bool(const List1&, const std::size_t, const std::size_t,
+                                 const List2&, const std::size_t, const std::size_t)>
+            cfunc,
+        const std::function<Delta1(const List1&, const std::size_t, const std::size_t)>
+            d1 = dummy_comparison<List1, Delta1>,
+        const bool is_d1_symmetric = true,
+        const std::function<Delta2(const List2&, const std::size_t, const std::size_t)>
+            d2 = dummy_comparison<List2, Delta2>,
+        const bool is_d2_symmetric = true);
+
+    template <typename List1, typename List2, typename Delta1 = double,
+              typename Delta2 = Delta1, typename EpsType = Delta1>
+    bool build_edges_metric_only(
+        pygraph& pg, const List1& pts1, const std::size_t pts1_len, const List2& pts2,
+        const std::size_t pts2_len, const EpsType epsilon,
+        const std::function<Delta1(const List1&, const std::size_t, const std::size_t)>
+            d1 = dummy_comparison<List1, Delta1>,
+        const bool is_d1_symmetric = true,
+        const std::function<Delta2(const List2&, const std::size_t, const std::size_t)>
+            d2 = dummy_comparison<List2, Delta2>,
+        const bool is_d2_symmetric = true);
 }  // namespace ext
+
 }  // namespace cliquematch
 #endif /* EXT_TEMPLATE_H */
 

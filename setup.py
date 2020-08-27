@@ -46,8 +46,8 @@ def get_src_cpps(path):
 ext_modules = [
     Extension(
         name="cliquematch.core",
-        sources=get_src_cpps("src/cliquematch/core/")
-        + get_src_cpps("src/cliquematch/ext/"),
+        sources=get_src_cpps("src/cliquematch/ext/")
+        + get_src_cpps("src/cliquematch/core/"),
         include_dirs=[
             str(get_pybind_include(True)),
             str(get_pybind_include(False)),

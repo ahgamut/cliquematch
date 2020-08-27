@@ -3,10 +3,6 @@
 
 #include <templates/relset.h>
 #include <algorithm>
-#include <cmath>
-#include <exception>
-#include <fstream>
-#include <iostream>
 
 namespace cliquematch
 {
@@ -15,20 +11,20 @@ namespace ext
     // template syntax brain hurty
     template <typename List, typename Delta>
     relset<List, Delta>::relset(
-        std::size_t N, std::function<Delta(List&, std::size_t, std::size_t)> dfunc,
+        std::size_t N,
+        const std::function<Delta(const List&, const std::size_t, const std::size_t)>&
+            dfunc,
         bool symmetric)
+        : symmetric(symmetric), N(N), delfunc(dfunc)
     {
-        this->N = N;
-        this->delfunc = dfunc;
-        this->symmetric = symmetric;
-        if (symmetric)
-            this->dists = std::vector<pair_dist<Delta> >(N * (N - 1) / 2);
+        if (this->symmetric)
+            this->dists.resize(N * (N - 1) / 2);
         else
-            this->dists = std::vector<pair_dist<Delta> >(N * (N - 1));
+            this->dists.resize(N * (N - 1));
     }
 
     template <typename List, typename Delta>
-    void relset<List, Delta>::fill_dists(List& x)
+    void relset<List, Delta>::fill_dists(const List& x)
     {
         std::size_t i, j, count = 0;
         for (i = 0; i < this->N; i++)
@@ -45,8 +41,9 @@ namespace ext
         std::sort(this->dists.begin(), this->dists.end());
     }
 
+    /* needed only for debugging
     template <typename List, typename Delta>
-    void relset<List, Delta>::disp()
+    void relset<List, Delta>::disp() const
     {
         for (std::size_t i = 0; i < this->dists.size(); i++)
         {
@@ -54,6 +51,7 @@ namespace ext
                       << this->dists[i].dist << "\n";
         }
     }
+    */
 }  // namespace ext
 }  // namespace cliquematch
 #endif /* RELSET_HPP */

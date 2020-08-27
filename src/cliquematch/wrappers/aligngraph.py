@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from cliquematch.core import AlignGraph as _AlignGraph
+from ._gen_graph import GenGraph
+from cliquematch.core import _build_edges_with_filter
 import numpy as np
 
 
@@ -72,7 +73,7 @@ class MaskFilter(object):
         return msk_score >= self.percentage
 
 
-class AlignGraph(_AlignGraph):
+class AlignGraph(GenGraph):
     """Correspondence graph for aligning images using obtained interest points.
 
     Uses a mask-based filtering method as a conditon function during
@@ -85,20 +86,7 @@ class AlignGraph(_AlignGraph):
     """
 
     def __init__(self, set1, set2):
-        self.S1 = np.float64(set1)
-        self.S2 = np.float64(set2)
-        _AlignGraph.__init__(self)
-
-    def build_edges(self):
-        args = [self, self.S1, len(self.S1), self.S2, len(self.S2)]
-        return _AlignGraph._build_edges_metric_only(*args)
-
-    def build_edges_with_condition(self, condition_func, use_cfunc_only):
-        args = [self, self.S1, len(self.S1), self.S2, len(self.S2), condition_func]
-        if use_cfunc_only:
-            return _AlignGraph._build_edges_condition_only(*args)
-        else:
-            return _AlignGraph._build_edges(*args)
+        super(AlignGraph, self).__init__(set1, set2)
 
     def build_edges_with_filter(self, control_points, filter_mask, percentage):
         """Uses control points and a binary mask to filter out invalid mappings
@@ -121,11 +109,12 @@ class AlignGraph(_AlignGraph):
             len(self.S1),
             self.S2,
             len(self.S2),
+            self.epsilon,
             control_points,
             filter_mask,
             percentage,
         ]
-        _AlignGraph._build_edges_with_filter(*args)
+        _build_edges_with_filter(*args)
 
     def get_correspondence(self):
         """Find correspondence between the sets of points ``S1`` and ``S2``.
@@ -138,7 +127,7 @@ class AlignGraph(_AlignGraph):
             to transform `S1` to `S2`
             (obtained via `Kabsch Algorithm <https://en.wikipedia.org/wiki/Kabsch_algorithm>`)
         """
-        indices = _AlignGraph._get_correspondence(self, len(self.S1), len(self.S2))
+        indices = super(AlignGraph, self).get_correspondence(return_indices=True)
         ans = [self.S1[indices[0], :], self.S2[indices[1], :]]
         # I want to find R, T such that S1*R + T = S2
 

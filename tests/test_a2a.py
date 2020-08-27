@@ -126,7 +126,7 @@ class TestA2AGraph(object):
         ans = G.get_correspondence()
 
         subset.sort()
-        assert ans[0].tolist() == subset
+        assert ans[0] == subset
 
     def test_heuristic(self):
         S1 = self.S1
@@ -151,7 +151,7 @@ class TestA2AGraph(object):
         ans = G.get_correspondence()
         print(G)
         subset.sort()
-        assert set(ans[0].tolist()) <= set(subset)
+        assert set(ans[0]) <= set(subset)
 
     def test_data(self):
         S1 = self.S1
@@ -211,7 +211,7 @@ class TestA2AGraph(object):
         ans = G.get_correspondence()
         G.continue_search()
         subset.sort()
-        assert set(ans[0].tolist()) == set(subset)
+        assert set(ans[0]) == set(subset)
 
     def test_reset_search(self):
         np.random.seed(824)
@@ -242,4 +242,4 @@ class TestA2AGraph(object):
 
         ans = G.get_correspondence()
         subset.sort()
-        assert set(ans[0].tolist()) == set(subset)
+        assert set(ans[0]) == set(subset)

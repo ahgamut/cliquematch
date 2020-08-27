@@ -37,14 +37,14 @@ namespace detail
         CLIQUE_LIMIT = 0xFFFF;
     }
 
-    graph::graph(std::size_t n_vert, std::size_t n_edges,
+    graph::graph(const std::size_t n_vert, const std::size_t n_edges,
                  std::vector<std::set<std::size_t>>& edges)
         : graph()
     {
         this->n_vert = n_vert + 1;
         // Therefore the 0th graph vertex is always a sentinel, remember the offset
-        this->vertices = std::vector<vertex>(this->n_vert);
-        this->edge_list = std::vector<std::size_t>(this->n_vert + 2 * n_edges);
+        this->vertices.resize(this->n_vert);
+        this->edge_list.resize(this->n_vert + 2 * n_edges);
 
         for (std::size_t i = 0; i < edges.size(); i++)
         {
@@ -63,14 +63,14 @@ namespace detail
         this->set_vertices();
     }
 
-    graph::graph(std::size_t n_vert, std::size_t n_edges,
+    graph::graph(const std::size_t n_vert, const std::size_t n_edges,
                  std::vector<std::pair<std::size_t, std::size_t>>& edges)
         : graph()
     {
         clean_edges(n_vert + 1, edges);
         this->n_vert = n_vert + 1;
-        this->vertices = std::vector<vertex>(this->n_vert);
-        this->edge_list = std::vector<std::size_t>(edges.size());
+        this->vertices.resize(this->n_vert);
+        this->edge_list.resize(edges.size());
 
         std::size_t i, j;
         for (i = 0; i < this->n_vert; i++)

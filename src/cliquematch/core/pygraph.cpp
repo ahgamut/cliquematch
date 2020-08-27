@@ -27,15 +27,35 @@ namespace core
         finished_all = false;
         ans_found = false;
         inited = false;
+        G = nullptr;
     }
-    void pygraphDeleter::operator()(pygraph* pg)
+    pygraph::~pygraph()
     {
-        if (pg->inited) delete pg->G;
-        pg->inited = false;
-        delete pg;
+        if (this->inited) delete this->G;
+        this->inited = false;
+        this->G = nullptr;
     }
+    pygraph::pygraph(pygraph&& other)
+    {
+        this->nvert = other.nvert;
+        this->nedges = other.nedges;
+        this->use_heur = other.use_heur;
+        this->use_dfs = other.use_dfs;
+        this->lower_bound = other.lower_bound;
+        this->upper_bound = other.upper_bound;
+        this->time_lim = other.time_lim;
+        this->current_vertex = other.current_vertex;
+        this->finished_heur = other.finished_heur;
+        this->finished_all = other.finished_all;
+        this->ans_found = false;
+
+        this->inited = other.inited;
+        this->G = other.G;
+        other.inited = false;
+    }
+    void pygraphDeleter::operator()(pygraph* pg) { delete pg; }
     void pygraph::load_graph(std::size_t n_vertices, std::size_t n_edges,
-                             std::vector<std::set<std::size_t>> edges)
+                             std::vector<std::set<std::size_t>>& edges)
     {
         this->nvert = n_vertices;
         this->nedges = n_edges;
@@ -44,7 +64,7 @@ namespace core
         this->inited = true;
     }
     void pygraph::load_graph(std::size_t n_vertices, std::size_t n_edges,
-                             std::vector<std::pair<std::size_t, std::size_t>> edges)
+                             std::vector<std::pair<std::size_t, std::size_t>>& edges)
     {
         this->nvert = n_vertices;
         this->nedges = n_edges;
@@ -72,15 +92,7 @@ namespace core
         ans_found = true;
         finished_all = finished_heur && (current_vertex >= nvert);
     }
-    // Finds the maximum clique and returns it as a std::vector
-    std::vector<std::size_t> pygraph::get_max_clique()
-    {
-        if (!ans_found) find_max_clique();
-        if (this->lower_bound > this->ans_clique.size() ||
-            this->G->CUR_MAX_CLIQUE_LOC == 0)
-            throw CM_ERROR("Unable to find maximum clique with given bounds\n");
-        return this->ans_clique;
-    }
+
     void pygraph::continue_search()
     {
         if (!finished_all)
@@ -93,8 +105,7 @@ namespace core
             std::cerr << "Search is complete.\n";
         }
     }
-    //' The clique search can be reset in case the current set of parameters were
-    // not optimal
+
     void pygraph::reset_search()
     {
         this->ans_found = false;
@@ -105,9 +116,45 @@ namespace core
         this->G->CUR_MAX_CLIQUE_LOC = 0;
     }
 
+    std::vector<std::size_t> pygraph::get_max_clique()
+    {
+        if (!ans_found) find_max_clique();
+        if (this->lower_bound > this->ans_clique.size() ||
+            this->G->CUR_MAX_CLIQUE_LOC == 0)
+            throw CM_ERROR("Unable to find maximum clique with given bounds\n");
+        return this->ans_clique;
+    }
+
+    std::pair<std::vector<std::size_t>, std::vector<std::size_t>>
+    pygraph::get_correspondence2(std::size_t len1, std::size_t len2,
+                                 std::vector<std::size_t> clique)
+    {
+        std::pair<std::vector<std::size_t>, std::vector<std::size_t>> ans;
+        std::size_t i, t1, t2;
+        for (i = 0; i < clique.size(); i++)
+        {
+            if (clique[i] == 0)
+            {
+                throw CM_ERROR(
+                    "Sentinel Value (0) appeared in clique. Increase the time "
+                    "limit; if repeated, reset graph\n");
+            }
+            t1 = (clique[i] - 1) / len2;
+            t2 = (clique[i] - 1) % len2;
+            ans.first.push_back(t1);
+            ans.second.push_back(t2);
+        }
+        return ans;
+    }
+
+    std::pair<std::vector<std::size_t>, std::vector<std::size_t>>
+    pygraph::get_correspondence(std::size_t len1, std::size_t len2)
+    {
+        return this->get_correspondence2(len1, len2, this->get_max_clique());
+    }
     // IO
 
-    std::string pygraph::showdata()
+    std::string pygraph::showdata() const
     {
         std::stringstream ss;
         ss << "cliquematch.core.Graph object at " << this << "\n(";
@@ -228,7 +275,7 @@ namespace core
         return pg;
     }
 
-    ndarray<std::size_t> pygraph::to_edgelist()
+    ndarray<std::size_t> pygraph::to_edgelist() const
     {
         ndarray<std::size_t> elist1(this->nedges * 2);
         elist1.resize({this->nedges, static_cast<std::size_t>(2)});
@@ -243,7 +290,7 @@ namespace core
         return elist1;
     }
 
-    void pygraph::to_file(std::string filename)
+    void pygraph::to_file(std::string filename) const
     {
         std::ofstream f(filename, std::ios::out);
         if (!f.is_open())
@@ -261,7 +308,7 @@ namespace core
         f.close();
     }
 
-    ndarray<bool> pygraph::to_adj_matrix()
+    ndarray<bool> pygraph::to_adj_matrix() const
     {
         ndarray<bool> adjmat1(this->nvert * this->nvert);
         adjmat1.resize({this->nvert, this->nvert});
@@ -280,7 +327,7 @@ namespace core
         return adjmat1;
     }
 
-    std::vector<std::set<std::size_t>> pygraph::to_adj_list()
+    std::vector<std::set<std::size_t>> pygraph::to_adj_list() const
     {
         std::vector<std::set<std::size_t>> edges(this->nvert + 1);
         this->G->send_data([&edges](std::size_t i, std::size_t j) {

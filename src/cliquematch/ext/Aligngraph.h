@@ -7,17 +7,13 @@ namespace cliquematch
 {
 namespace ext
 {
-    class AlignGraph : public A2AGraph
-    {
-       public:
-        void build_edges_with_filter(Eigen::Ref<DoubleMatrixR>& pts1,
-                                     std::size_t pts1_Len,
-                                     Eigen::Ref<DoubleMatrixR>& pts2,
-                                     std::size_t pts2_len,
-                                     Eigen::Ref<DoubleMatrixR> control_pts,
-                                     Eigen::Ref<BoolMatrixR> mask,
-                                     double percentage = 0.8);
-    };
+    bool build_edges_with_filter(pygraph& pg, const Eigen::Ref<DoubleMatrixR>& pts1,
+                                 const std::size_t pts1_len,
+                                 const Eigen::Ref<DoubleMatrixR>& pts2,
+                                 const std::size_t pts2_len, const double epsilon,
+                                 const Eigen::Ref<DoubleMatrixR> control_pts,
+                                 const Eigen::Ref<BoolMatrixR> mask,
+                                 const double percentage = 0.8);
 }  // namespace ext
 }  // namespace cliquematch
 #endif /* ALIGNGRAPH_H */

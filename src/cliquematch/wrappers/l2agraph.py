@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from cliquematch.core import L2AGraph as _L2AGraph
+from ._gen_graph import GenGraph
 from warnings import warn
 import numpy as np
 
 
-class L2AGraph(_L2AGraph):
+class L2AGraph(GenGraph):
     """Correspondence Graph wrapper for list-to-array mappings.
 
     Any general object can be passed for `.S1`; the user is required to define
@@ -25,7 +25,9 @@ class L2AGraph(_L2AGraph):
     def __init__(
         self, set1, set2, d1=None, d2=None, is_d1_symmetric=True, is_d2_symmetric=True
     ):
-        _L2AGraph.__init__(self)
+        super(L2AGraph, self).__init__(
+            set1, set2, d1, d2, is_d1_symmetric, is_d2_symmetric
+        )
         self.S1 = set1
         self.S2 = np.float64(set2)
         self.d1 = None
@@ -43,53 +45,3 @@ class L2AGraph(_L2AGraph):
                 "L2AGraph: build_edges with throw error without distance metric for elements of S1,"
                 "Using default distance metric (Euclidean) for set S2"
             )
-
-    def build_edges(self):
-        """Build edges of the correspondence graph using distance metrics.
-
-        Checks `.d1` and `.d2` for defaults before passing to base class.
-        """
-        args = [self, self.S1, len(self.S1), self.S2, len(self.S2)]
-        if self.d1:
-            args = args + [self.d1, self.is_d1_symmetric]
-            if self.d2:
-                args = args + [self.d2, self.is_d2_symmetric]
-        return _L2AGraph._build_edges_metric_only(*args)
-
-    def build_edges_with_condition(self, condition_func, use_cfunc_only):
-        """Build edges of the correspondence graph using a given condition function.
-
-        Args:
-            condition_func ( `callable` ): must take parameters corresponding
-                            to `.S1`, `int`, `int`, `.S2`,
-                            `int`, `int`, and return `bool`
-            use_cfunc_only ( `bool` ): if `True`, the distance metrics will not
-                            be used to filter out edges (slower)
-
-        Returns:
-            `True` if construction was successful
-        """
-        args = [self, self.S1, len(self.S1), self.S2, len(self.S2), condition_func]
-        if use_cfunc_only:
-            return _L2AGraph._build_edges_condition_only(*args)
-        else:
-            if self.d1:
-                args = args + [self.d1, self.is_d1_symmetric]
-                if self.d2:
-                    args = args + [self.d2, self.is_d2_symmetric]
-            return _L2AGraph._build_edges(*args)
-
-    def get_correspondence(self, return_indices=True):
-        """Get corresponding subsets between the sets `.S1` and `.S2`.
-
-        Args:
-            return_indices ( `bool` ): if `True` return the indices of the
-                            corresponding elements, else return the elements
-        """
-        indices = _L2AGraph._get_correspondence(self, len(self.S1), len(self.S2))
-        if not return_indices:
-            answer = [[self.S1[x] for x in indices[1]], self.S2[indices[0], :]]
-        else:
-            answer = [indices[0], indices[1]]
-
-        return answer
