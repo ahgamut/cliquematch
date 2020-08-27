@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+echo "travis tag was originally $TRAVIS_TAG"
 TRAVIS_TAG=$(git tag -l --contains HEAD)
-TRAVIS_TAG="v1.3.0"
 echo "git cmd gave $TRAVIS_TAG"
 if [[ -z "$TRAVIS_TAG" ]]; then
 	echo "No tag; not uploading to PyPI"
