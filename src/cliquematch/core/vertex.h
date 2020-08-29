@@ -35,7 +35,7 @@ namespace detail
         // modified binary search, returns location by reference
         // return 1 if found, 0 if not found
         // returns -1 only if value is greater than the array
-        std::size_t beg = 0, end = N - 1, mid = (beg + end / 2);
+        std::size_t beg = 0, end = N - 1, mid = beg + (end - beg) / 2;
         if (a[end] < val)
         {
             loc = end;
@@ -57,7 +57,7 @@ namespace detail
                 beg = mid + 1;
             else
                 end = mid - 1;
-            mid = (beg + end) / 2;
+            mid = beg + (end - beg) / 2;
         }
         return 0;
     }

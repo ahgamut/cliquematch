@@ -31,7 +31,7 @@ namespace ext
     short binary_find2(const pair_dist<T> *const a, const std::size_t N, const T &val,
                        std::size_t &loc)
     {
-        int beg = 0, end = N - 1, mid = (beg + end / 2);
+        std::size_t beg = 0, end = N - 1, mid = beg + (end - beg) / 2;
         if (a[end] < val)
         {
             loc = end;
@@ -51,7 +51,7 @@ namespace ext
                 beg = mid + 1;
             else
                 end = mid - 1;
-            mid = (beg + end) / 2;
+            mid = beg + (end - beg) / 2;
         }
         return 0;
     }

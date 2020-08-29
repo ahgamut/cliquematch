@@ -6,12 +6,16 @@ namespace cliquematch
 {
 namespace detail
 {
+    static_assert(sizeof(std::size_t) >= sizeof(u32),
+                  "cannot pack 32bit values into std::size_t");
+    constexpr size_t U32_PER_SIZE_T = sizeof(std::size_t) / sizeof(u32);
+
     void clean_edges(std::size_t n_vert,
                      std::vector<std::pair<std::size_t, std::size_t>>& edges)
     {
         using sp = std::pair<std::size_t, std::size_t>;
         std::sort(edges.begin(), edges.end(), [](const sp& a, const sp& b) {
-            return a.first == b.first ? a.second < b.second : a.first < b.first;
+            return (a.first < b.first) || (a.first == b.first && a.second < b.second);
         });
         auto it = std::unique(edges.begin(), edges.end());
         edges.resize(std::distance(edges.begin(), it));
@@ -59,7 +63,7 @@ namespace detail
             edges[i].erase(i);
         }
 
-        this->edge_bits = std::vector<u32>(eb_size);
+        this->edge_bits.resize(1 + eb_size / U32_PER_SIZE_T);
         this->set_vertices();
     }
 
@@ -88,14 +92,15 @@ namespace detail
             this->eb_size += (j % 32 != 0) + j / 32;
         }
 
-        this->edge_bits = std::vector<u32>(eb_size);
+        this->edge_bits.resize(1 + eb_size / U32_PER_SIZE_T);
         this->set_vertices();
     }
 
     void graph::set_vertices()
     {
         for (std::size_t i = 0; i < vertices.size(); i++)
-            vertices[i].set_spos(this->edge_list.data(), this->edge_bits.data());
+            vertices[i].set_spos(this->edge_list.data(),
+                                 reinterpret_cast<u32*>(this->edge_bits.data()));
         this->CLIQUE_LIMIT = this->max_degree;
     }
 

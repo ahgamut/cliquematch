@@ -20,7 +20,7 @@ namespace detail
         std::size_t el_size;
         // edges stored as bits for a clique,
         // (padded to ensure 32bit)
-        std::vector<u32> edge_bits;
+        std::vector<std::size_t> edge_bits;
         std::size_t eb_size;
         short find_if_neighbors(const std::size_t v1_id, const std::size_t v2_id,
                                 std::size_t& v2_position) const
