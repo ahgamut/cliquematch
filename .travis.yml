@@ -47,6 +47,3 @@ install:
 script:
   - travis/script.sh
   - ls wheelhouse/
-
-after_success:
-  - travis/upload.sh
