@@ -6,21 +6,21 @@
 [![travis build](https://travis-ci.com/ahgamut/cliquematch.svg?branch=master)][5]
 [![appveyor build](https://ci.appveyor.com/api/projects/status/27r2qy8mbog04bhg?svg=true)][6]
 
-The cliquematch package aims to do two specific things:
+The `cliquematch` package aims to do two specific things:
 
 1.  Find a [maximum clique][wiki] in large sparse undirected graphs, as quickly and efficiently as possible.
-	(cliquematch uses C++ internally to implement a really fast maximum clique algorithm).
+	(`cliquematch` uses C++ internally to implement a really fast maximum clique algorithm).
 
 2.  Construct large sparse undirected graphs in-memory for the various applications of the maximum clique
 	problem.
 
-Licensed under MIT License. View the documentation at https://cliquematch.readthedocs.io
+Licensed under MIT License. View the documentation at https://cliquematch.readthedocs.io/
 
 ## Installation Instructions
 
 ### Installing from a wheel
 
-PyPI wheels are available for Linux and Windows. 
+[PyPI][wheels] wheels are available for Linux and Windows. 
 MacOS builds are tested but wheels are not provided.
 
 ```bash
@@ -53,4 +53,4 @@ pip3 install pybind11
 [5]: https://travis-ci.com/ahgamut/cliquematch
 [6]: https://ci.appveyor.com/project/ahgamut/cliquematch
 [wiki]: https://en.wikipedia.org/wiki/Clique_(graph_theory)#Definitions
-[cond2003]: https://sparse.tamu.edu/Newman/cond-mat-2003
+[wheels]: https://pypi.org/project/cliquematch/

@@ -137,7 +137,7 @@ class BuildExt(_build_ext):
 
 setup(
     name="cliquematch",
-    version="1.3.0",
+    version="1.4.0",
     author="Gautham Venkatasubramanian",
     author_email="ahgamut@gmail.com",
     description="Finding correspondence via maximum cliques in large graphs",
