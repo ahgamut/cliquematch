@@ -4,10 +4,6 @@ os: linux
 git:
   depth: 3
   submodules: true
-branches:
-  only:
-  - master
-  - /v\d+\.\d+\.\d+[a-z]/
 
 deploy:
   provider: script
@@ -51,3 +47,6 @@ install:
 script:
   - travis/script.sh
   - ls wheelhouse/
+
+after_success:
+  - travis/upload.sh
