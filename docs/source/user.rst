@@ -205,7 +205,7 @@ The correspondence graph classes are all subclasses of `~cliquematch.Graph`, the
 * A ``build_edges`` method that constructs the correspondence graph using only the distance metrics.
 * A ``build_edges_with_condition`` method that accepts a condition function ``cf``, and a boolean ``use_condition_only``:
   
-    * If ``use_condition_only`` is `True`, the graph is constructed using only ``cf`` (slower)
+    * If ``use_cfunc_only`` is `True`, the graph is constructed using only ``cf`` (slower)
     * Otherwise the graph is constructed using the distance metrics and pruned with ``cf`` (faster)
 
 * A ``get_correspondence`` method that returns the largest corresponding

@@ -85,7 +85,7 @@ API Documentation
 
         Constructs `Graph` instance from the given edge list
 
-        :param `numpy.ndarray`: edgelist
+        :param: edgelist (`numpy.ndarray` of shape ``(n,2)``\ )
         :param `int`: num_vertices
         :returns: the loaded `Graph`
 
@@ -93,7 +93,7 @@ API Documentation
 
         Constructs `Graph` instance from the given boolean adjacency matrix
 
-        :param `numpy.ndarray`: adjmat
+        :param: adjmat (`numpy.ndarray`\ , `bool` square matrix)
         :returns: the loaded `Graph`
 
     .. py:staticmethod:: from_adjlist
@@ -135,30 +135,5 @@ API Documentation
 .. autoclass:: A2LGraph(set1, set2, d1=None, d2=None, is_d1_symmetric=True, is_d2_symmetric=True)
 .. autoclass:: IsoGraph(set1, set2)
 .. autoclass:: AlignGraph(set1, set2)
-
-.. py:module:: cliquematch.core
-.. py:class:: A2AGraph()
-   
-   `cliquematch` C++ template class instantiation
-
-.. py:class:: L2LGraph()
-   
-   `cliquematch` C++ template class instantiation
-
-.. py:class:: L2AGraph()
-   
-   `cliquematch` C++ template class instantiation
-
-.. py:class:: A2LGraph()
-   
-   `cliquematch` C++ template class instantiation
-
-.. py:class:: IsoGraph()
-   
-   Internal `cliquematch` class
-
-.. py:class:: AlignGraph()
-   
-   Internal `cliquematch` class
-
+   :no-inherited-members:
 

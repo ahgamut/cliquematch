@@ -59,8 +59,10 @@ autodoc_docstring_signature = True
 default_role = "py:obj"
 autodoc_default_options = {
     "members": True,
-    "inherited-members": False,
-    "show-inheritance": False,
+    "inherited-members": True,
+    "undoc-members": False,
+    "private-members": False,
+    "no-show-inheritance": True,
     "member-order": "bysource",
 }
 intersphinx_mapping = {
