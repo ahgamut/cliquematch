@@ -104,11 +104,8 @@ class BuildExt(_build_ext):
                     self.compiler.compiler_so.remove("-g")
 
         elif ct == "msvc":
-            opts.append('-DVERSION_INFO=\\"%s\\"' % self.distribution.get_version())
+            opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
         elif ct == "mingw32":
-            print(
-                "\n\nUsing MINGW, including static versions of libgcc, libstdc++, and winpthread\n\n"
-            )
             opts = self.c_opts.get("unix")
 
         eigen_dir = os.environ.get("EIGEN_DIR", "include")
@@ -127,14 +124,6 @@ class BuildExt(_build_ext):
 
         for ext in self.extensions:
             ext.extra_compile_args = opts
-            if "mingw" in ct:
-                ext.extra_link_args = [
-                    "-Wl,-Bstatic,--whole-archive",
-                    "-lwinpthread",
-                    "-Wl,--no-whole-archive",
-                    "-static-libgcc",
-                    "-static-libstdc++",
-                ]
         _build_ext.build_extensions(self)
 
 

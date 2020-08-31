@@ -46,4 +46,4 @@ install:
 
 script:
   - travis/script.sh
-  - ls wheelhouse/ -al
+  - ls wheelhouse/ -l
