@@ -102,7 +102,6 @@ class BuildExt(_build_ext):
             if self.compiler.compiler_so:
                 if "-g" in self.compiler.compiler_so:
                     self.compiler.compiler_so.remove("-g")
-
         elif ct == "msvc":
             opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
         elif ct == "mingw32":
@@ -129,7 +128,7 @@ class BuildExt(_build_ext):
 
 setup(
     name="cliquematch",
-    version="1.4.0",
+    version="1.4.1",
     author="Gautham Venkatasubramanian",
     author_email="ahgamut@gmail.com",
     description="Finding correspondence via maximum cliques in large graphs",
