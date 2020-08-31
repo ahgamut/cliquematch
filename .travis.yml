@@ -46,4 +46,4 @@ install:
 
 script:
   - travis/script.sh
-  - ls wheelhouse/ -al --block-size=K
+  - ls wheelhouse/ -al

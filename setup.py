@@ -3,7 +3,9 @@ from setuptools.command.build_ext import build_ext as _build_ext
 import sys
 import os
 import platform
+import distutils.log
 
+distutils.log.set_verbosity(distutils.log.DEBUG)
 REQUIRED_MACROS = [
     ("STACK_DFS", "1"),
     ("BENCHMARKING", "0"),
@@ -92,12 +94,14 @@ class BuildExt(_build_ext):
 
     def build_extensions(self):
         ct = self.compiler.compiler_type
-        print(self.compiler.__dict__)
         opts = self.c_opts.get(ct)
         if ct == "unix":
             opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
             if has_flag(self.compiler, "-fvisibility=hidden"):
                 opts.append("-fvisibility=hidden")
+            if self.compiler.compiler_so:
+                if "-g" in self.compiler.compiler_so:
+                    self.compiler.compiler_so.remove("-g")
 
         elif ct == "msvc":
             opts.append('-DVERSION_INFO=\\"%s\\"' % self.distribution.get_version())
@@ -123,6 +127,14 @@ class BuildExt(_build_ext):
 
         for ext in self.extensions:
             ext.extra_compile_args = opts
+            if "mingw" in ct:
+                ext.extra_link_args = [
+                    "-Wl,-Bstatic,--whole-archive",
+                    "-lwinpthread",
+                    "-Wl,--no-whole-archive",
+                    "-static-libgcc",
+                    "-static-libstdc++",
+                ]
         _build_ext.build_extensions(self)
 
 
