@@ -10,6 +10,6 @@ else
 	# should run delocate here to fix dependencies, in case I want to supply MacOS wheels
 	# delocate-listdeps --depending dist/cliquematch*.whl
 	# delocate-wheel -w wheelhouse --require-archs=intel dist/cliquematch*.whl
-	ls dist/ -l
+	ls dist/
 fi
 
