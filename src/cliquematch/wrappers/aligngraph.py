@@ -116,18 +116,7 @@ class AlignGraph(GenGraph):
         ]
         _build_edges_with_filter(*args)
 
-    def get_correspondence(self):
-        """Find correspondence between the sets of points ``S1`` and ``S2``.
-
-        Returns
-        -------
-
-        `dict`
-            The two sets of corresponding points and the rotation/translation required
-            to transform `S1` to `S2`
-            (obtained via `Kabsch Algorithm <https://en.wikipedia.org/wiki/Kabsch_algorithm>`)
-        """
-        indices = super(AlignGraph, self).get_correspondence(return_indices=True)
+    def _format_correspondence(self, indices):
         ans = [self.S1[indices[0], :], self.S2[indices[1], :]]
         # I want to find R, T such that S1*R + T = S2
 
@@ -159,3 +148,17 @@ class AlignGraph(GenGraph):
             "dy": translation[1],
             "rotmat": rotmat,
         }
+
+    def get_correspondence(self):
+        """Find correspondence between the sets of points ``S1`` and ``S2``.
+
+        Returns
+        -------
+
+        `dict`
+            The two sets of corresponding points and the rotation/translation required
+            to transform `S1` to `S2`
+            (obtained via `Kabsch Algorithm <https://en.wikipedia.org/wiki/Kabsch_algorithm>`)
+        """
+        indices = super(AlignGraph, self).get_correspondence(return_indices=True)
+        return self._format_correspondence(indices)

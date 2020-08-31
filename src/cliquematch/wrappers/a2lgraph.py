@@ -48,3 +48,6 @@ class A2LGraph(GenGraph):
                 "A2LGraph: Using default distance metric (Euclidean) for S1, and"
                 "build_edges will throw error without distance metric to compare list elements"
             )
+
+    def _format_correspondence(self, indices):
+        return (self.S1[indices[0]], [self.S2[x] for x in indices[1]])

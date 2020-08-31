@@ -45,3 +45,6 @@ class L2AGraph(GenGraph):
                 "L2AGraph: build_edges with throw error without distance metric for elements of S1,"
                 "Using default distance metric (Euclidean) for set S2"
             )
+
+    def _format_correspondence(self, indices):
+        return ([self.S1[x] for x in indices[0]], self.S2[indices[1]])

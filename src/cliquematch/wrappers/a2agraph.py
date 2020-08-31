@@ -36,3 +36,6 @@ class A2AGraph(GenGraph):
                 warn("A2AGraph: Using default distance metric (Euclidean) for set S2")
         else:
             warn("A2AGraph: Using default distance metric (Euclidean) for both arrays")
+
+    def _format_correspondence(self, indices):
+        return (self.S1[indices[0]], self.S2[indices[1]])

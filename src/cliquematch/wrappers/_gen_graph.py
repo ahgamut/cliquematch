@@ -63,6 +63,9 @@ class GenGraph(Graph):
                     args = args + [self.d2, self.is_d2_symmetric]
             return _build_edges(*args)
 
+    def _format_correspondence(self, indices):
+        return indices
+
     def get_correspondence(self, return_indices=True):
         """Get corresponding subsets between the `.S1` and `.S2`.
 
@@ -72,7 +75,7 @@ class GenGraph(Graph):
         """
         indices = Graph._get_correspondence(self, len(self.S1), len(self.S2))
         if not return_indices:
-            answer = [self.S1[indices[0], :], self.S2[indices[1], :]]
+            answer = self._format_correspondence(indices)
         else:
             answer = indices
         return answer
