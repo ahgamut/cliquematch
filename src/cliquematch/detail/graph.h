@@ -1,7 +1,7 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-#include <core/vertex.h>
+#include <detail/vertex.h>
 #include <chrono>
 #include <functional>
 #include <set>
@@ -53,9 +53,8 @@ namespace detail
         void send_data(std::function<void(std::size_t, std::size_t)>) const;
 
         // giving max_clique to pygraph
-        double find_max_cliques(std::size_t& start_vert, bool& heur_done,
-                                bool use_heur = false, bool use_dfs = true,
-                                double time_limit = 10000);
+        double find_max_cliques(std::size_t& start_vert, bool use_heur = false,
+                                bool use_dfs = true, double time_limit = 10000);
         std::vector<std::size_t> get_max_clique() const;
         std::vector<std::size_t> get_max_clique(std::size_t i) const;
 
@@ -66,6 +65,7 @@ namespace detail
         friend class RecursionDFS;
         friend class StackDFS;
         friend class DegreeHeuristic;
+        friend class CliqueEnumerator;
     };
 }  // namespace detail
 }  // namespace cliquematch

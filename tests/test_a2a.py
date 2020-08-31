@@ -48,7 +48,7 @@ class TestA2AGraph(object):
 
     * Loading with different callables (and warning default as Euclidean)
     * testing that edges can be built, with or without a cfunc
-    * testing data access, dfs, and heuristic (heuristic is buggy)
+    * testing data access, dfs, and heuristic
     * testing time limits with and continue search
     """
 
@@ -118,12 +118,8 @@ class TestA2AGraph(object):
         S2 = np.float64(np.matmul(S1[subset, :], rotmat) + [1, 1])
         G = cliquematch.A2AGraph(S1, S2, eucd, eucd)
         G.epsilon = 0.001
-        G.time_limit = 100
-        G.use_heuristic = False
-        G.use_dfs = True
-        G.upper_bound = 10
         G.build_edges()
-        ans = G.get_correspondence()
+        ans = G.get_correspondence(upper_bound=10, use_dfs=True, use_heuristic=False)
 
         subset.sort()
         assert ans[0] == subset
@@ -143,47 +139,11 @@ class TestA2AGraph(object):
         S2 = np.float64(np.matmul(S1[subset, :], rotmat) + [1, 1])
         G = cliquematch.A2AGraph(S1, S2, eucd, eucd)
         G.epsilon = 0.001
-        G.time_limit = 100
-        G.use_heuristic = True
-        G.use_dfs = True
-        G.upper_bound = 10
         G.build_edges()
-        ans = G.get_correspondence()
+        ans = G.get_correspondence(upper_bound=10, use_dfs=False, use_heuristic=True)
         print(G)
         subset.sort()
         assert set(ans[0]) <= set(subset)
-
-    def test_data(self):
-        S1 = self.S1
-        S2 = self.S2
-        G = cliquematch.A2AGraph(S1, S2, eucd, eucd)
-        G.epsilon = 0.1
-        G.S1[0, 0] = 0
-        G.S2[0, 1] = 0
-        G.use_dfs = True
-        G.use_heuristic = False
-        G.upper_bound = 100
-        G.time_limit = 200
-        full_inf = repr(G)
-        temp_inf = str(G)
-        read_onlys = [
-            G.current_vertex,
-            G.search_done,
-            G.n_vertices,
-            G.n_edges,
-        ]
-
-        with pytest.raises(AttributeError):
-            G.current_vertex = 25
-
-        with pytest.raises(AttributeError):
-            G.search_done = False
-
-        with pytest.raises(AttributeError):
-            G.n_vertices = 22
-
-        with pytest.raises(AttributeError):
-            G.n_edges = 31
 
     def test_continue(self):
         np.random.seed(824)
@@ -200,16 +160,22 @@ class TestA2AGraph(object):
         S2 = np.float64(np.matmul(S1[subset, :], rotmat) + [1, 1])
         G = cliquematch.A2AGraph(S1, S2, eucd, eucd)
         G.epsilon = 0.001
-        G.time_limit = 0.001
-        # G.use_heuristic = True
-        G.use_dfs = True
-        G.upper_bound = 100
         G.build_edges()
         while not G.search_done:
-            G.continue_search()
-            ans = G.get_correspondence()
-        ans = G.get_correspondence()
-        G.continue_search()
+            ans = G.get_correspondence(
+                upper_bound=100,
+                time_limit=0.001,
+                use_dfs=True,
+                use_heuristic=False,
+                continue_search=True,
+            )
+        ans = G.get_correspondence(
+            upper_bound=100,
+            time_limit=0.001,
+            use_dfs=True,
+            use_heuristic=False,
+            continue_search=True,
+        )
         subset.sort()
         assert set(ans[0]) == set(subset)
 
@@ -230,16 +196,42 @@ class TestA2AGraph(object):
         G.epsilon = 0.001
         G.build_edges()
 
-        G.time_limit = 100
-        # G.use_heuristic = False
-        G.use_dfs = True
-        G.lower_bound = 100  # will cause error
-        G.upper_bound = 100
         with pytest.raises(RuntimeError):
-            ans = G.get_correspondence()
+            ans = G.get_correspondence(lower_bound=100, upper_bound=100)
         G.reset_search()
-        G.lower_bound = 19  # will work
 
-        ans = G.get_correspondence()
+        ans = G.get_correspondence(lower_bound=19, upper_bound=100)
         subset.sort()
         assert set(ans[0]) == set(subset)
+
+    def test_enumi(self):
+        S1 = self.S1
+        S2 = self.S2
+        subset = list(x for x in range(20))
+        random.shuffle(subset)
+        subset = subset[:10]
+        rotmat = np.array(
+            [
+                [np.cos(np.pi / 3), -np.sin(np.pi / 3)],
+                [np.sin(np.pi / 3), np.cos(np.pi / 3)],
+            ]
+        )
+        S2 = np.float64(np.matmul(S1[subset, :], rotmat) + [1, 1])
+        G = cliquematch.A2AGraph(S1, S2, eucd, eucd)
+        G.epsilon = 0.001
+        G.build_edges()
+        ans = G.get_correspondence(upper_bound=10, use_dfs=True)
+        subset.sort()
+        assert set(ans[0]) == set(subset)
+
+        c1 = list(x for x in G.all_correspondences(size=1))
+        assert len(c1) == G.n_vertices
+        c9 = list(x for x in G.all_correspondences(size=9))
+        assert len(c9) == 10
+        for x in c9:
+            assert set(x[0]) < set(ans[0])
+        c9b = list(x for x in G.all_correspondences(size=9, return_indices=False))
+        assert len(c9) == len(c9b)
+        for i in range(len(c9)):
+            t0 = self.S1[c9[i][0]]
+            assert (c9b[i][0] == t0).all()

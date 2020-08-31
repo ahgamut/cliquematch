@@ -1,4 +1,4 @@
-#include <core/graph.h>
+#include <detail/graph.h>
 #include <algorithm>
 #include <iostream>
 

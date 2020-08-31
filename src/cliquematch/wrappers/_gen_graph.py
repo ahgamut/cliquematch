@@ -7,6 +7,18 @@ from cliquematch.core import (
 )
 
 
+class WrappedIterator(object):
+    def __init__(self, it, wrapper):
+        self._it = it
+        self._wrapper = wrapper
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return self._wrapper(next(self._it))
+
+
 class GenGraph(Graph):
     def __init__(
         self, set1, set2, d1=None, d2=None, is_d1_symmetric=True, is_d2_symmetric=True
@@ -66,16 +78,44 @@ class GenGraph(Graph):
     def _format_correspondence(self, indices):
         return indices
 
-    def get_correspondence(self, return_indices=True):
+    def get_correspondence(
+        self,
+        lower_bound=1,
+        upper_bound=0xFFFF,
+        time_limit=-1.0,
+        use_heuristic=True,
+        use_dfs=True,
+        continue_search=False,
+        return_indices=True,
+    ):
         """Get corresponding subsets between the `.S1` and `.S2`.
 
         Args:
             return_indices ( `bool` ): if `True` return the indices of the
                             corresponding elements, else return the elements
         """
-        indices = Graph._get_correspondence(self, len(self.S1), len(self.S2))
-        if not return_indices:
-            answer = self._format_correspondence(indices)
-        else:
+        indices = Graph._get_correspondence(
+            self,
+            len(self.S1),
+            len(self.S2),
+            lower_bound,
+            upper_bound,
+            time_limit,
+            use_heuristic,
+            use_dfs,
+            continue_search,
+        )
+        if return_indices:
             answer = indices
+        else:
+            answer = self._format_correspondence(indices)
         return answer
+
+    def all_correspondences(self, size, return_indices=True):
+        if return_indices:
+            return Graph._all_correspondences(self, len(self.S1), len(self.S2), size)
+        else:
+            return WrappedIterator(
+                Graph._all_correspondences(self, len(self.S1), len(self.S2), size),
+                lambda x: self._format_correspondence(x),
+            )

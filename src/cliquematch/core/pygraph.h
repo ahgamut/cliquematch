@@ -25,23 +25,17 @@ namespace core
     using ndarray =
         pybind11::array_t<dtype, pybind11::array::c_style | pybind11::array::forcecast>;
 
+    class CliqueIterator;
+    class CorrespondenceIterator;
     class pygraph
     {
        private:
-        detail::graph* G;
         bool inited;
-        bool ans_found;
-        bool finished_heur;
-        void find_max_clique();
-        std::vector<std::size_t> ans_clique;
+        detail::graph* G;
 
        public:
-        bool use_heur;
-        bool use_dfs;
         bool finished_all;
-        double time_lim;
         std::size_t nvert, nedges;
-        std::size_t lower_bound, upper_bound;
         std::size_t current_vertex;
 
         pygraph();
@@ -49,11 +43,23 @@ namespace core
         pygraph(const pygraph&) = delete;
         pygraph& operator=(pygraph&) = delete;
         virtual ~pygraph();
-        void continue_search();
+        void load_graph(std::size_t, std::size_t, std::vector<std::set<std::size_t>>&);
+        void load_graph(std::size_t, std::size_t,
+                        std::vector<std::pair<std::size_t, std::size_t>>&);
+
+        std::vector<std::size_t> get_max_clique(std::size_t lower_bound = 1,
+                                                std::size_t upper_bound = 0xFFFF,
+                                                double time_limit = -1,
+                                                bool use_heuristic = true,
+                                                bool use_dfs = true,
+                                                bool continue_search = false);
         void reset_search();
-        std::vector<std::size_t> get_max_clique();
         std::pair<std::vector<std::size_t>, std::vector<std::size_t>>
-        get_correspondence(std::size_t len1, std::size_t len2);
+        get_correspondence(std::size_t len1, std::size_t len2,
+                           std::size_t lower_bound = 1,
+                           std::size_t upper_bound = 0xFFFF, double time_limit = -1,
+                           bool use_heuristic = true, bool use_dfs = true,
+                           bool continue_search = false);
         std::pair<std::vector<std::size_t>, std::vector<std::size_t>>
         get_correspondence2(std::size_t len1, std::size_t len2,
                             std::vector<std::size_t> clique);
@@ -64,12 +70,11 @@ namespace core
         std::vector<std::set<std::size_t>> to_adj_list() const;
         void to_file(std::string filename) const;
 
-        void load_graph(std::size_t, std::size_t, std::vector<std::set<std::size_t>>&);
-        void load_graph(std::size_t, std::size_t,
-                        std::vector<std::pair<std::size_t, std::size_t>>&);
         friend std::vector<std::pair<std::size_t, std::size_t>> iso_edges(
             std::size_t&, std::size_t&, const pygraph&, const pygraph&);
         friend class pygraphDeleter;
+        friend class CliqueIterator;
+        friend class CorrespondenceIterator;
     };
 
     class pygraphDeleter

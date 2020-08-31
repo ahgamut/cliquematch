@@ -45,12 +45,10 @@ class TestAlignGraph(object):
         print(S1_sub, S2)
         G = cliquematch.AlignGraph(S1, S2)
         G.epsilon = 0.001
-        G.time_limit = 100
-        G.use_heuristic = False
-        G.use_dfs = True
-        G.upper_bound = 10
         G.build_edges_with_filter(S2, self.mask, percentage=0.8)
-        ans = G.get_correspondence()
+        ans = G.get_correspondence(
+            use_heuristic=False, use_dfs=True, upper_bound=10, return_indices=False
+        )
 
         assert abs(ans["theta"] - np.pi / 3) < 1e-5
         assert abs(ans["dx"] - 100) < 1e-5
@@ -71,12 +69,10 @@ class TestAlignGraph(object):
         S2 = np.float64(np.matmul(S1_sub, rotmat) + [100, 100])
         G = cliquematch.AlignGraph(S1, S2)
         G.epsilon = 0.001
-        G.time_limit = 100
-        G.use_heuristic = True
-        G.use_dfs = True
-        G.upper_bound = 10
         G.build_edges_with_filter(S2, self.mask, percentage=0.8)
-        ans = G.get_correspondence()
+        ans = G.get_correspondence(
+            use_heuristic=True, use_dfs=False, upper_bound=10, return_indices=False
+        )
         print(G)
 
         assert abs(ans["theta"] - np.pi / 3) < 1e-5
@@ -98,23 +94,19 @@ class TestAlignGraph(object):
         S2 = np.float64(np.matmul(S1_sub, rotmat) + [100, 100])
         G = cliquematch.AlignGraph(S1, S2)
         G.epsilon = 0.001
-        G.time_limit = 100
-        G.use_heuristic = False
-        G.use_dfs = True
-        G.upper_bound = 10
         G.build_edges_with_filter(S2, self.mask, percentage=0.8)
-        ans = G.get_correspondence()
+        ans = G.get_correspondence(
+            use_heuristic=False, use_dfs=True, upper_bound=10, return_indices=False
+        )
         print(G)
 
         G2 = cliquematch.AlignGraph(S1, S2)
         G2.epsilon = 0.001
-        G2.time_limit = 100
-        G2.use_heuristic = False
-        G2.use_dfs = True
-        G2.upper_bound = 10
         filt = cliquematch.wrappers.aligngraph.MaskFilter(S2, self.mask, percentage=0.8)
         G2.build_edges_with_condition(filt, False)
-        ans2 = G2.get_correspondence()
+        ans2 = G2.get_correspondence(
+            use_dfs=True, use_heuristic=False, upper_bound=10, return_indices=False
+        )
         print(G2)
         assert abs(ans["theta"] - ans2["theta"]) < 1e-8
         assert abs(ans["dx"] - ans2["dx"]) < 1e-8

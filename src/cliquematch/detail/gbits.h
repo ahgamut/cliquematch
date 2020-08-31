@@ -24,7 +24,6 @@ namespace detail
         graphBits();
         graphBits(std::size_t n_bits);
         graphBits(graphBits&& other);
-        graphBits(const graphBits&) = delete;
         graphBits& operator=(const graphBits&) = delete;
         ~graphBits()
         {

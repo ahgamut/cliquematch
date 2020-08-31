@@ -1,4 +1,4 @@
-#include <core/searchstate.h>
+#include <detail/searchstate.h>
 namespace cliquematch
 {
 namespace detail

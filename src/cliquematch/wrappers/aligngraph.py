@@ -149,7 +149,16 @@ class AlignGraph(GenGraph):
             "rotmat": rotmat,
         }
 
-    def get_correspondence(self):
+    def get_correspondence(
+        self,
+        lower_bound=1,
+        upper_bound=0xFFFF,
+        time_limit=-1.0,
+        use_heuristic=True,
+        use_dfs=True,
+        continue_search=False,
+        return_indices=True,
+    ):
         """Find correspondence between the sets of points ``S1`` and ``S2``.
 
         Returns
@@ -160,5 +169,16 @@ class AlignGraph(GenGraph):
             to transform `S1` to `S2`
             (obtained via `Kabsch Algorithm <https://en.wikipedia.org/wiki/Kabsch_algorithm>`)
         """
-        indices = super(AlignGraph, self).get_correspondence(return_indices=True)
-        return self._format_correspondence(indices)
+        indices = super(AlignGraph, self).get_correspondence(
+            lower_bound,
+            upper_bound,
+            time_limit,
+            use_heuristic,
+            use_dfs,
+            continue_search,
+            True,
+        )
+        if return_indices:
+            return indices
+        else:
+            return self._format_correspondence(indices)

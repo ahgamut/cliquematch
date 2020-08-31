@@ -1,6 +1,6 @@
+#include <detail/mmio.h>
+#include <detail/graph.h>
 #include <core/pygraph.h>
-#include <core/mmio.h>
-#include <core/graph.h>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
@@ -17,15 +17,8 @@ namespace core
     {
         nvert = 0;
         nedges = 0;
-        use_heur = false;
-        use_dfs = true;
-        lower_bound = 1;
-        upper_bound = 0xFFFFFFFF;
-        time_lim = 100.0;
         current_vertex = 0;
-        finished_heur = false;
         finished_all = false;
-        ans_found = false;
         inited = false;
         G = nullptr;
     }
@@ -39,21 +32,12 @@ namespace core
     {
         this->nvert = other.nvert;
         this->nedges = other.nedges;
-        this->use_heur = other.use_heur;
-        this->use_dfs = other.use_dfs;
-        this->lower_bound = other.lower_bound;
-        this->upper_bound = other.upper_bound;
-        this->time_lim = other.time_lim;
         this->current_vertex = other.current_vertex;
-        this->finished_heur = other.finished_heur;
         this->finished_all = other.finished_all;
-        this->ans_found = false;
-
         this->inited = other.inited;
         this->G = other.G;
         other.inited = false;
     }
-    void pygraphDeleter::operator()(pygraph* pg) { delete pg; }
     void pygraph::load_graph(std::size_t n_vertices, std::size_t n_edges,
                              std::vector<std::set<std::size_t>>& edges)
     {
@@ -72,57 +56,40 @@ namespace core
         this->G = new detail::graph(this->nvert, this->nedges, edges);
         this->inited = true;
     }
+    void pygraphDeleter::operator()(pygraph* pg) { delete pg; }
 
     // Computation
-
-    void pygraph::find_max_clique()
-    {
-        if (this->G->n_vert == 0) throw CM_ERROR("Graph is not initialized!!\n");
-
-        //	std::cerr<<"Finding cliques\n";
-        this->G->CUR_MAX_CLIQUE_SIZE = this->lower_bound > this->G->CUR_MAX_CLIQUE_SIZE
-                                           ? this->lower_bound
-                                           : this->G->CUR_MAX_CLIQUE_SIZE;
-        this->G->CLIQUE_LIMIT = this->upper_bound < this->G->max_degree
-                                    ? this->upper_bound
-                                    : this->G->max_degree;
-        this->G->find_max_cliques(current_vertex, finished_heur, use_heur, use_dfs,
-                                  time_lim);
-        ans_clique = this->G->get_max_clique();
-        ans_found = true;
-        finished_all = finished_heur && (current_vertex >= nvert);
-    }
-
-    void pygraph::continue_search()
-    {
-        if (!finished_all)
-        {
-            ans_found = false;
-            find_max_clique();
-        }
-        else
-        {
-            std::cerr << "Search is complete.\n";
-        }
-    }
-
     void pygraph::reset_search()
     {
-        this->ans_found = false;
-        this->finished_all = false;
-        this->finished_heur = false;
-        this->current_vertex = 0;
         this->G->CUR_MAX_CLIQUE_SIZE = 1;
-        this->G->CUR_MAX_CLIQUE_LOC = 0;
+        this->finished_all = false;
+        this->current_vertex = 0;
     }
 
-    std::vector<std::size_t> pygraph::get_max_clique()
+    std::vector<std::size_t> pygraph::get_max_clique(std::size_t lower_bound,
+                                                     std::size_t upper_bound,
+                                                     double time_limit,
+                                                     bool use_heuristic, bool use_dfs,
+                                                     bool continue_search)
     {
-        if (!ans_found) find_max_clique();
-        if (this->lower_bound > this->ans_clique.size() ||
-            this->G->CUR_MAX_CLIQUE_LOC == 0)
+        if (!continue_search)
+            current_vertex = 0;
+        else if (current_vertex != 0)
+            use_heuristic = false;
+
+        if (!this->inited || this->nvert == 0)
+            throw CM_ERROR("Graph is not initialized!!\n");
+        this->G->CUR_MAX_CLIQUE_SIZE = lower_bound > this->G->CUR_MAX_CLIQUE_SIZE
+                                           ? lower_bound
+                                           : this->G->CUR_MAX_CLIQUE_SIZE;
+        this->G->CLIQUE_LIMIT =
+            upper_bound < this->G->max_degree ? upper_bound : this->G->max_degree;
+        this->G->find_max_cliques(current_vertex, use_heuristic, use_dfs, time_limit);
+        finished_all = (current_vertex >= nvert);
+        auto ans = this->G->get_max_clique();
+        if (lower_bound > ans.size())
             throw CM_ERROR("Unable to find maximum clique with given bounds\n");
-        return this->ans_clique;
+        return ans;
     }
 
     std::pair<std::vector<std::size_t>, std::vector<std::size_t>>
@@ -148,24 +115,26 @@ namespace core
     }
 
     std::pair<std::vector<std::size_t>, std::vector<std::size_t>>
-    pygraph::get_correspondence(std::size_t len1, std::size_t len2)
+    pygraph::get_correspondence(std::size_t len1, std::size_t len2,
+                                std::size_t lower_bound, std::size_t upper_bound,
+                                double time_limit, bool use_heuristic, bool use_dfs,
+                                bool continue_search)
     {
-        return this->get_correspondence2(len1, len2, this->get_max_clique());
+        return this->get_correspondence2(
+            len1, len2,
+            this->get_max_clique(lower_bound, upper_bound, time_limit, use_heuristic,
+                                 use_dfs, continue_search));
     }
     // IO
 
     std::string pygraph::showdata() const
     {
         std::stringstream ss;
-        ss << "cliquematch.core.Graph object at " << this << "\n(";
+        ss << "cliquematch.core.Graph object at " << this << "(";
         ss << "n_vertices=" << this->nvert << ",";
         ss << "n_edges=" << this->nedges << ",";
-        ss << "search_done=" << (this->finished_all ? "True" : "False") << ",";
-        ss << "lower_bound=" << this->lower_bound << ",";
-        ss << "upper_bound=" << this->upper_bound << ",";
-        ss << "time_limit=" << this->time_lim << ",";
-        ss << "use_heuristic=" << (this->use_heur ? "True" : "False") << ",";
-        ss << "use_dfs=" << (this->use_dfs ? "True" : "False");
+        ss << "search_done=" << (this->current_vertex < this->nvert ? "True" : "False")
+           << ",";
         ss << ")";
         return ss.str();
     }

@@ -1,7 +1,7 @@
 #ifndef VERTEX_H
 #define VERTEX_H
 
-#include <core/gbits.h>
+#include <detail/gbits.h>
 
 namespace cliquematch
 {

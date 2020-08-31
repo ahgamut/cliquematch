@@ -3,13 +3,6 @@ from setuptools.command.build_ext import build_ext as _build_ext
 import sys
 import os
 import platform
-import distutils.log
-
-distutils.log.set_verbosity(distutils.log.DEBUG)
-REQUIRED_MACROS = [
-    ("STACK_DFS", "1"),
-    ("BENCHMARKING", "0"),
-]
 
 
 class get_pybind_include(object):
@@ -46,15 +39,15 @@ def get_src_cpps(path):
 ext_modules = [
     Extension(
         name="cliquematch.core",
-        sources=get_src_cpps("src/cliquematch/ext/")
-        + get_src_cpps("src/cliquematch/core/"),
+        sources=get_src_cpps("src/cliquematch/detail/")
+        + get_src_cpps("src/cliquematch/core/")
+        + get_src_cpps("src/cliquematch/ext/"),
         include_dirs=[
             str(get_pybind_include(True)),
             str(get_pybind_include(False)),
             "src/cliquematch/",
             os.environ.get("EIGEN_DIR", "include/"),
         ],
-        define_macros=REQUIRED_MACROS,
         language="c++",
     )
 ]
@@ -128,7 +121,7 @@ class BuildExt(_build_ext):
 
 setup(
     name="cliquematch",
-    version="1.4.1",
+    version="2.0.0",
     author="Gautham Venkatasubramanian",
     author_email="ahgamut@gmail.com",
     description="Finding correspondence via maximum cliques in large graphs",

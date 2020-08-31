@@ -131,22 +131,13 @@ class TestGraph(object):
         )
 
         G = cliquematch.Graph.from_edgelist(edges, 8)
-        G.use_dfs = True
-        G.use_heuristic = False
-        G.lower_bound = 1
-        G.upper_bound = 100
-        G.time_limit = 200
         full_inf = repr(G)
         temp_inf = str(G)
         read_onlys = [
-            G.current_vertex,
             G.search_done,
             G.n_vertices,
             G.n_edges,
         ]
-
-        with pytest.raises(AttributeError):
-            G.current_vertex = 25
 
         with pytest.raises(AttributeError):
             G.search_done = False
@@ -179,9 +170,7 @@ class TestGraph(object):
         )
 
         G = cliquematch.Graph.from_edgelist(edges, 8)
-        G.use_dfs = True
-        G.use_heuristic = False
-        ans = G.get_max_clique()
+        ans = G.get_max_clique(use_heuristic=False, use_dfs=True)
         assert ans == [1, 4, 5, 6, 7]
 
     def test_reset_search(self):
@@ -206,13 +195,46 @@ class TestGraph(object):
         )
 
         G = cliquematch.Graph.from_edgelist(edges, 8)
-        G.lower_bound = 6  # will cause error
-        G.upper_bound = 32
-        G.use_dfs = True
-        G.use_heuristic = False
         with pytest.raises(RuntimeError):
-            ans = G.get_max_clique()
+            ans = G.get_max_clique(
+                lower_bound=6, upper_bound=32, use_dfs=True, use_heuristic=False
+            )
         G.reset_search()
-        G.lower_bound = 1
-        ans = G.get_max_clique()
+        ans = G.get_max_clique(
+            lower_bound=1, upper_bound=32, use_dfs=True, use_heuristic=False
+        )
         assert ans == [1, 4, 5, 6, 7]
+
+    def test_enumi(self):
+        edges = np.array(
+            [
+                [2, 3],
+                [1, 3],
+                [1, 4],
+                [1, 5],
+                [1, 6],
+                [1, 7],
+                [4, 5],
+                [4, 6],
+                [4, 7],
+                [5, 6],
+                [5, 7],
+                [6, 7],
+                [2, 8],
+                [3, 8],
+            ],
+            dtype=np.uint32,
+        )
+
+        G = cliquematch.Graph.from_edgelist(edges, 8)
+        ans = G.get_max_clique(use_heuristic=False, use_dfs=True)
+        assert ans == [1, 4, 5, 6, 7]
+
+        c1 = list(x for x in G.all_cliques(size=1))
+        assert len(c1) == G.n_vertices
+        c2 = list(x for x in G.all_cliques(size=2))
+        assert len(c2) == G.n_edges
+        c4 = list(x for x in G.all_cliques(size=4))
+        assert len(c4) == 5
+        for x in c4:
+            assert set(x) < set(ans)

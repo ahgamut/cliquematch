@@ -1,7 +1,7 @@
 #ifndef HEURISTIC_H
 #define HEURISTIC_H
 
-#include <core/clique.h>
+#include <detail/clique.h>
 
 namespace cliquematch
 {
@@ -21,7 +21,7 @@ namespace detail
         std::size_t mcs_potential, candidates_left, cur_clique_size, cand_max;
 
        public:
-        std::size_t process_graph(graph&, std::size_t, double);
+        std::size_t process_graph(graph&);
         void process_vertex(graph&, std::size_t, graphBits&, graphBits&);
         DegreeHeuristic() = default;
         ~DegreeHeuristic() = default;

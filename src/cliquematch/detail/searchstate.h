@@ -1,6 +1,6 @@
 #ifndef SEARCHSTATE_H
 #define SEARCHSTATE_H
-#include <core/vertex.h>
+#include <detail/vertex.h>
 
 namespace cliquematch
 {
@@ -12,6 +12,9 @@ namespace detail
         graphBits cand, res;
 
         SearchState(const vertex&);
+        SearchState(SearchState&& tmp)
+            : start_at(tmp.start_at), id(tmp.id), cand(std::move(tmp.cand)),
+              res(std::move(tmp.res)){};
         SearchState() = default;
         void refer_from(const graphBits&, const graphBits&, std::size_t);
     };

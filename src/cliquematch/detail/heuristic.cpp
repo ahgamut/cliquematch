@@ -1,4 +1,4 @@
-#include <core/heuristic.h>
+#include <detail/heuristic.h>
 #include <algorithm>
 #include <iostream>
 
@@ -6,22 +6,17 @@ namespace cliquematch
 {
 namespace detail
 {
-    std::size_t DegreeHeuristic::process_graph(graph& G, std::size_t start_vertex,
-                                               double time_limit)
+    std::size_t DegreeHeuristic::process_graph(graph& G)
     {
         std::size_t i;
         neighbors.reserve(G.max_degree);
+        neighbors.resize(G.max_degree);
         graphBits res(G.max_degree);
         graphBits cand(G.max_degree);
-        this->TIME_LIMIT = time_limit;
 
         process_vertex(G, G.md_vert, res, cand);
-        for (i = 0; i < G.vertices.size() && G.CUR_MAX_CLIQUE_SIZE < G.CLIQUE_LIMIT;
-             i++)
+        for (i = 0; i < G.n_vert && G.CUR_MAX_CLIQUE_SIZE < G.CLIQUE_LIMIT; i++)
         {
-#if BENCHMARKING == 0
-            if (G.elapsed_time() > TIME_LIMIT) break;
-#endif
             if (G.vertices[i].N <= G.CUR_MAX_CLIQUE_SIZE || i == G.md_vert) continue;
             process_vertex(G, i, res, cand);
         }

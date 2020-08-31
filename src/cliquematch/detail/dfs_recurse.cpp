@@ -1,4 +1,4 @@
-#include <core/dfs.h>
+#include <detail/dfs.h>
 #include <algorithm>
 #include <iostream>
 
@@ -6,21 +6,15 @@ namespace cliquematch
 {
 namespace detail
 {
-#if STACK_DFS == 0
-#pragma message("Using recursion for DFS")
-    std::size_t RecursionDFS::process_graph(graph& G, std::size_t start_vertex,
-                                            double time_limit)
+    std::size_t RecursionDFS::process_graph(graph& G)
     {
         std::size_t i = start_vertex;
-        this->TIME_LIMIT = time_limit;
-        for (; i < G.vertices.size(); i++)
+        for (; i < G.n_vert; i++)
         {
             if (G.vertices[i].N <= G.CUR_MAX_CLIQUE_SIZE ||
                 G.CUR_MAX_CLIQUE_SIZE >= G.CLIQUE_LIMIT)
                 continue;
-#if BENCHMARKING == 0
             if (G.elapsed_time() > this->TIME_LIMIT) break;
-#endif
             process_vertex(G, i);
         }
         // If we pause midway, I want to know where we stopped
@@ -56,9 +50,7 @@ namespace detail
         std::size_t candidates_left = prev_cand.count();
         std::size_t mcs_potential = candidates_left + res.count();
 
-#if BENCHMARKING == 0
         if (G.elapsed_time() > this->TIME_LIMIT) return;
-#endif
         if (G.CUR_MAX_CLIQUE_SIZE >= G.CLIQUE_LIMIT) return;
         if (mcs_potential <= G.CUR_MAX_CLIQUE_SIZE) return;
 
@@ -123,6 +115,5 @@ namespace detail
             res.reset(i);
         }
     }
-#endif
 }  // namespace detail
 }  // namespace cliquematch

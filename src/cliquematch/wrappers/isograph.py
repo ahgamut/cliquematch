@@ -21,10 +21,34 @@ class IsoGraph(Graph):
         """
         _build_edges(self, self.S1, self.S2)
 
-    def get_correspondence(self):
+    def _format_correspondence(self, indices):
+        return indices
+
+    def get_correspondence(
+        self,
+        lower_bound=1,
+        upper_bound=0xFFFF,
+        time_limit=-1.0,
+        use_heuristic=True,
+        use_dfs=True,
+        continue_search=False,
+        return_indices=True,
+    ):
         """Obtain indices of the corresponding vertices in the subgraph isomorphism.
         """
-        indices = self._get_correspondence(self.S1.n_vertices, self.S2.n_vertices)
+        indices = self._get_correspondence(
+            self.S1.n_vertices,
+            self.S2.n_vertices,
+            lower_bound,
+            upper_bound,
+            time_limit,
+            use_heuristic,
+            use_dfs,
+            continue_search,
+        )
         offset = lambda l: [x + 1 for x in l]
-        answer = [offset(indices[0]), offset(indices[1])]
-        return answer
+        indices = [offset(indices[0]), offset(indices[1])]
+        if return_indices:
+            return indices
+        else:
+            return self._format_correspondence(indices)

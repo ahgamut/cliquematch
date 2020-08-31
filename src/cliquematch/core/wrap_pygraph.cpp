@@ -1,4 +1,5 @@
 #include <core/pygraph.h>
+#include <core/pyiterator.h>
 #include <pybind11/iostream.h>
 #include <pybind11/stl.h>
 
@@ -13,18 +14,6 @@ void init_pygraph(pybind11::module& m)
 
     class_<pygraph, std::unique_ptr<pygraph, cm_core::pygraphDeleter>>(m, "Graph")
         .def(py::init<>())
-        .def_readwrite("use_heuristic", &pygraph::use_heur,
-                       "Search using the heuristic if true")
-        .def_readwrite("use_dfs", &pygraph::use_dfs,
-                       "Perform the depth-first search if true")
-        .def_readwrite("lower_bound", &pygraph::lower_bound,
-                       "Set the lower bound on the size of clique to find")
-        .def_readwrite("upper_bound", &pygraph::upper_bound,
-                       "Set the upper bound on the size of clique to find")
-        .def_readwrite("time_limit", &pygraph::time_lim,
-                       "Set the time limit on the search")
-        .def_readonly("current_vertex", &pygraph::current_vertex,
-                      "The vertex which is about to be searched (Readonly)")
         .def_readonly("search_done", &pygraph::finished_all,
                       "Whether the search has been completed (Readonly)")
         .def_readonly("n_vertices", &pygraph::nvert,
@@ -32,11 +21,26 @@ void init_pygraph(pybind11::module& m)
         .def_readonly("n_edges", &pygraph::nedges,
                       "Number of edges in the graph (Readonly)")
         .def("get_max_clique", &pygraph::get_max_clique,
-             "Finds a maximum clique in graph within the given bounds")
-        .def("continue_search", &pygraph::continue_search,
-             "Continue the clique search if the entire graph has not been searched")
+             "Find a maximum clique in graph within the given bounds",
+             "lower_bound"_a = 1, "upper_bound"_a = 0xFFFF, "time_limit"_a = 0.0,
+             "use_heuristic"_a = true, "use_dfs"_a = true, "continue_search"_a = false)
         .def("reset_search", &pygraph::reset_search,
-             "Reset the search for maximum cliques")
+             "Reset the clique search to try with different parameters")
+        .def("_get_correspondence", &pygraph::get_correspondence, "len1"_a, "len2"_a,
+             "lower_bound"_a = 1, "upper_bound"_a = 0xFFFF, "time_limit"_a = 0.0,
+             "use_heuristic"_a = true, "use_dfs"_a = true, "continue_search"_a = false)
+        .def("all_cliques",
+             [](py::object s, std::size_t clique_size) {
+                 return cm_core::CliqueIterator(s.cast<pygraph&>(), s, clique_size);
+             },
+             "size"_a)
+        .def("_all_correspondences",
+             [](py::object s, std::size_t len1, std::size_t len2,
+                std::size_t clique_size) {
+                 return cm_core::CorrespondenceIterator(s.cast<pygraph&>(), s, len1,
+                                                        len2, clique_size);
+             },
+             "len1"_a, "len2"_a, "size"_a)
         .def_static("from_file", &cm_core::from_file,
                     "Constructs `Graph` instance from reading a Matrix Market file",
                     arg("filename"), py::return_value_policy::move)
@@ -58,7 +62,6 @@ void init_pygraph(pybind11::module& m)
              "Exports `Graph` instance to a boolean matrix")
         .def("to_adjlist", &pygraph::to_adj_list,
              "Exports `Graph` instance to an adjacency list")
-        .def("_get_correspondence", &pygraph::get_correspondence)
         .def("__repr__", &pygraph::showdata)
         .def("__str__", &pygraph::showdata);
 }

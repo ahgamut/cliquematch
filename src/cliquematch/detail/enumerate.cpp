@@ -1,35 +1,20 @@
-#include <core/dfs.h>
-#include <algorithm>
-#include <iostream>
+#include <detail/dfs.h>
 
 namespace cliquematch
 {
 namespace detail
 {
-#if STACK_DFS == 1
-#pragma message("Using explicit stack for DFS")
-    std::size_t StackDFS::process_graph(graph& G, std::size_t start_vertex,
-                                        double time_limit)
+    void CliqueEnumerator::process_vertex(graph& G)
     {
-        this->TIME_LIMIT = time_limit;
-        if (!states.empty()) states.clear();
-        for (i = start_vertex; i < G.vertices.size(); i++)
+        for (cur++; cur < G.vertices.size(); cur++)
         {
-            if (G.vertices[i].N <= G.CUR_MAX_CLIQUE_SIZE ||
-                G.CUR_MAX_CLIQUE_SIZE >= G.CLIQUE_LIMIT)
-                continue;
-#if BENCHMARKING == 0
-            if (G.elapsed_time() > TIME_LIMIT) break;
-#endif
-            process_vertex(G, i);
+            if (G.vertices[cur].N < this->REQUIRED_SIZE) continue;
+            if (load_vertex(G)) break;
         }
-        // If we pause midway, i want to know where we stopped
-        return i;
     }
 
-    void StackDFS::process_vertex(graph& G, std::size_t cur)
+    bool CliqueEnumerator::load_vertex(graph& G)
     {
-        f = 0;
         SearchState x(G.vertices[cur]);
         this->clique_potential = 1;
         for (j = 0; j < G.vertices[cur].N; j++)
@@ -41,16 +26,34 @@ namespace detail
             x.cand.set(j);
             this->clique_potential++;
         }
-        if (this->clique_potential <= G.CUR_MAX_CLIQUE_SIZE) return;
-
+        if (this->clique_potential < this->REQUIRED_SIZE) return false;
         states.push_back(std::move(x));
         clique_size = 1;
-        while (!states.empty())
+        return true;
+    }
+
+    std::size_t CliqueEnumerator::process_graph(graph& G)
+    {
+        f = 0;
+        if (this->REQUIRED_SIZE == 0)
         {
-            if (G.CUR_MAX_CLIQUE_SIZE >= G.CLIQUE_LIMIT) return;
-#if BENCHMARKING == 0
-            if (G.elapsed_time() > this->TIME_LIMIT) return;
-#endif
+            cur = G.n_vert;
+            return cur;
+        }
+        if (this->REQUIRED_SIZE == 1 && cur < G.n_vert)
+        {
+            G.vertices[cur].bits.clear();
+            G.vertices[cur].bits.set(G.vertices[cur].spos);
+            return cur++;
+        }
+
+        while (cur < G.n_vert)
+        {
+            if (states.empty())
+            {
+                this->process_vertex(G);
+                continue;
+            }
             SearchState& cur_state = states.back();
             candidates_left = cur_state.cand.count();
             clique_potential = candidates_left + clique_size;
@@ -64,7 +67,7 @@ namespace detail
 
                 to_remove.clear();
                 for (k = j + 1;
-                     k < G.vertices[cur].N && clique_potential > G.CUR_MAX_CLIQUE_SIZE;
+                     k < G.vertices[cur].N && clique_potential >= this->REQUIRED_SIZE;
                      k++)
                 {
                     if (!cur_state.cand[k]) continue;
@@ -76,16 +79,15 @@ namespace detail
                         (candidates_left - to_remove.size()) + clique_size;
                 }
 
-                if (clique_potential > G.CUR_MAX_CLIQUE_SIZE)
+                if (clique_potential >= this->REQUIRED_SIZE)
                 {
-                    if (candidates_left == to_remove.size() + 1)
+                    // adding 1 so as to count vert as part of the clique
+                    if (clique_size + 1 == this->REQUIRED_SIZE)
                     {
                         cur_state.res.set(j);
                         G.vertices[cur].bits.copy_data(cur_state.res);
-                        G.vertices[cur].mcs = clique_potential;
-                        G.CUR_MAX_CLIQUE_SIZE = clique_potential;
-                        G.CUR_MAX_CLIQUE_LOC = cur;
                         cur_state.res.reset(j);
+                        return cur;
                     }
 
                     else
@@ -99,14 +101,16 @@ namespace detail
                     }
                 }
             }
-            if (j == G.vertices[cur].N)
+            if (j >= G.vertices[cur].N)
             {
                 cur_state.res.reset(cur_state.id);
                 states.pop_back();
                 clique_size--;
             }
         }
+
+        return cur;
     }
-#endif
+
 }  // namespace detail
 }  // namespace cliquematch

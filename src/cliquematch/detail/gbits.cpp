@@ -1,4 +1,4 @@
-#include <core/gbits.h>
+#include <detail/gbits.h>
 #include <cassert>
 #include <iostream>
 

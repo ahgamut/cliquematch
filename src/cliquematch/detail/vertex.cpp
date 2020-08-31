@@ -1,4 +1,4 @@
-#include <core/vertex.h>
+#include <detail/vertex.h>
 #include <iostream>
 
 namespace cliquematch

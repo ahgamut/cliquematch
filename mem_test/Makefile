@@ -1,8 +1,8 @@
-CXXFLAGS = -I../src/cliquematch/ -std=c++11 -O3 -c -g3 -Wall -Wpedantic -fno-omit-frame-pointer -DSTACK_DFS=1 -DBENCHMARKING=1
+CXXFLAGS = -I../src/cliquematch/ -std=c++11 -O3 -c -g3 -Wall -Wpedantic -fno-omit-frame-pointer
 LINKFLAGS= -fno-omit-frame-pointer
 VALFLAGS = --tool=memcheck --leak-check=full --leak-resolution=high --show-leak-kinds=all --errors-for-leak-kinds=all
-SRC_DIR = ../src/cliquematch/core
-SRC_FILES = clique.cpp dfs_recurse.cpp dfs_stack.cpp gbits.cpp graph.cpp heuristic.cpp mmio.cpp searchstate.cpp vertex.cpp
+SRC_DIR = ../src/cliquematch/detail
+SRC_FILES = clique.cpp dfs_recurse.cpp dfs_stack.cpp gbits.cpp graph.cpp heuristic.cpp mmio.cpp searchstate.cpp vertex.cpp enumerate.cpp
 OBJS = $(patsubst %.cpp,%.o,$(SRC_FILES) main.cpp)
 
 all: cm_base
@@ -17,11 +17,9 @@ cm_base: $(OBJS)
 	$(CXX) $^ $(LINKFLAGS) -o $@
 
 test: cm_base cond-mat-2003.mtx
-	valgrind $(VALFLAGS) ./cm_base cond-mat-2003.mtx 1
 	valgrind $(VALFLAGS) ./cm_base cond-mat-2003.mtx 0
 
 run: cm_base cond-mat-2003.mtx
-	./cm_base cond-mat-2003.mtx 1
 	./cm_base cond-mat-2003.mtx 0
 
 clean:
