@@ -22,6 +22,11 @@ constructed for applications of the maximum clique problem are rarely modified
 by hand (constructed anew instead), and (3) there are better
 packages (|networkx|_ and |igraph|_) for general graph analysis.
 
+.. note::
+
+    `cliquematch` version 2 is available: it has a simpler API, and also
+    implements clique enumeration. View version 2 at the `master branch`_ or
+    `docs`_.
 
 .. toctree::
    :maxdepth: 2
@@ -36,8 +41,8 @@ packages (|networkx|_ and |igraph|_) for general graph analysis.
 .. |pyvers| image:: https://img.shields.io/badge/python-3.5+-blue.svg
    :target: https://www.python.org/download/releases/3.5.0/
 .. |license| image:: https://img.shields.io/github/license/ahgamut/cliquematch
-   :target: https://github.com/ahgamut/cliquematch/blob/master/LICENSE
-.. |travis build| image:: https://travis-ci.com/ahgamut/cliquematch.svg?branch=master
+   :target: https://github.com/ahgamut/cliquematch/blob/v1/LICENSE
+.. |travis build| image:: https://travis-ci.com/ahgamut/cliquematch.svg?branch=v1
    :target: https://travis-ci.com/ahgamut/cliquematch
 .. |appveyor build| image:: https://ci.appveyor.com/api/projects/status/27r2qy8mbog04bhg?svg=true
    :target: https://ci.appveyor.com/project/ahgamut/cliquematch
@@ -46,3 +51,5 @@ packages (|networkx|_ and |igraph|_) for general graph analysis.
 .. _networkx: https://networkx.github.io/documentation/stable/
 .. |igraph| replace:: ``igraph``
 .. _igraph: https://igraph.org/python/
+.. _master branch: https://github.com/ahgamut/cliquematch/
+.. _docs: https://cliquematch.readthedocs.io/stable

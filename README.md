@@ -3,7 +3,7 @@
 
 [![pyvers](https://img.shields.io/badge/python-3.5+-blue.svg)][3]
 [![license](https://img.shields.io/github/license/ahgamut/cliquematch)][4]
-[![travis build](https://travis-ci.com/ahgamut/cliquematch.svg?branch=master)][5]
+[![travis build](https://travis-ci.com/ahgamut/cliquematch.svg?branch=v1)][5]
 [![appveyor build](https://ci.appveyor.com/api/projects/status/27r2qy8mbog04bhg?svg=true)][6]
 
 The `cliquematch` package aims to do two specific things:
@@ -14,7 +14,9 @@ The `cliquematch` package aims to do two specific things:
 2.  Construct large sparse undirected graphs in-memory for the various applications of the maximum clique
 	problem.
 
-Licensed under MIT License. View the documentation at https://cliquematch.readthedocs.io/
+Licensed under MIT License. View the documentation at https://cliquematch.readthedocs.io/v1.5.0
+
+Note: `cliquematch` version 2 is available, view the docs [here](https://cliquematch.readthedocs.io/stable).
 
 ## Installation Instructions
 
@@ -24,7 +26,7 @@ Licensed under MIT License. View the documentation at https://cliquematch.readth
 MacOS builds are tested but wheels are not provided.
 
 ```bash
-pip install cliquematch
+pip install cliquematch<2.0.0
 ```
 
 ### Installing from source
@@ -49,7 +51,7 @@ pip3 install pybind11
 [1]: https://github.com/pybind/pybind11/
 [2]: https://gitlab.com/libeigen/eigen/-/releases#3.3.7
 [3]: https://www.python.org/download/releases/3.5.0/
-[4]: https://github.com/ahgamut/cliquematch/blob/master/LICENSE
+[4]: https://github.com/ahgamut/cliquematch/blob/v1/LICENSE
 [5]: https://travis-ci.com/ahgamut/cliquematch
 [6]: https://ci.appveyor.com/project/ahgamut/cliquematch
 [wiki]: https://en.wikipedia.org/wiki/Clique_(graph_theory)#Definitions

@@ -120,6 +120,15 @@ namespace detail
         }
     }
 
+    std::set<std::size_t> graph::vertex_data(std::size_t i) const
+    {
+        auto ans = std::set<std::size_t>(
+            this->edge_list.begin() + this->vertices[i].elo,
+            this->edge_list.begin() + this->vertices[i].elo + this->vertices[i].N);
+        ans.erase(ans.find(i));
+        return ans;
+    }
+
     std::vector<std::pair<std::size_t, std::size_t>> iso_edges(
         std::size_t& num_vertices, std::size_t& num_edges, const graph& g1,
         const graph& g2)

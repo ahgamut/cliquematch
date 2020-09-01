@@ -337,6 +337,11 @@ namespace core
         return edges;
     }
 
+    std::set<std::size_t> pygraph::get_vertex_data(std::size_t i) const
+    {
+        if (i > this->nvert) throw CM_ERROR("Vertex index out of bounds");
+        return this->G->vertex_data(i);
+    }
     // Subgraph isomorphisms
     std::vector<std::pair<std::size_t, std::size_t>> iso_edges(std::size_t& nv,
                                                                std::size_t& ne,

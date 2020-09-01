@@ -51,6 +51,7 @@ namespace detail
               std::vector<std::pair<std::size_t, std::size_t>>& edges);
         void disp() const;
         void send_data(std::function<void(std::size_t, std::size_t)>) const;
+        std::set<std::size_t> vertex_data(std::size_t i) const;
 
         // giving max_clique to pygraph
         double find_max_cliques(std::size_t& start_vert, bool& heur_done,

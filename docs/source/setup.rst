@@ -15,7 +15,7 @@ MacOS builds are tested but wheels are not provided.
 
 .. code:: bash
 
-    pip install cliquematch
+    pip install cliquematch<2.0.0
 
 Installing from source
 ----------------------

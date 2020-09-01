@@ -149,16 +149,21 @@ class AlignGraph(GenGraph):
             "rotmat": rotmat,
         }
 
-    def get_correspondence(self):
+    def get_correspondence(self, return_indices=False):
         """Find correspondence between the sets of points ``S1`` and ``S2``.
 
-        Returns
-        -------
+        Args:
+            return_indices (`bool`\ ):
+                if `True`\ , returns only indices, else the below `dict`
 
-        `dict`
-            The two sets of corresponding points and the rotation/translation required
-            to transform `S1` to `S2`
-            (obtained via `Kabsch Algorithm <https://en.wikipedia.org/wiki/Kabsch_algorithm>`)
+        Returns:
+            `dict` of the two sets of corresponding points and the
+            rotation/translation required to transform `S1` to `S2` (obtained
+            via `Kabsch Algorithm <https://en.wikipedia.org/wiki/Kabsch_algorithm>`_)
+
         """
         indices = super(AlignGraph, self).get_correspondence(return_indices=True)
-        return self._format_correspondence(indices)
+        if return_indices:
+            return indices
+        else:
+            return self._format_correspondence(indices)
