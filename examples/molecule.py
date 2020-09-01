@@ -54,9 +54,10 @@ def plot(d1, d2, filename=None):
     G = cliquematch.A2AGraph(d1.positions, d2.positions)
     cfunc = condition_closure(d1._mol, d2._mol)
     G.epsilon = 1e-6
-    G.use_heuristic = True
     G.build_edges_with_condition(cfunc, False)
-    sub1, sub2 = G.get_correspondence(return_indices=True)
+    sub1, sub2 = G.get_correspondence(
+        use_heuristic=True, use_dfs=True, return_indices=True
+    )
 
     fig = plt.figure(figsize=(12.1, 6.1))
     axs = fig.subplots(1, 2)
@@ -66,7 +67,7 @@ def plot(d1, d2, filename=None):
     Draw.rdMolDraw2D.PrepareAndDrawMolecule(
         mdraw,
         d1._mol,
-        highlightAtoms=sub1.tolist(),
+        highlightAtoms=sub1,
         highlightAtomColors={
             int(x): (0.05 * i, 1.0 - 0.05 * i, 0.0) for i, x in enumerate(sub1)
         },
@@ -81,7 +82,7 @@ def plot(d1, d2, filename=None):
     Draw.rdMolDraw2D.PrepareAndDrawMolecule(
         mdraw,
         d2._mol,
-        highlightAtoms=sub2.tolist(),
+        highlightAtoms=sub2,
         highlightAtomColors={
             int(x): (0.05 * i, 1.0 - 0.05 * i, 0.0) for i, x in enumerate(sub2)
         },
@@ -97,7 +98,10 @@ def plot(d1, d2, filename=None):
     fig.savefig(filename)
     plt.close()
     print(
-        len(d1.positions), len(d2.positions), G.n_edges, len(G.get_max_clique()),
+        len(d1.positions),
+        len(d2.positions),
+        G.n_edges,
+        len(G.get_max_clique(use_heuristic=True, use_dfs=True)),
     )
 
 

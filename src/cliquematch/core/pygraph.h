@@ -46,7 +46,7 @@ namespace core
         void load_graph(std::size_t, std::size_t, std::vector<std::set<std::size_t>>&);
         void load_graph(std::size_t, std::size_t,
                         std::vector<std::pair<std::size_t, std::size_t>>&);
-
+        void check_loaded() const;
         std::vector<std::size_t> get_max_clique(std::size_t lower_bound = 1,
                                                 std::size_t upper_bound = 0xFFFF,
                                                 double time_limit = -1,

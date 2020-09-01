@@ -69,6 +69,10 @@ class IsoGraph(Graph):
                 else return `dict`\s for each corresponding subgraph and
                 a `dict` mapping the vertices.
 
+        Raises:
+            RuntimeError: if called before edges are constructed
+            RuntimeError: if search parameters are invalid / clique is not found
+            RuntimeError: if obtained correspondence is invalid
         """
         indices = self._get_correspondence(
             self.S1.n_vertices,
@@ -102,6 +106,8 @@ class IsoGraph(Graph):
                 a wrapped `~cliquematch.core.CorrespondenceIterator` object,
                 which yields correspondences as per ``return_indices``.
 
+        Raises:
+            RuntimeError: if called before edges are constructed
         """
         offset = lambda l: [x + 1 for x in l]
         if return_indices:

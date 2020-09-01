@@ -57,10 +57,13 @@ def view_correspondence(img1, img2):
     G = cliquematch.A2AGraph(img1.pts, img2.pts)
     G.epsilon = 50
     G.build_edges_with_condition(condition_func, False)
-    G.use_heuristic = True
-    G.use_dfs = False
-    print(G)
-    corr = G.get_correspondence(False)
+    corr = G.get_correspondence(
+        lower_bound=1,
+        upper_bound=50,
+        use_dfs=True,
+        use_heuristic=True,
+        return_indices=False,
+    )
     clique_size = len(corr[0])
 
     fig = plt.figure()

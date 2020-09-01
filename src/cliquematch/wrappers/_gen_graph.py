@@ -39,6 +39,12 @@ class GenGraph(Graph):
         """Build edges of the correspondence graph using distance metrics.
 
         Checks `.d1` and `.d2` for defaults before passing to base class.
+
+        Raises:
+            RuntimeError: if `.d1`\ or `.d2`  are invalid functions
+
+        Returns:
+            bool: `True` if construction was successful
         """
         args = [self, self.S1, len(self.S1), self.S2, len(self.S2), self.epsilon]
         if self.d1:
@@ -59,6 +65,9 @@ class GenGraph(Graph):
 
         Returns:
             `True` if construction was successful
+
+        Raises:
+            RuntimeError: if `.d1`\, `.d2`\, or ``condition_func`` are invalid functions
         """
         args = [
             self,
@@ -111,6 +120,11 @@ class GenGraph(Graph):
             return_indices (`bool`\):
                 if `True` return the indices of the corresponding elements,
                 else return the elements
+
+        Raises:
+            RuntimeError: if called before edges are constructed
+            RuntimeError: if search parameters are invalid / clique is not found
+            RuntimeError: if obtained correspondence is invalid
         """
         indices = Graph._get_correspondence(
             self,
@@ -142,6 +156,9 @@ class GenGraph(Graph):
             `~cliquematch._WrappedIterator`:
                 a wrapped `~cliquematch.core.CorrespondenceIterator` object,
                 which yields correspondences as per ``return_indices``.
+
+        Raises:
+            RuntimeError: if called before edges have been constructed
         """
         if return_indices:
             return Graph._all_correspondences(self, len(self.S1), len(self.S2), size)

@@ -56,6 +56,11 @@ namespace core
         this->G = new detail::graph(this->nvert, this->nedges, edges);
         this->inited = true;
     }
+    void pygraph::check_loaded() const
+    {
+        if (!this->inited || this->nvert == 0)
+            throw CM_ERROR("Graph is not initialized!!\n");
+    }
     void pygraphDeleter::operator()(pygraph* pg) { delete pg; }
 
     // Computation
@@ -77,8 +82,7 @@ namespace core
         else if (current_vertex != 0)
             use_heuristic = false;
 
-        if (!this->inited || this->nvert == 0)
-            throw CM_ERROR("Graph is not initialized!!\n");
+        check_loaded();
         this->G->CUR_MAX_CLIQUE_SIZE = lower_bound > this->G->CUR_MAX_CLIQUE_SIZE
                                            ? lower_bound
                                            : this->G->CUR_MAX_CLIQUE_SIZE;
@@ -246,6 +250,7 @@ namespace core
 
     ndarray<std::size_t> pygraph::to_edgelist() const
     {
+        check_loaded();
         ndarray<std::size_t> elist1(this->nedges * 2);
         elist1.resize({this->nedges, static_cast<std::size_t>(2)});
         auto elist = elist1.mutable_unchecked<2>();
@@ -261,6 +266,7 @@ namespace core
 
     void pygraph::to_file(std::string filename) const
     {
+        check_loaded();
         std::ofstream f(filename, std::ios::out);
         if (!f.is_open())
         {
@@ -279,6 +285,7 @@ namespace core
 
     ndarray<bool> pygraph::to_adj_matrix() const
     {
+        check_loaded();
         ndarray<bool> adjmat1(this->nvert * this->nvert);
         adjmat1.resize({this->nvert, this->nvert});
         auto adjmat = adjmat1.mutable_unchecked<2>();
@@ -298,6 +305,7 @@ namespace core
 
     std::vector<std::set<std::size_t>> pygraph::to_adj_list() const
     {
+        check_loaded();
         std::vector<std::set<std::size_t>> edges(this->nvert + 1);
         this->G->send_data([&edges](std::size_t i, std::size_t j) {
             edges[i].insert(j);

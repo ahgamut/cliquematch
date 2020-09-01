@@ -44,10 +44,13 @@ API Documentation
                 default is `False`\.
         :returns: the vertices in the maximum clique
         :rtype: `list`
+        :raises RuntimeError: if the graph is empty or a clique could not be found
 
     .. py:method:: reset_search
 
         Reset the search space for `~cliquematch.Graph.get_max_clique`.
+        
+        :raises RuntimeError: if the graph is empty
 
     .. py:method:: all_cliques(size)
 
@@ -55,6 +58,7 @@ API Documentation
 
         :param `int` size: size of a clique to search for.
         :rtype: `~cliquematch.core.CliqueIterator`
+        :raises RuntimeError: if the graph is empty
 
     .. py:staticmethod:: from_file
 
@@ -62,14 +66,18 @@ API Documentation
 
         :param str filename:
         :returns: the loaded `~cliquematch.Graph`
+        :raises RuntimeError: if the file could not be read
 
     .. py:staticmethod:: from_edgelist
 
-        Constructs `~cliquematch.Graph` instance from the given edge list
+        Constructs `~cliquematch.Graph` instance from the given edge list.
+        Note that vertex indices must start from 1.
 
         :param `numpy.ndarray` edgelist: shape ``(n,2)``\
         :param `int` num_vertices: 
         :returns: the loaded `~cliquematch.Graph`
+        :raises RuntimeError: if any value in ``edgelist`` is greater than ``num_vertices``
+        :raises RuntimeError: if value in ``edgelist`` is ``0``
 
     .. py:staticmethod:: from_matrix
 
@@ -77,39 +85,48 @@ API Documentation
 
         :param `numpy.ndarray` adjmat: `bool` square matrix
         :returns: the loaded `~cliquematch.Graph`
+        :raises RuntimeError: if ``adjmat`` is not square or the edges could not be constructed
 
     .. py:staticmethod:: from_adjlist
 
-        Constructs `~cliquematch.Graph` instance from the given adjacency list
+        Constructs `~cliquematch.Graph` instance from the given adjacency list.
+        Note that the first element of the list must be an empty `set`\, vertex
+        indices start at 1.
 
         :param `int` num_vertices:
         :param `int` num_edges:
         :param `list` edges: `list` of `set`\s
         :returns: the loaded `~cliquematch.Graph`
+        :raises RuntimeError: if first element in ``edges`` is nonempty, or there are invalid vertices/edges
 
     .. py:method:: to_file
 
         Exports `~cliquematch.Graph` instance to a Matrix Market file
         
         :param str filename:
+        :raises RuntimeError: if the file could not be opened, or if the graph is empty
+
 
     .. py:method:: to_edgelist
 
         Exports `~cliquematch.Graph` instance to an edge list
 
         :returns: ``(n,2)`` `numpy.ndarray` of edges
+        :raises RuntimeError: if the graph is empty
 
     .. py:method:: to_matrix
 
         Exports `~cliquematch.Graph` instance to a boolean matrix
         
         :returns: square `numpy.ndarray` of `bool`\ s
+        :raises RuntimeError: if the graph is empty
 
     .. py:method:: to_adjlist
 
         Exports `~cliquematch.Graph` instance to an adjacency list
         
         :returns: `list` of `set`\ s
+        :raises RuntimeError: if the graph is empty
 
 .. autoclass:: A2AGraph(set1, set2, d1=None, d2=None, is_d1_symmetric=True, is_d2_symmetric=True)
 .. autoclass:: L2LGraph(set1, set2, d1=None, d2=None, is_d1_symmetric=True, is_d2_symmetric=True)

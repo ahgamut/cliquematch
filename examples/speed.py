@@ -33,12 +33,13 @@ def runner(name_list, use_dfs, use_heuristic):
     )
     for x in name_list:
         G = cliquematch.Graph.from_file(x + ".mtx")
-        G.upper_bound = 1000
-        G.time_limit = 100
-        G.use_dfs = use_dfs
-        G.use_heuristic = use_heuristic
         start = time.time()
-        ans = G.get_max_clique()
+        ans = G.get_max_clique(
+            lower_bound=1,
+            upper_bound=65535,
+            use_dfs=use_dfs,
+            use_heuristic=use_heuristic,
+        )
         t = time.time() - start
         print(
             "{:<18s}{:>18d}{:>18d}{:>18d}{:>18.5f}".format(

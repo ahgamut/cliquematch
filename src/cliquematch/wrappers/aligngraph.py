@@ -188,6 +188,10 @@ class AlignGraph(GenGraph):
                 (obtained via `Kabsch Algorithm
                 <https://en.wikipedia.org/wiki/Kabsch_algorithm>`_)
 
+        Raises:
+            RuntimeError: if called before edges are constructed
+            RuntimeError: if search parameters are invalid / clique is not found
+            RuntimeError: if obtained correspondence is invalid
         """
         indices = super(AlignGraph, self).get_correspondence(
             lower_bound,
