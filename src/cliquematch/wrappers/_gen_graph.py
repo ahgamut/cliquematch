@@ -92,10 +92,25 @@ class GenGraph(Graph):
         return_indices=True,
     ):
         """Get corresponding subsets between the `.S1` and `.S2`.
+        Calls `~cliquematch.Graph.get_max_clique` internally.
 
         Args:
-            return_indices ( `bool` ): if `True` return the indices of the
-                            corresponding elements, else return the elements
+            lower_bound (`int`\): set a lower bound for the size
+            upper_bound (`int`\): set an upper bound for the size
+            time_limit (`float`\):
+                set a time limit for the search: a nonpositive value
+                implies there is no time limit (use in conjunction
+                with ``continue_search``\ ).
+            use_heuristic (`bool`\):
+                if `True`\, use the heuristic-based search to obtain
+                a large clique quickly. Good for obtaining an initial lower bound.
+            use_dfs (`bool`\):
+                if `True`\, use the depth-first to obtain the clique. default is `True`\.
+            continue_search (`bool`\):
+                set as `True` to continue a clique search interrupted by ``time_limit``\.
+            return_indices (`bool`\):
+                if `True` return the indices of the corresponding elements,
+                else return the elements
         """
         indices = Graph._get_correspondence(
             self,
@@ -115,6 +130,19 @@ class GenGraph(Graph):
         return answer
 
     def all_correspondences(self, size, return_indices=True):
+        """Find all correspondences of a given size.
+
+        Args:
+            size (`int`\): size of the corresponding subsets.
+            return_indices (`bool`\):
+                if `True` return the indices of the corresponding elements,
+                else return the elements
+
+        Returns:
+            `~cliquematch._WrappedIterator`:
+                a wrapped `~cliquematch.core.CorrespondenceIterator` object,
+                which yields correspondences as per ``return_indices``.
+        """
         if return_indices:
             return Graph._all_correspondences(self, len(self.S1), len(self.S2), size)
         else:

@@ -48,7 +48,27 @@ class IsoGraph(Graph):
         continue_search=False,
         return_indices=True,
     ):
-        """Obtain indices of the corresponding vertices in the subgraph isomorphism.
+        """Obtain the corresponding vertices in the subgraph isomorphism.
+
+        Args:
+            lower_bound (`int`\): set a lower bound for the size
+            upper_bound (`int`\): set an upper bound for the size
+            time_limit (`float`\):
+                set a time limit for the search: a nonpositive value
+                implies there is no time limit (use in conjunction
+                with ``continue_search``\ ).
+            use_heuristic (`bool`\):
+                if `True`\, use the heuristic-based search to obtain
+                a large clique quickly. Good for obtaining an initial lower bound.
+            use_dfs (`bool`\):
+                if `True`\, use the depth-first to obtain the clique. default is `True`\.
+            continue_search (`bool`\):
+                set as `True` to continue a clique search interrupted by ``time_limit``\.
+            return_indices (`bool`\):
+                if `True` return the vertices of the corresponding subgraphs,
+                else return `dict`\s for each corresponding subgraph and
+                a `dict` mapping the vertices.
+
         """
         indices = self._get_correspondence(
             self.S1.n_vertices,
@@ -68,6 +88,21 @@ class IsoGraph(Graph):
             return self._format_correspondence(indices)
 
     def all_correspondences(self, size, return_indices=True):
+        """Find all correspondences of a given size.
+
+        Args:
+            size (`int`\): size of the corresponding subsets.
+            return_indices (`bool`\):
+                if `True` return the vertices of the corresponding subgraphs,
+                else return `dict`\s for each corresponding subgraph and
+                a `dict` mapping the vertices.
+
+        Returns:
+            `~cliquematch._WrappedIterator`:
+                a wrapped `~cliquematch.core.CorrespondenceIterator` object,
+                which yields correspondences as per ``return_indices``.
+
+        """
         offset = lambda l: [x + 1 for x in l]
         if return_indices:
             return WrappedIterator(

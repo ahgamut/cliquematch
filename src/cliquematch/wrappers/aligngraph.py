@@ -160,14 +160,34 @@ class AlignGraph(GenGraph):
         return_indices=True,
     ):
         """Find correspondence between the sets of points ``S1`` and ``S2``.
+        Calls `~cliquematch.Graph.get_max_clique` internally.
 
-        Returns
-        -------
+        Args:
+            lower_bound (`int`\): set a lower bound for the size
+            upper_bound (`int`\): set an upper bound for the size
+            time_limit (`float`\):
+                set a time limit for the search: a nonpositive value
+                implies there is no time limit (use in conjunction
+                with ``continue_search``\ ).
+            use_heuristic (`bool`\):
+                if `True`\, use the heuristic-based search to obtain
+                a large clique quickly. Good for obtaining an initial lower bound.
+            use_dfs (`bool`\):
+                if `True`\, use the depth-first to obtain the clique. default is `True`\.
+            continue_search (`bool`\):
+                set as `True` to continue a clique search interrupted by ``time_limit``\.
+            return_indices (`bool`\):
+                if `True` return the indices of the corresponding elements,
+                else return the below `dict`
 
-        `dict`
-            The two sets of corresponding points and the rotation/translation required
-            to transform `S1` to `S2`
-            (obtained via `Kabsch Algorithm <https://en.wikipedia.org/wiki/Kabsch_algorithm>`)
+        Returns:
+
+            `dict` :
+                The two sets of corresponding points and the
+                rotation/translation required to transform `S1` to `S2`
+                (obtained via `Kabsch Algorithm
+                <https://en.wikipedia.org/wiki/Kabsch_algorithm>`_)
+
         """
         indices = super(AlignGraph, self).get_correspondence(
             lower_bound,

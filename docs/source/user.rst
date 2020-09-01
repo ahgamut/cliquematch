@@ -3,10 +3,10 @@ User Guide
 
 As described in the homepage, `cliquematch` aims to do two things:
 
-1. Find a `maximum clique`_ in large sparse undirected graphs, as quickly and efficiently as possible. 
+1. Find `maximum cliques`_ in large sparse undirected graphs, as quickly and efficiently as possible. 
 
 2. Construct large sparse undirected graphs in-memory for the various
-   applications of the maximum clique problem.
+   applications of the maximum clique/clique enumeration problem.
   
 Let's look at how `cliquematch` can be used as described above.
 
@@ -37,74 +37,94 @@ We can also load a `~cliquematch.Graph` using an adjacency matrix
 (`~cliquematch.Graph.from_adj_matrix`), an adjacency list
 (`~cliquematch.Graph.from_adj_list`), or a list of edges
 (`~cliquematch.Graph.from_edgelist`).  Once the `~cliquematch.Graph` object has
-been loaded, we can change some of the search properties of the
-`~cliquematch.Graph` before searching for a clique:
+been loaded, we can provide various parameters to search for a clique with `~cliquematch.Graph.get_max_clique`:
 
-* A `~cliquematch.Graph.lower_bound` and an `~cliquematch.Graph.upper_bound` can be set for the size for clique.
-* A `~cliquematch.Graph.time_limit` can be set for the clique search.
-* In case the graph is very large, to get a large clique quickly via a
-  heuristic method, `~cliquematch.Graph.use_heuristic` can be set to `True`, and
-  `~cliquematch.Graph.use_dfs` can be set to `False` to skip the depth-first
-  search.
+.. code:: python
 
-.. warning::
-    Both `~cliquematch.Graph.use_heuristic` and `~cliquematch.Graph.use_dfs` cannot be set to `False`.
-    `cliquematch` will then skip the clique search entirely and raise a `RuntimeError`.
-
-There are some additional read-only properties:
-
-* `~cliquematch.Graph.n_vertices` and `~cliquematch.Graph.n_edges` provide the
-  number of vertices and edges in the graph.
-* `~cliquematch.Graph.search_done` is `True` if the depth-first search has been completed.
-
-The user can print the `Graph` object to view the properties:
-
-.. code:: python 
-    
-    G.time_limit = 1
-    G.upper_bound = 30
-    G.lower_bound = 10
-    G.use_heuristic = False
-    G.use_dfs = True
-    print(G)
-    # cliquematch.core.Graph object at 0x559e7da730c0
-    # (n_vertices=31163,n_edges=120029,lower_bound=10,upper_bound=30,
-    # time_limit=1,use_heuristic=False,use_dfs=True,search_done=False)
-
-
-After setting the properties, the user can call
-`~cliquematch.Graph.get_max_clique` to get a clique as per the above
-constraints.
-
-.. code:: python 
-    
-    answer = G.get_max_clique()
+    answer = G.get_max_clique(
+        lower_bound=1,
+        upper_bound=1729,
+        time_limit=100,
+        use_heuristic=True,
+        use_dfs=True,
+    )
     print(answer)
     # [9986, 9987, 10066, 10068, 10071, 10072, 10074, 10076,
     # 10077, 10078, 10079, 10080, 10081, 10082, 10083, 10085,
     # 10287, 10902, 10903, 10904, 10905, 10906, 10907, 10908, 10909]
 
+* A ``lower_bound`` and an ``upper_bound`` can be set for the size for clique.
+* A ``time_limit`` can be set for the clique search.
+* In case the graph is very large, to get a large clique quickly via a
+  heuristic method, ``use_heuristic`` can be set to `True`, and
+  ``use_dfs`` can be set to `False` to skip the depth-first
+  search.
 
-What was the `~cliquematch.Graph.search_done` property for? In case the clique
-search has not completed, the user can continue the search within a loop like
-this:
+.. warning::
+    Both ``use_heuristic`` and ``use_dfs`` cannot be set to `False`.
+    `cliquematch` will then skip the clique search entirely and raise a `RuntimeError`.
+
+The `~cliquematch.Graph` object has some read-only properties:
+
+* `~cliquematch.Graph.n_vertices` and `~cliquematch.Graph.n_edges` provide the
+  number of vertices and edges in the graph.
+* `~cliquematch.Graph.search_done` is `True` if the depth-first search has been completed.
+
+The user can print the `~cliquematch.Graph` object to view the properties:
+
+.. code:: python 
+    
+    print(G)
+    # cliquematch.core.Graph object at 0x559e7da730c0
+    # (n_vertices=31163,n_edges=120029,search_done=False)
+
+
+What is the `~cliquematch.Graph.search_done` property for? In case the clique
+search was interrupted due to ``time_limit``\, the user can provide a
+``continue_search`` parameter within a loop like this:
 
 .. code:: python
 
     while not G.search_done:
-        G.continue_search()
-        answer = G.get_max_clique()
+        answer = G.get_max_clique(
+            lower_bound=1,
+            upper_bound=1729,
+            time_limit=100,
+            use_heuristic=True,
+            use_dfs=True,
+            continue_search=True,
+        )
 
-
-Finally, if the entire `~cliquematch.Graph` needs to be searched again (say for a clique of larger size),
+If the entire `~cliquematch.Graph` needs to be searched again (say for a clique of larger size),
 the user can call the `~cliquematch.Graph.reset_search` method:
 
 .. code:: python
 
     G.reset_search()
-    G.upper_bound = 45
-    G.get_max_clique()
+    G.get_max_clique(
+        lower_bound=1, upper_bound=31, time_limit=100, use_heuristic=True, use_dfs=True
+    )
 
+
+Finding Multiple cliques : clique enumeration
+---------------------------------------------
+
+The above `~cliquematch.Graph` methods deal with finding *one* large clique. A
+related use case is to find *multiple* large cliques in a given graph,and
+iterate through them in some order.
+
+The `~cliquematch.Graph` class has an `~cliquematch.Graph.all_cliques` method
+for finding all cliques of a given size. Taking the `~cliquematch.Graph` object
+loaded as per the above section:
+
+.. code:: python
+   
+   import cliquematch
+   G = cliquematch.Graph.from_file("cond-mat-2003.mtx")
+   # we know there exists a maximum clique of size 25
+   # so let's find cliques of size 24
+   for clique in G.all_cliques(size=24):
+        print(clique)
 
 
 Applications of the maximum clique problem  
@@ -202,15 +222,19 @@ The correspondence graph classes are all subclasses of `~cliquematch.Graph`, the
 * An ``__init__`` method that accepts the sets :math:`P` (or ``S1``),
   :math:`Q` (or ``S2``), and the distance functions for ``S1`` and ``S2``
   respectively.
-* A ``build_edges`` method that constructs the correspondence graph using only the distance metrics.
-* A ``build_edges_with_condition`` method that accepts a condition function ``cf``, and a boolean ``use_condition_only``:
+* A `~cliquematch.A2AGraph.build_edges` method that constructs the correspondence graph using only the distance metrics.
+* A `~cliquematch.A2AGraph.build_edges_with_condition` method that accepts a condition function ``cf``, and a boolean ``use_condition_only``:
   
     * If ``use_cfunc_only`` is `True`, the graph is constructed using only ``cf`` (slower)
     * Otherwise the graph is constructed using the distance metrics and pruned with ``cf`` (faster)
 
-* A ``get_correspondence`` method that returns the largest corresponding
-  subsets :math:`P^*` and :math:`Q^*`, or the indices of the elements in the
-  subsets.
+* A `~cliquematch.A2AGraph.get_correspondence` method that returns the largest
+  corresponding subsets :math:`P^*` and :math:`Q^*`, or the indices of the
+  elements in the subsets.
+
+* A `~.cliquematch.A2AGraph.all_correspondences` method similar to the
+  `cliquematch.Graph.all_cliques` that works similar to
+  `~cliquematch.A2AGraph.get_correspondence`.
 
 The correspondence graph classes available are:
 
@@ -228,7 +252,7 @@ fields. Here are a couple of examples from the `Github repo`_:
 2. |molec| can be implemented |molec_impl| .
 
 
-.. _maximum clique: https://en.wikipedia.org/wiki/Clique_(graph_theory)#Definitions
+.. _maximum cliques: https://en.wikipedia.org/wiki/Clique_(graph_theory)#Definitions
 .. _Github repo: https://github.com/ahgamut/cliquematch
 .. |ccmm| replace:: `This image matching algorithm <https://link.springer.com/article/10.1007/s10489-015-0646-1>`__
 .. |ccmm_impl| replace:: `like this <https://github.com/ahgamut/cliquematch/blob/master/examples/ccmm.py>`__

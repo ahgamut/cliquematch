@@ -1,8 +1,9 @@
 # modified sample from https://packaging.python.org/guides/supporting-windows-using-appveyor/
-version: 1.0.0a{build}
+version: 2.0.0a{build}
 branches:
   only:
     - master
+    - v1
 max_jobs: 3
 clone_depth: 3
 build: off

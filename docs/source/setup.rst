@@ -15,7 +15,7 @@ MacOS builds are tested but wheels are not provided.
 
 .. code:: bash
 
-    pip install cliquematch
+    pip install cliquematch>=2.0.0
 
 Installing from source
 ----------------------
@@ -42,15 +42,6 @@ Installing from source
       later is needed.
    -  **Note:** Installing under Windows+MinGW has not been tested.
 
-4. (*Advanced*) Compilation Flags: ``setup.py`` compiles the `cliquematch`
-   extension with two additional flags.
-
-   -  ``STACK_DFS`` (``1`` by default): If nonzero, `cliquematch` uses
-      an explicit stack for the depth-first clique search; otherwise it
-      uses recursive function calls. Primarily for debugging purposes.
-
-   -  ``BENCHMARKING`` (``0`` by default): Set to ``1`` when
-      benchmarking the core cliquematch algorithm.
 
 .. |pybind11| replace:: ``pybind11``
 .. _pybind11: https://github.com/pybind/pybind11/
