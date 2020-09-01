@@ -20,6 +20,8 @@ void init_pygraph(pybind11::module& m)
                       "Number of vertices in the graph (Readonly)")
         .def_readonly("n_edges", &pygraph::nedges,
                       "Number of edges in the graph (Readonly)")
+        .def("_vertex_neighbors", &pygraph::get_vertex_data,
+             "Return the neighbors of the given vertex", "v"_a)
         .def("get_max_clique", &pygraph::get_max_clique,
              "Find a maximum clique in graph within the given bounds",
              "lower_bound"_a = 1, "upper_bound"_a = 0xFFFF, "time_limit"_a = 0.0,

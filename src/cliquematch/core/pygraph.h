@@ -69,6 +69,7 @@ namespace core
         ndarray<std::size_t> to_edgelist() const;
         std::vector<std::set<std::size_t>> to_adj_list() const;
         void to_file(std::string filename) const;
+        std::set<std::size_t> get_vertex_data(std::size_t i) const;
 
         friend std::vector<std::pair<std::size_t, std::size_t>> iso_edges(
             std::size_t&, std::size_t&, const pygraph&, const pygraph&);

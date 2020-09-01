@@ -54,9 +54,10 @@ namespace detail
 
         // giving max_clique to pygraph
         double find_max_cliques(std::size_t& start_vert, bool use_heur = false,
-                                bool use_dfs = true, double time_limit = 10000);
+                                bool use_dfs = true, double time_limit = -1);
         std::vector<std::size_t> get_max_clique() const;
         std::vector<std::size_t> get_max_clique(std::size_t i) const;
+        std::set<std::size_t> vertex_data(std::size_t i) const;
 
         friend std::vector<std::pair<std::size_t, std::size_t>> iso_edges(std::size_t&,
                                                                           std::size_t&,

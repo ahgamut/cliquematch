@@ -39,3 +39,7 @@ class TestIsoGraph(object):
         ans = G.get_correspondence(return_indices=True)
         assert set(ans[0]) == {1, 2, 3, 4, 5}
         assert ans[1] == [2, 1, 3, 4, 5]
+
+        g1, g2, mapping = G.get_correspondence(return_indices=False)
+        for k in mapping.keys():
+            assert len(g1[k]) >= len(g2[mapping[k]])

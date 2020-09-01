@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from cliquematch.core import Graph, _build_edges
+from ._gen_graph import WrappedIterator
 from warnings import warn
 
 
@@ -22,7 +23,16 @@ class IsoGraph(Graph):
         _build_edges(self, self.S1, self.S2)
 
     def _format_correspondence(self, indices):
-        return indices
+        v1 = set(indices[0])
+        v2 = set(indices[0])
+        G1 = dict()
+        G2 = dict()
+        mapping = dict()
+        for i in range(len(indices[0])):
+            G1[indices[0][i]] = self.S1._vertex_neighbors(indices[0][i]) & v1
+            G2[indices[1][i]] = self.S2._vertex_neighbors(indices[1][i]) & v2
+            mapping[indices[0][i]] = indices[1][i]
+        return (G1, G2, mapping)
 
     def get_correspondence(
         self,
@@ -52,3 +62,12 @@ class IsoGraph(Graph):
             return indices
         else:
             return self._format_correspondence(indices)
+
+    def all_correspondences(self, size, return_indices=True):
+        if return_indices:
+            return Graph._all_correspondences(self, len(self.S1), len(self.S2), size)
+        else:
+            return WrappedIterator(
+                Graph._all_correspondences(self, len(self.S1), len(self.S2), size),
+                lambda x: self._format_correspondence(x),
+            )

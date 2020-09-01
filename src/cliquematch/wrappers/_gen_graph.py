@@ -18,6 +18,9 @@ class WrappedIterator(object):
     def __next__(self):
         return self._wrapper(next(self._it))
 
+    def next(self):
+        return self.__next__()
+
 
 class GenGraph(Graph):
     def __init__(
