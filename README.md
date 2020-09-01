@@ -14,9 +14,9 @@ The `cliquematch` package aims to do two specific things:
 2.  Construct large sparse undirected graphs in-memory for the various applications of the maximum clique
 	problem.
 
-Licensed under MIT License. View the documentation at https://cliquematch.readthedocs.io/v1.5.0
+Licensed under MIT License. View the documentation at https://cliquematch.readthedocs.io/en/v1.5.0
 
-Note: `cliquematch` version 2 is available, view the docs [here](https://cliquematch.readthedocs.io/stable).
+Note: `cliquematch` version 2 is available, view the docs [here](https://cliquematch.readthedocs.io/en/stable).
 
 ## Installation Instructions
 

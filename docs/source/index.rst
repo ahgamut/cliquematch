@@ -52,4 +52,4 @@ packages (|networkx|_ and |igraph|_) for general graph analysis.
 .. |igraph| replace:: ``igraph``
 .. _igraph: https://igraph.org/python/
 .. _master branch: https://github.com/ahgamut/cliquematch/
-.. _docs: https://cliquematch.readthedocs.io/stable
+.. _docs: https://cliquematch.readthedocs.io/en/stable
