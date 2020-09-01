@@ -28,10 +28,14 @@ class IsoGraph(Graph):
         G1 = dict()
         G2 = dict()
         mapping = dict()
+        inv_map = dict()
+        v2_inv = lambda z: set(inv_map[x] for x in z)
         for i in range(len(indices[0])):
-            G1[indices[0][i]] = self.S1._vertex_neighbors(indices[0][i]) & v1
-            G2[indices[1][i]] = self.S2._vertex_neighbors(indices[1][i]) & v2
             mapping[indices[0][i]] = indices[1][i]
+            inv_map[indices[1][i]] = indices[0][i]
+        for i in range(len(indices[0])):
+            G2[indices[1][i]] = self.S2._vertex_neighbors(indices[1][i]) & v2
+            G1[indices[0][i]] = v2_inv(G2[indices[1][i]])
         return (G1, G2, mapping)
 
     def get_correspondence(
@@ -64,10 +68,14 @@ class IsoGraph(Graph):
             return self._format_correspondence(indices)
 
     def all_correspondences(self, size, return_indices=True):
+        offset = lambda l: [x + 1 for x in l]
         if return_indices:
-            return Graph._all_correspondences(self, len(self.S1), len(self.S2), size)
+            return WrappedIterator(
+                Graph._all_correspondences(self, len(self.S1), len(self.S2), size),
+                lambda x: [offset(x[0]), offset(x[1])],
+            )
         else:
             return WrappedIterator(
                 Graph._all_correspondences(self, len(self.S1), len(self.S2), size),
-                lambda x: self._format_correspondence(x),
+                lambda x: self._format_correspondence([offset(x[0]), offset(x[1])]),
             )
