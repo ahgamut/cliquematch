@@ -9,10 +9,12 @@ namespace detail
     std::size_t DegreeHeuristic::process_graph(graph& G)
     {
         std::size_t i;
-        neighbors.reserve(G.max_degree);
         neighbors.resize(G.max_degree);
-        graphBits res(G.max_degree);
-        graphBits cand(G.max_degree);
+        graphBits res, cand;
+
+        G.check_memory(G.max_degree);
+        res.refer_from(G.recycle_memory(G.max_degree), G.max_degree);
+        cand.refer_from(G.recycle_memory(G.max_degree), G.max_degree);
 
         process_vertex(G, G.md_vert, res, cand);
         for (i = 0; i < G.n_vert && G.CUR_MAX_CLIQUE_SIZE < G.CLIQUE_LIMIT; i++)

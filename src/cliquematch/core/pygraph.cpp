@@ -38,22 +38,14 @@ namespace core
         this->G = other.G;
         other.inited = false;
     }
-    void pygraph::load_graph(std::size_t n_vertices, std::size_t n_edges,
-                             std::vector<std::set<std::size_t>>& edges)
+    void pygraph::load_graph(
+        std::size_t n_vertices, std::size_t n_edges,
+        std::pair<std::vector<std::size_t>, std::vector<std::size_t>>&& edges)
     {
         this->nvert = n_vertices;
         this->nedges = n_edges;
         if (this->inited) delete this->G;
-        this->G = new detail::graph(this->nvert, this->nedges, edges);
-        this->inited = true;
-    }
-    void pygraph::load_graph(std::size_t n_vertices, std::size_t n_edges,
-                             std::vector<std::pair<std::size_t, std::size_t>>& edges)
-    {
-        this->nvert = n_vertices;
-        this->nedges = n_edges;
-        if (this->inited) delete this->G;
-        this->G = new detail::graph(this->nvert, this->nedges, edges);
+        this->G = new detail::graph(this->nvert, this->nedges, std::move(edges));
         this->inited = true;
     }
     void pygraph::check_loaded() const
@@ -148,11 +140,11 @@ namespace core
         std::size_t no_of_vertices, no_of_edges;
         pygraph pg;
         auto edges =
-            detail::mmio3_reader(filename.c_str(), no_of_vertices, no_of_edges);
+            detail::mmio4_reader(filename.c_str(), no_of_vertices, no_of_edges);
 
-        if (edges.data() == NULL || edges.size() == 0)
+        if (edges.first.size() == 0 || edges.second.size() == 0)
             throw CM_ERROR("Could not extract edges!!\n");
-        pg.load_graph(no_of_vertices, no_of_edges, edges);
+        pg.load_graph(no_of_vertices, no_of_edges, std::move(edges));
         return pg;
     }
 
@@ -162,10 +154,16 @@ namespace core
         std::size_t no_of_edges = 0;
         std::size_t v1, v2;
         auto edge_list = edge_list1.unchecked<2>();
-        std::vector<std::pair<std::size_t, std::size_t>> edges(no_of_vertices + 1);
+        std::pair<std::vector<std::size_t>, std::vector<std::size_t>> edges;
+        edges.first.resize(no_of_vertices + 1);
+        edges.second.resize(no_of_vertices + 1);
         pygraph pg;
 
-        for (std::size_t i = 0; i < edges.size(); i++) edges[i] = {i, i};
+        for (std::size_t i = 0; i < edges.first.size(); i++)
+        {
+            edges.first[i] = i;
+            edges.second[i] = i;
+        }
         for (auto i = 0; i < edge_list.shape(0); i++)
         {
             v1 = edge_list(i, 0);
@@ -178,14 +176,16 @@ namespace core
                 throw CM_ERROR(
                     "Vertex numbers must begin at 1, 0 is used as a sentinel value\n");
             }
-            edges.push_back(std::make_pair(v1, v2));
-            edges.push_back(std::make_pair(v2, v1));
             no_of_edges++;
+            edges.first.push_back(v1);
+            edges.second.push_back(v2);
+            edges.first.push_back(v2);
+            edges.second.push_back(v1);
         }
 
-        if (edges.data() == NULL || edges.size() == 0)
+        if (edges.first.size() == 0 || edges.second.size() == 0)
             throw CM_ERROR("Could not extract edges!!\n");
-        pg.load_graph(no_of_vertices, no_of_edges, edges);
+        pg.load_graph(no_of_vertices, no_of_edges, std::move(edges));
         return pg;
     }
 
@@ -201,7 +201,7 @@ namespace core
             std::size_t no_of_edges = 0;
             pygraph pg;
 
-            std::vector<std::pair<std::size_t, std::size_t>> edges;
+            std::pair<std::vector<std::size_t>, std::vector<std::size_t>> edges;
 
             for (std::size_t i = 0; i < no_of_vertices; i++)
             {
@@ -209,17 +209,19 @@ namespace core
                 {
                     if (adjmat(i, j) || i == j)
                     {
-                        edges.push_back(std::make_pair(i + 1, j + 1));
-                        edges.push_back(std::make_pair(j + 1, i + 1));
+                        edges.first.push_back(i + 1);
+                        edges.second.push_back(j + 1);
+                        edges.first.push_back(j + 1);
+                        edges.second.push_back(i + 1);
                         no_of_edges += (i != j);
                     }
                 }
             }
 
             no_of_edges /= 2;
-            if (edges.data() == NULL || edges.size() == 0)
+            if (edges.first.size() == 0 || edges.second.size() == 0)
                 throw CM_ERROR("Could not extract edges!!\n");
-            pg.load_graph(no_of_vertices, no_of_edges, edges);
+            pg.load_graph(no_of_vertices, no_of_edges, std::move(edges));
             return pg;
         }
     }
@@ -232,19 +234,25 @@ namespace core
         if (n_vertices != edges.size() - 1)
             throw CM_ERROR("Number of vertices don't match!\n");
 
+        std::pair<std::vector<std::size_t>, std::vector<std::size_t>> edges2;
         pygraph pg;
         for (std::size_t i = 0; i < edges.size(); i++)
         {
+            edges2.first.push_back(i);
+            edges2.second.push_back(i);
             for (auto& j : edges[i])
             {
                 if (j == 0 || j > n_vertices || j == i ||
                     edges[j].find(i) == edges[j].end())
                     throw CM_ERROR("Invalid edge in adjacency list!\n");
+
+                edges2.first.push_back(i);
+                edges2.second.push_back(j);
                 e++;
             }
         }
         if (e / 2 != n_edges) throw CM_ERROR("Number of edges don't match!\n");
-        pg.load_graph(n_vertices, n_edges, edges);
+        pg.load_graph(n_vertices, n_edges, std::move(edges2));
         return pg;
     }
 
@@ -321,10 +329,8 @@ namespace core
     }
 
     // Subgraph isomorphisms
-    std::vector<std::pair<std::size_t, std::size_t>> iso_edges(std::size_t& nv,
-                                                               std::size_t& ne,
-                                                               const pygraph& g1,
-                                                               const pygraph& g2)
+    std::pair<std::vector<std::size_t>, std::vector<std::size_t>> iso_edges(
+        std::size_t& nv, std::size_t& ne, const pygraph& g1, const pygraph& g2)
     {
         return iso_edges(nv, ne, *(g1.G), *(g2.G));
     }

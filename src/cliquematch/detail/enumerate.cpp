@@ -15,7 +15,9 @@ namespace detail
 
     bool CliqueEnumerator::load_vertex(graph& G)
     {
-        SearchState x(G.vertices[cur]);
+        G.check_memory(G.vertices[cur].N);
+        SearchState x(G.vertices[cur], G.recycle_memory(G.vertices[cur].N),
+                      G.recycle_memory(G.vertices[cur].N));
         this->clique_potential = 1;
         for (j = 0; j < G.vertices[cur].N; j++)
         {
@@ -46,6 +48,7 @@ namespace detail
             G.vertices[cur].bits.set(G.vertices[cur].spos);
             return cur++;
         }
+        states.reserve(G.max_degree);
 
         while (cur < G.n_vert)
         {
@@ -93,7 +96,8 @@ namespace detail
                     else
                     {
                         SearchState future_state;
-                        future_state.refer_from(cur_state.cand, cur_state.res, j);
+                        future_state.refer_from(G.recycle_memory(G.vertices[cur].N),
+                                                cur_state.cand, cur_state.res, j);
                         for (auto k : to_remove) future_state.cand.reset(k);
                         states.push_back(std::move(future_state));
                         clique_size++;

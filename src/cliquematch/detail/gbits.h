@@ -35,8 +35,9 @@ namespace detail
         };
 
         void copy_from(const graphBits& other);
+        void copy_from(const graphBits& other, u32* data_ptr);
         void copy_data(const graphBits& other);
-        void refer_from(u32* ext_data, std::size_t n_bits, bool cleanout = true);
+        void refer_from(u32* ext_data, std::size_t n_bits, bool cleanout = false);
         void refer_from(const graphBits& other)
         {
             refer_from(other.data, other.valid_len, false);

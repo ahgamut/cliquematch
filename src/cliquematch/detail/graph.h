@@ -11,6 +11,7 @@ namespace cliquematch
 {
 namespace detail
 {
+    constexpr std::size_t BITS_PER_SIZE_T = 8 * sizeof(std::size_t);
     class graph
     {
        private:
@@ -22,6 +23,10 @@ namespace detail
         // (padded to ensure 32bit)
         std::vector<std::size_t> edge_bits;
         std::size_t eb_size;
+        std::size_t search_start, search_cur, search_end;
+        std::chrono::time_point<std::chrono::steady_clock> start_time;
+
+        // add stuff for allocating searchstates using existing memory in edge_bits;
         short find_if_neighbors(const std::size_t v1_id, const std::size_t v2_id,
                                 std::size_t& v2_position) const
         {
@@ -32,8 +37,25 @@ namespace detail
         void set_vertices();
         void start_clock();
         double elapsed_time() const;
-
-        std::chrono::time_point<std::chrono::steady_clock> start_time;
+        void check_memory(const std::size_t N)
+        {
+            std::size_t size_per_step =
+                (N % BITS_PER_SIZE_T != 0) + N / BITS_PER_SIZE_T;
+            if (search_cur + N * size_per_step >= search_end)
+            {
+                for (search_cur = search_start; search_cur < search_end; search_cur++)
+                    edge_bits[search_cur] = 0;
+                search_cur = search_start;
+            }
+        }
+        u32* recycle_memory(const std::size_t N)
+        {
+            std::size_t size_required =
+                (N % BITS_PER_SIZE_T != 0) + N / BITS_PER_SIZE_T;
+            u32* loc = reinterpret_cast<u32*>(&(edge_bits[search_cur]));
+            search_cur += size_required;
+            return loc;
+        }
 
        public:
         std::size_t n_vert;
@@ -49,6 +71,8 @@ namespace detail
               std::vector<std::set<std::size_t>>& edges);
         graph(const std::size_t n_vert, const std::size_t n_edges,
               std::vector<std::pair<std::size_t, std::size_t>>& edges);
+        graph(const std::size_t n_vert, const std::size_t n_edges,
+              std::pair<std::vector<std::size_t>, std::vector<std::size_t>>&& edges);
         void disp() const;
         void send_data(std::function<void(std::size_t, std::size_t)>) const;
 
@@ -59,10 +83,8 @@ namespace detail
         std::vector<std::size_t> get_max_clique(std::size_t i) const;
         std::set<std::size_t> vertex_data(std::size_t i) const;
 
-        friend std::vector<std::pair<std::size_t, std::size_t>> iso_edges(std::size_t&,
-                                                                          std::size_t&,
-                                                                          const graph&,
-                                                                          const graph&);
+        friend std::pair<std::vector<std::size_t>, std::vector<std::size_t>> iso_edges(
+            std::size_t&, std::size_t&, const graph&, const graph&);
         friend class RecursionDFS;
         friend class StackDFS;
         friend class DegreeHeuristic;

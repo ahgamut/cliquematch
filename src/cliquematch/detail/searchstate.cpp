@@ -18,5 +18,6 @@ namespace detail
         this->res.refer_from(prev_res);
         this->res.set(id);
     }
+
 }  // namespace detail
 }  // namespace cliquematch

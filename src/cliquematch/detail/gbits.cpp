@@ -68,6 +68,17 @@ namespace detail
         this->copy_data(other);
     }
 
+    void graphBits::copy_from(const graphBits& other, u32* data_ptr)
+    {
+        if (!this->ext_ptr && this->data != nullptr) delete[] this->data;
+        this->dlen = other.dlen;
+        this->valid_len = other.valid_len;
+        this->pad_cover = other.pad_cover;
+        this->ext_ptr = true;
+        this->data = data_ptr;
+        this->copy_data(other);
+    }
+
     void graphBits::copy_data(const graphBits& other)
     {
         std::copy(other.data, other.data + this->dlen, this->data);

@@ -12,9 +12,9 @@ namespace ext
 
         auto edges = iso_edges(no_of_vertices, no_of_edges, s1, s2);
 
-        if (edges.data() == nullptr || edges.size() == 0)
+        if (edges.first.size() == 0 || edges.second.size() == 0)
             throw CM_ERROR("Could not extract edges");
-        pg.load_graph(no_of_vertices, no_of_edges, edges);
+        pg.load_graph(no_of_vertices, no_of_edges, std::move(edges));
 
         return true;
     }

@@ -7,6 +7,7 @@ namespace detail
     std::size_t StackDFS::process_graph(graph& G)
     {
         if (!states.empty()) states.clear();
+        states.reserve(G.max_degree);
         for (i = 0; i < G.n_vert; i++)
         {
             if (G.vertices[i].N <= G.CUR_MAX_CLIQUE_SIZE ||
@@ -21,7 +22,9 @@ namespace detail
     void StackDFS::process_vertex(graph& G, std::size_t cur)
     {
         f = 0;
-        SearchState x(G.vertices[cur]);
+        G.check_memory(G.vertices[cur].N);
+        SearchState x(G.vertices[cur], G.recycle_memory(G.vertices[cur].N),
+                      G.recycle_memory(G.vertices[cur].N));
         this->clique_potential = 1;
         for (j = 0; j < G.vertices[cur].N; j++)
         {
@@ -79,7 +82,8 @@ namespace detail
                     else
                     {
                         SearchState future_state;
-                        future_state.refer_from(cur_state.cand, cur_state.res, j);
+                        future_state.refer_from(G.recycle_memory(G.vertices[cur].N),
+                                                cur_state.cand, cur_state.res, j);
                         for (auto k : to_remove) future_state.cand.reset(k);
                         states.push_back(std::move(future_state));
                         clique_size++;

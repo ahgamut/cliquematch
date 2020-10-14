@@ -31,7 +31,7 @@ namespace ext
      */
     template <typename List1, typename List2, typename Delta1 = double,
               typename Delta2 = Delta1, typename EpsType = Delta1>
-    std::vector<std::pair<std::size_t, std::size_t> > edges_from_relsets(
+    std::pair<std::vector<std::size_t>, std::vector<std::size_t>> edges_from_relsets(
         std::size_t& nvert, std::size_t& nedges, const relset<List1, Delta1>&,
         const relset<List2, Delta2>&, const EpsType epsilon);
 
@@ -52,7 +52,7 @@ namespace ext
      */
     template <typename List1, typename List2, typename Delta1 = double,
               typename Delta2 = Delta1, typename EpsType = Delta1>
-    std::vector<std::pair<std::size_t, std::size_t> > efr_condition(
+    std::pair<std::vector<std::size_t>, std::vector<std::size_t>> efr_condition(
         std::size_t& nvert, std::size_t& nedges, const relset<List1, Delta1>&,
         const relset<List2, Delta2>&, const EpsType epsilon,
         const std::function<bool(const std::size_t, const std::size_t,

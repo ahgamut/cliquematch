@@ -20,13 +20,14 @@ int main(int argc, char* argv[])
     std::cout << "Reading from file: " << argv[1] << "\n";
 
     auto start = std::chrono::steady_clock::now();
-    auto edges = cmd::mmio3_reader(argv[1], no_of_vertices, no_of_edges);
+    auto edges = cmd::mmio4_reader(argv[1], no_of_vertices, no_of_edges);
     auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
         std::chrono::steady_clock::now() - start);
     reading_time = static_cast<double>(elapsed.count()) / 1e6;
 
     start = std::chrono::steady_clock::now();
-    cmd::graph* G = new cmd::graph(no_of_vertices, no_of_edges, edges);
+    cmd::graph* G = new cmd::graph(no_of_vertices, no_of_edges, std::move(edges));
+    // cmd::graph* G = new cmd::graph(no_of_vertices, no_of_edges, edges);
     elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
         std::chrono::steady_clock::now() - start);
     loading_time = static_cast<double>(elapsed.count()) / 1e6;
@@ -36,7 +37,7 @@ int main(int argc, char* argv[])
     clique_time = G->find_max_cliques(start_vertex, true, false, -1);
     auto ans = G->get_max_clique();
     std::cout << "Clique finding (via heuristic) took " << clique_time
-              << "s\nclique of size: " << G->CUR_MAX_CLIQUE_SIZE << "\n";
+              << "s\nclique of size: " << ans.size() << "\n";
     for (auto x : ans) { std::cout << x << " "; }
     std::cout << "\n\n";
 
@@ -45,7 +46,7 @@ int main(int argc, char* argv[])
     clique_time = G->find_max_cliques(start_vertex, false, true, 10);
     ans = G->get_max_clique();
     std::cout << "Clique finding (via recursion) took " << clique_time
-              << "s\nclique of size: " << G->CUR_MAX_CLIQUE_SIZE << "\n";
+              << "s\nclique of size: " << ans.size() << "\n";
     for (auto x : ans) { std::cout << x << " "; }
     std::cout << "\n\n";
 
@@ -54,7 +55,7 @@ int main(int argc, char* argv[])
     clique_time = G->find_max_cliques(start_vertex, false, true, -1);
     ans = G->get_max_clique();
     std::cout << "Clique finding (via stack) took " << clique_time
-              << "s\nclique of size: " << G->CUR_MAX_CLIQUE_SIZE << "\n";
+              << "s\nclique of size: " << ans.size() << "\n";
     for (auto x : ans) { std::cout << x << " "; }
     std::cout << "\n\n";
 
@@ -66,8 +67,8 @@ int main(int argc, char* argv[])
     {
         start_vertex = en.process_graph(*G);
         if (start_vertex >= G->n_vert) break;
-        ct++;
-        // ans = G->get_max_clique(start_vertex);
+        ans = G->get_max_clique(start_vertex);
+        if (ans.size() == clique_size) ct++;
         // std::cout << "#" << ct << ": ";
         // for (auto x : ans) { std::cout << x << " "; }
         // std::cout << "\n\n";

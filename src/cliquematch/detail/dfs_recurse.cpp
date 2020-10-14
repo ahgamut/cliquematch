@@ -23,8 +23,10 @@ namespace detail
 
     void RecursionDFS::process_vertex(graph& G, std::size_t cur)
     {
-        graphBits res(G.vertices[cur].N);
-        graphBits cand(G.vertices[cur].N);
+        G.check_memory(G.vertices[cur].N);
+        graphBits res, cand;
+        res.refer_from(G.recycle_memory(G.vertices[cur].N), G.vertices[cur].N, false);
+        cand.refer_from(G.recycle_memory(G.vertices[cur].N), G.vertices[cur].N, false);
         std::size_t i, vert, mcs_potential = 1;
         res.set(G.vertices[cur].spos);
         // only search thru neighbors with greater degrees
@@ -41,7 +43,9 @@ namespace detail
             cand.set(i);
             mcs_potential++;
         }
-        if (mcs_potential > G.CUR_MAX_CLIQUE_SIZE) search_vertex(G, cur, cand, res);
+        if (mcs_potential <= G.CUR_MAX_CLIQUE_SIZE) return;
+
+        search_vertex(G, cur, cand, res);
     }
 
     void RecursionDFS::search_vertex(graph& G, std::size_t cur,
@@ -68,7 +72,7 @@ namespace detail
         // There exist candidates for possible clique expansion,
         // so go through them recursively
         graphBits cand;
-        cand.copy_from(prev_cand);
+        cand.copy_from(prev_cand, G.recycle_memory(G.vertices[cur].N));
 
         std::size_t i, k;
         short f = 0;
