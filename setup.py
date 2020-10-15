@@ -89,14 +89,11 @@ class BuildExt(_build_ext):
         ct = self.compiler.compiler_type
         opts = self.c_opts.get(ct)
         if ct == "unix":
-            opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
             if has_flag(self.compiler, "-fvisibility=hidden"):
                 opts.append("-fvisibility=hidden")
             if self.compiler.compiler_so:
                 if "-g" in self.compiler.compiler_so:
                     self.compiler.compiler_so.remove("-g")
-        elif ct == "msvc":
-            opts.append('/DVERSION_INFO="%s"' % self.distribution.get_version())
         elif ct == "mingw32":
             opts = self.c_opts.get("unix")
 

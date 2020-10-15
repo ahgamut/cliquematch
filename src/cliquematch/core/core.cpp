@@ -16,7 +16,6 @@ void init_Isograph(py::module&);
 PYBIND11_MODULE(core, m)
 {
     using namespace pybind11;
-    m.attr("__version__") = "dev";
     namespace cm = cliquematch;
     cm::init_pygraph(m);
     cm::init_iterators(m);
