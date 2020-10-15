@@ -10,7 +10,8 @@ namespace detail
     class CliqueOperator
     {
        public:
-        CliqueOperator() = default;
+        std::size_t request_size;
+        CliqueOperator() { request_size = 0; }
         virtual ~CliqueOperator() = default;
         virtual std::size_t process_graph(graph&) = 0;
     };

@@ -12,12 +12,12 @@ namespace detail
         graphBits cand, res;
 
         SearchState() = default;
-        SearchState(const vertex& ver, u32* cand_ptr, u32* res_ptr)
+        SearchState(const vertex& ver, u32* res_ptr, u32* cand_ptr)
             : start_at(0), id(ver.spos)
         {
-            this->cand.refer_from(cand_ptr, ver.N);
             this->res.refer_from(res_ptr, ver.N);
             this->res.set(this->id);
+            this->cand.refer_from(cand_ptr, ver.N);
         }
         SearchState(SearchState&& tmp)
             : start_at(tmp.start_at), id(tmp.id), cand(std::move(tmp.cand)),
@@ -29,7 +29,7 @@ namespace detail
             this->id = id;
             this->cand.copy_from(prev_cand, cand_ptr);
             this->res.refer_from(prev_res);
-            this->res.set(id);
+            this->res.set(this->id);
         }
     };
 }  // namespace detail

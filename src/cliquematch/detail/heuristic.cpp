@@ -12,9 +12,10 @@ namespace detail
         neighbors.resize(G.max_degree);
         graphBits res, cand;
 
-        G.check_memory();
-        res.refer_from(G.recycle_memory(G.max_degree), G.max_degree);
-        cand.refer_from(G.recycle_memory(G.max_degree), G.max_degree);
+        request_size =
+            (G.max_degree % BITS_PER_SIZE_T != 0) + G.max_degree / BITS_PER_SIZE_T;
+        res.refer_from(G.load_memory(request_size), G.max_degree);
+        cand.refer_from(G.load_memory(request_size), G.max_degree);
 
         process_vertex(G, G.md_vert, res, cand);
         for (i = 0; i < G.n_vert && G.CUR_MAX_CLIQUE_SIZE < G.CLIQUE_LIMIT; i++)
@@ -22,6 +23,7 @@ namespace detail
             if (G.vertices[i].N <= G.CUR_MAX_CLIQUE_SIZE || i == G.md_vert) continue;
             process_vertex(G, i, res, cand);
         }
+        G.clear_memory(2 * request_size);
         return i;
     }
 

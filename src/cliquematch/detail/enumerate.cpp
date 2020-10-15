@@ -15,8 +15,10 @@ namespace detail
 
     bool CliqueEnumerator::load_vertex(graph& G)
     {
-        SearchState x(G.vertices[cur], G.recycle_memory(G.vertices[cur].N),
-                      G.recycle_memory(G.vertices[cur].N));
+        request_size = (G.vertices[cur].N % BITS_PER_SIZE_T != 0) +
+                       G.vertices[cur].N / BITS_PER_SIZE_T;
+        SearchState x(G.vertices[cur], G.load_memory(request_size),
+                      G.load_memory(request_size));
         this->clique_potential = 1;
         for (j = 0; j < G.vertices[cur].N; j++)
         {
@@ -27,7 +29,11 @@ namespace detail
             x.cand.set(j);
             this->clique_potential++;
         }
-        if (this->clique_potential < this->REQUIRED_SIZE) return false;
+        if (this->clique_potential < this->REQUIRED_SIZE)
+        {
+            G.clear_memory(2 * request_size);
+            return false;
+        }
         states.push_back(std::move(x));
         clique_size = 1;
         return true;
@@ -39,12 +45,14 @@ namespace detail
         if (this->REQUIRED_SIZE == 0)
         {
             cur = G.n_vert;
+            G.clear_memory(2 * request_size);
             return cur;
         }
         if (this->REQUIRED_SIZE == 1 && cur < G.n_vert)
         {
             G.vertices[cur].bits.clear();
             G.vertices[cur].bits.set(G.vertices[cur].spos);
+            G.clear_memory(2 * request_size);
             return cur++;
         }
         states.reserve(G.max_degree);
@@ -53,7 +61,7 @@ namespace detail
         {
             if (states.empty())
             {
-                G.check_memory();
+                G.clear_memory(request_size);
                 this->process_vertex(G);
                 continue;
             }
@@ -96,7 +104,7 @@ namespace detail
                     else
                     {
                         SearchState future_state;
-                        future_state.refer_from(G.recycle_memory(G.vertices[cur].N),
+                        future_state.refer_from(G.load_memory(request_size),
                                                 cur_state.cand, cur_state.res, j);
                         for (auto k : to_remove) future_state.cand.reset(k);
                         states.push_back(std::move(future_state));
@@ -108,8 +116,9 @@ namespace detail
             if (j >= G.vertices[cur].N)
             {
                 cur_state.res.reset(cur_state.id);
-                states.pop_back();
                 clique_size--;
+                states.pop_back();
+                G.clear_memory(request_size);
             }
         }
 

@@ -16,7 +16,7 @@ namespace detail
                 continue;
             if (G.elapsed_time() > this->TIME_LIMIT) break;
             process_vertex(G, i);
-            G.check_memory();
+            G.clear_memory(2 * request_size);
         }
         // If we pause midway, I want to know where we stopped
         return i;
@@ -24,11 +24,13 @@ namespace detail
 
     void RecursionDFS::process_vertex(graph& G, std::size_t cur)
     {
-        graphBits res, cand;
-        res.refer_from(G.recycle_memory(G.vertices[cur].N), G.vertices[cur].N, false);
-        cand.refer_from(G.recycle_memory(G.vertices[cur].N), G.vertices[cur].N, false);
-        std::size_t i, vert, mcs_potential = 1;
+        request_size = (G.vertices[cur].N % BITS_PER_SIZE_T != 0) +
+                       G.vertices[cur].N / BITS_PER_SIZE_T;
+        graphBits res, cand;  // order matters, can before res
+        res.refer_from(G.load_memory(request_size), G.vertices[cur].N, false);
+        cand.refer_from(G.load_memory(request_size), G.vertices[cur].N, false);
         res.set(G.vertices[cur].spos);
+        std::size_t i, vert, mcs_potential = 1;
         // only search thru neighbors with greater degrees
         // (this amortizes the search cost because
         // vertices with really low degree have fewer neighbors
@@ -72,7 +74,7 @@ namespace detail
         // There exist candidates for possible clique expansion,
         // so go through them recursively
         graphBits cand;
-        cand.copy_from(prev_cand, G.recycle_memory(G.vertices[cur].N));
+        cand.copy_from(prev_cand, G.load_memory(request_size));
 
         std::size_t i, k;
         short f = 0;
@@ -112,12 +114,12 @@ namespace detail
             }
 
             search_vertex(G, cur, cand, res);
-
             // we need to remove vert from clique consideration (undo
             // assumption) because the next (future) candidate may not have
             // it as part of the clique
             res.reset(i);
         }
+        G.clear_memory(request_size);
     }
 }  // namespace detail
 }  // namespace cliquematch

@@ -14,7 +14,6 @@ namespace detail
                 G.CUR_MAX_CLIQUE_SIZE >= G.CLIQUE_LIMIT)
                 continue;
             process_vertex(G, i);
-            G.check_memory();
         }
         // If we pause midway, i want to know where we stopped
         return i;
@@ -23,8 +22,10 @@ namespace detail
     void StackDFS::process_vertex(graph& G, std::size_t cur)
     {
         f = 0;
-        SearchState x(G.vertices[cur], G.recycle_memory(G.vertices[cur].N),
-                      G.recycle_memory(G.vertices[cur].N));
+        request_size = (G.vertices[cur].N % BITS_PER_SIZE_T != 0) +
+                       G.vertices[cur].N / BITS_PER_SIZE_T;
+        SearchState x(G.vertices[cur], G.load_memory(request_size),
+                      G.load_memory(request_size));
         this->clique_potential = 1;
         for (j = 0; j < G.vertices[cur].N; j++)
         {
@@ -35,7 +36,11 @@ namespace detail
             x.cand.set(j);
             this->clique_potential++;
         }
-        if (this->clique_potential <= G.CUR_MAX_CLIQUE_SIZE) return;
+        if (this->clique_potential <= G.CUR_MAX_CLIQUE_SIZE)
+        {
+            G.clear_memory(2 * request_size);
+            return;
+        }
 
         states.push_back(std::move(x));
         clique_size = 1;
@@ -82,7 +87,7 @@ namespace detail
                     else
                     {
                         SearchState future_state;
-                        future_state.refer_from(G.recycle_memory(G.vertices[cur].N),
+                        future_state.refer_from(G.load_memory(request_size),
                                                 cur_state.cand, cur_state.res, j);
                         for (auto k : to_remove) future_state.cand.reset(k);
                         states.push_back(std::move(future_state));
@@ -94,10 +99,12 @@ namespace detail
             if (j == G.vertices[cur].N)
             {
                 cur_state.res.reset(cur_state.id);
+                G.clear_memory(request_size);
                 states.pop_back();
                 clique_size--;
             }
         }
+        G.clear_memory(request_size);
     }
 }  // namespace detail
 }  // namespace cliquematch

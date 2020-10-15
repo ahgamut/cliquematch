@@ -69,9 +69,9 @@ int main(int argc, char* argv[])
         if (start_vertex >= G->n_vert) break;
         ans = G->get_max_clique(start_vertex);
         if (ans.size() == clique_size) ct++;
-        // std::cout << "#" << ct << ": ";
-        // for (auto x : ans) { std::cout << x << " "; }
-        // std::cout << "\n\n";
+        /*  std::cout << "#" << ct << ": ";
+          for (auto x : ans) { std::cout << x << (x == start_vertex ? "!" : " "); }
+          std::cout << "\n\n";*/
     }
     std::cout << ct << " cliques of size " << clique_size << std::endl;
     delete G;

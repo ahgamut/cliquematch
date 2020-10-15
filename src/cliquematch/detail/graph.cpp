@@ -188,16 +188,6 @@ namespace detail
             search_end = edge_bits.size();
         }
 
-        /*
-         * ratio > 1 -> no clique requires more memory than the
-         * available amount -> no heap allocations while searching!!!!
-         *
-         * the higher this ratio is
-         * ->   the less likely memory will have to be reused in the search,
-         * i.e. the less likely check_memory() has to zero out memory
-         * ->   the faster the clique search will be.
-         *
-         */
 #ifndef NDEBUG
         std::cout << "search spread: " << spread << "; max requirement: " << max_space
                   << "; ratio = " << (1.0 * (search_end - search_start)) / (max_space)
