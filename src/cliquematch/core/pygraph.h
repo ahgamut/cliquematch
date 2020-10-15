@@ -43,7 +43,6 @@ namespace core
         pygraph(const pygraph&) = delete;
         pygraph& operator=(pygraph&) = delete;
         virtual ~pygraph();
-        void load_graph(std::size_t, std::size_t, std::vector<std::set<std::size_t>>&);
         void load_graph(
             std::size_t, std::size_t,
             std::pair<std::vector<std::size_t>, std::vector<std::size_t>>&&);
