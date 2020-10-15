@@ -12,7 +12,7 @@ namespace detail
         neighbors.resize(G.max_degree);
         graphBits res, cand;
 
-        G.check_memory(G.max_degree);
+        G.check_memory();
         res.refer_from(G.recycle_memory(G.max_degree), G.max_degree);
         cand.refer_from(G.recycle_memory(G.max_degree), G.max_degree);
 

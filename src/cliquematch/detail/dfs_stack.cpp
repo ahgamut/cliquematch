@@ -14,6 +14,7 @@ namespace detail
                 G.CUR_MAX_CLIQUE_SIZE >= G.CLIQUE_LIMIT)
                 continue;
             process_vertex(G, i);
+            G.check_memory();
         }
         // If we pause midway, i want to know where we stopped
         return i;
@@ -22,7 +23,6 @@ namespace detail
     void StackDFS::process_vertex(graph& G, std::size_t cur)
     {
         f = 0;
-        G.check_memory(G.vertices[cur].N);
         SearchState x(G.vertices[cur], G.recycle_memory(G.vertices[cur].N),
                       G.recycle_memory(G.vertices[cur].N));
         this->clique_potential = 1;

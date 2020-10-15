@@ -161,14 +161,48 @@ namespace detail
                 this->md_vert = i;
             }
             this->el_size += j;
-            this->eb_size += (j % 32 != 0) + j / 32;
+            this->eb_size += (j % BITS_PER_SIZE_T != 0) + j / BITS_PER_SIZE_T;
         }
 
-        // std::cout << "obtained size: " << edge_bits.size()
-        //         << "\t resizing to: " << (1 + eb_size / U32_PER_SIZE_T) << std::endl;
-        search_start = 1 + eb_size / U32_PER_SIZE_T;
+        search_start = 1 + eb_size;
         search_cur = search_start;
         search_end = edge_bits.size();
+
+        /*
+         * Available memory in edge_bits ~= (|V| + 2|E|) - ceil(2|E|/64)
+         * 	  max. degree for a vertex = d_max < |V|
+         * -> max. clique search depth = d_max < |V|
+         * -> max. search space required = d_max x ceil(d_max/64)
+         * (dividing by 64-bit for bitsets to be safe)
+         * Claim is that available memory is almost always greater than
+         * max. search space required. (reusable search space)
+         */
+        std::size_t size_per_step =
+            (max_degree % BITS_PER_SIZE_T != 0) + max_degree / BITS_PER_SIZE_T;
+        std::size_t spread = (search_end - search_start);
+        std::size_t max_space = max_degree * (size_per_step);
+
+        if (max_space >= spread)  // this is most likely impossible
+        {
+            edge_bits.resize(edge_bits.size() + (max_space - spread + 1));
+            search_end = edge_bits.size();
+        }
+
+        /*
+         * ratio > 1 -> no clique requires more memory than the
+         * available amount -> no heap allocations while searching!!!!
+         *
+         * the higher this ratio is
+         * ->   the less likely memory will have to be reused in the search,
+         * i.e. the less likely check_memory() has to zero out memory
+         * ->   the faster the clique search will be.
+         *
+         */
+#ifndef NDEBUG
+        std::cout << "search spread: " << spread << "; max requirement: " << max_space
+                  << "; ratio = " << (1.0 * (search_end - search_start)) / (max_space)
+                  << std::endl;
+#endif
         this->set_vertices();
     }
 

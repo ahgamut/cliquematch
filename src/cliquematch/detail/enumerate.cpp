@@ -15,7 +15,6 @@ namespace detail
 
     bool CliqueEnumerator::load_vertex(graph& G)
     {
-        G.check_memory(G.vertices[cur].N);
         SearchState x(G.vertices[cur], G.recycle_memory(G.vertices[cur].N),
                       G.recycle_memory(G.vertices[cur].N));
         this->clique_potential = 1;
@@ -54,6 +53,7 @@ namespace detail
         {
             if (states.empty())
             {
+                G.check_memory();
                 this->process_vertex(G);
                 continue;
             }

@@ -16,6 +16,7 @@ namespace detail
                 continue;
             if (G.elapsed_time() > this->TIME_LIMIT) break;
             process_vertex(G, i);
+            G.check_memory();
         }
         // If we pause midway, I want to know where we stopped
         return i;
@@ -23,7 +24,6 @@ namespace detail
 
     void RecursionDFS::process_vertex(graph& G, std::size_t cur)
     {
-        G.check_memory(G.vertices[cur].N);
         graphBits res, cand;
         res.refer_from(G.recycle_memory(G.vertices[cur].N), G.vertices[cur].N, false);
         cand.refer_from(G.recycle_memory(G.vertices[cur].N), G.vertices[cur].N, false);

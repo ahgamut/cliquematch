@@ -37,11 +37,12 @@ namespace detail
         void set_vertices();
         void start_clock();
         double elapsed_time() const;
-        void check_memory(const std::size_t N)
+        void check_memory()
         {
-            std::size_t size_per_step =
-                (N % BITS_PER_SIZE_T != 0) + N / BITS_PER_SIZE_T;
-            if (search_cur + N * size_per_step >= search_end)
+            const std::size_t size_per_step =
+                (max_degree % BITS_PER_SIZE_T != 0) + max_degree / BITS_PER_SIZE_T;
+            const std::size_t possible_bound = search_cur + max_degree * size_per_step;
+            if (possible_bound >= search_end || possible_bound < search_start)
             {
                 for (search_cur = search_start; search_cur < search_end; search_cur++)
                     edge_bits[search_cur] = 0;
