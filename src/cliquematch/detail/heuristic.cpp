@@ -10,12 +10,11 @@ namespace detail
     {
         std::size_t i;
         neighbors.resize(G.max_degree);
-        graphBits res, cand;
 
         request_size =
             (G.max_degree % BITS_PER_SIZE_T != 0) + G.max_degree / BITS_PER_SIZE_T;
-        res.refer_from(G.load_memory(request_size), G.max_degree);
-        cand.refer_from(G.load_memory(request_size), G.max_degree);
+        graphBits res(G.load_memory(request_size), G.max_degree);
+        graphBits cand(G.load_memory(request_size), G.max_degree);
 
         process_vertex(G, G.md_vert, res, cand);
         for (i = 0; i < G.n_vert && G.CUR_MAX_CLIQUE_SIZE < G.CLIQUE_LIMIT; i++)

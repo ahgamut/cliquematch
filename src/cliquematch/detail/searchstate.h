@@ -9,19 +9,18 @@ namespace detail
     struct SearchState
     {
         std::size_t start_at, id;
-        graphBits cand, res;
+        graphBits res, cand;
 
         SearchState() = default;
         SearchState(const vertex& ver, u32* res_ptr, u32* cand_ptr)
-            : start_at(0), id(ver.spos)
+            : start_at(0), id(ver.spos), res(res_ptr, ver.N), cand(cand_ptr, ver.N)
         {
-            this->res.refer_from(res_ptr, ver.N);
             this->res.set(this->id);
-            this->cand.refer_from(cand_ptr, ver.N);
         }
         SearchState(SearchState&& tmp)
-            : start_at(tmp.start_at), id(tmp.id), cand(std::move(tmp.cand)),
-              res(std::move(tmp.res)){};
+            : start_at(tmp.start_at), id(tmp.id), res(std::move(tmp.res)),
+              cand(std::move(tmp.cand)){};
+
         void refer_from(u32* cand_ptr, const graphBits& prev_cand,
                         const graphBits& prev_res, std::size_t id)
         {

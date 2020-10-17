@@ -15,33 +15,63 @@ namespace detail
     class graphBits
     {
        private:
-        bool ext_ptr;  // true if someone else gave the data pointer
         u32 pad_cover;
         u32* data;
         std::size_t valid_len, dlen;
 
        public:
-        graphBits();
-        graphBits(std::size_t n_bits);
-        graphBits(graphBits&& other);
         graphBits& operator=(const graphBits&) = delete;
-        ~graphBits()
+        graphBits() = default;
+        graphBits(graphBits&& other)
         {
-            if (!this->ext_ptr && this->data != nullptr)
-            {
-                delete[] this->data;
-                this->data = nullptr;
-            }
-        };
-
-        void copy_from(const graphBits& other);
-        void copy_from(const graphBits& other, u32* data_ptr);
-        void copy_data(const graphBits& other);
-        void refer_from(u32* ext_data, std::size_t n_bits, bool cleanout = false);
+            this->data = other.data;
+            this->valid_len = other.valid_len;
+            this->dlen = other.dlen;
+            this->pad_cover = other.pad_cover;
+        }
+        graphBits(u32* ext_data, std::size_t n_bits, bool cleanout = false)
+        {
+            this->refer_from(ext_data, n_bits, cleanout);
+        }
+        void copy_from(const graphBits& other, u32* data_ptr)
+        {
+            this->dlen = other.dlen;
+            this->valid_len = other.valid_len;
+            this->pad_cover = other.pad_cover;
+            this->data = data_ptr;
+            this->copy_data(other);
+        }
+        void copy_data(const graphBits& other)
+        {
+            std::copy(other.data, other.data + this->dlen, this->data);
+        }
         void refer_from(const graphBits& other)
         {
-            refer_from(other.data, other.valid_len, false);
-        };
+            this->data = other.data;
+            this->pad_cover = other.pad_cover;
+            this->valid_len = other.valid_len;
+            this->dlen = other.dlen;
+        }
+        void refer_from(u32* ext_data, std::size_t n_bits, bool cleanout = false)
+        {
+            this->data = ext_data;  // since someone else gives me the data, they should
+                                    // have inited
+            this->valid_len = n_bits;
+            this->dlen = (n_bits % 32 != 0) + n_bits / 32;
+            this->pad_cover =
+                n_bits % 32 == 0 ? ALL_ONES : ALL_ONES << (32 - n_bits % 32);
+            if (cleanout) this->clear();
+        }
+        void clear(std::size_t N = 0)
+        {
+            std::size_t i = 0;
+            std::size_t clear_len;
+            if (N == 0 || N >= this->valid_len || 1 + (N / 32) >= this->dlen)
+                clear_len = this->dlen;
+            else
+                clear_len = 1 + N / 32;
+            for (i = 0; i < clear_len; i++) this->data[i] = 0;
+        }
 
         void set(std::size_t i)
         {
@@ -69,19 +99,12 @@ namespace detail
             return (this->data[i / 32] & mask) != 0;
         };
 
-        void clear(std::size_t N = 0);
         std::size_t count() const;
         std::size_t len() const { return this->valid_len; };
         graphBits& operator&=(const graphBits& other);
         graphBits& operator|=(const graphBits& other);
         graphBits& operator^=(const graphBits& other);
         graphBits& operator-=(const graphBits& other);
-
-        graphBits operator~() const;
-        graphBits operator&(const graphBits& other) const;
-        graphBits operator|(const graphBits& other) const;
-        graphBits operator^(const graphBits& other) const;
-        graphBits operator-(const graphBits& other) const;
 
         void show() const;
         void show(const std::vector<std::size_t>&) const;

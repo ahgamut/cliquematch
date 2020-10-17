@@ -26,9 +26,8 @@ namespace detail
     {
         request_size = (G.vertices[cur].N % BITS_PER_SIZE_T != 0) +
                        G.vertices[cur].N / BITS_PER_SIZE_T;
-        graphBits res, cand;  // order matters, can before res
-        res.refer_from(G.load_memory(request_size), G.vertices[cur].N, false);
-        cand.refer_from(G.load_memory(request_size), G.vertices[cur].N, false);
+        graphBits res(G.load_memory(request_size), G.vertices[cur].N, false);
+        graphBits cand(G.load_memory(request_size), G.vertices[cur].N, false);
         res.set(G.vertices[cur].spos);
         std::size_t i, vert, clique_potential = 1;
         // only search thru neighbors with greater degrees
@@ -76,9 +75,8 @@ namespace detail
         graphBits cand;
         cand.copy_from(prev_cand, G.load_memory(request_size));
 
-        std::size_t i, k;
+        std::size_t i, k, vert, ans;
         short f = 0;
-        std::size_t vert, ans;
         for (i = 0; i < G.vertices[cur].N; i++)
         {
             // keep going until a candidate exists
