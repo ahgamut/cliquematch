@@ -8,7 +8,7 @@ namespace detail
     {
         for (cur++; cur < G.vertices.size(); cur++)
         {
-            if (G.vertices[cur].N < this->REQUIRED_SIZE) continue;
+            if (G.vertices[cur].mcs < this->REQUIRED_SIZE) continue;
             if (load_vertex(G)) break;
         }
     }
@@ -55,7 +55,7 @@ namespace detail
             G.clear_memory(2 * request_size);
             return cur++;
         }
-        states.reserve(G.max_degree);
+        states.reserve(G.CLIQUE_LIMIT);
 
         while (cur < G.n_vert)
         {

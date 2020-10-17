@@ -79,7 +79,7 @@ namespace core
                                            ? lower_bound
                                            : this->G->CUR_MAX_CLIQUE_SIZE;
         this->G->CLIQUE_LIMIT =
-            upper_bound < this->G->max_degree ? upper_bound : this->G->max_degree;
+            upper_bound < this->G->CLIQUE_LIMIT ? upper_bound : this->G->CLIQUE_LIMIT;
         this->G->find_max_cliques(current_vertex, use_heuristic, use_dfs, time_limit);
         finished_all = (current_vertex >= nvert);
         auto ans = this->G->get_max_clique();

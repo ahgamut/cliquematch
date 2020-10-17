@@ -155,11 +155,6 @@ namespace detail
                 edge_bits[el_size + j] = 0;
 
             this->vertices[i].refer_from(i, j, this->el_size, this->eb_size);
-            if (this->max_degree < j)
-            {
-                this->max_degree = j;
-                this->md_vert = i;
-            }
             this->el_size += j;
             this->eb_size += (j % BITS_PER_SIZE_T != 0) + j / BITS_PER_SIZE_T;
         }
@@ -168,6 +163,30 @@ namespace detail
         search_cur = search_start;
         search_end = edge_bits.size();
 
+        this->set_vertices();
+    }
+
+    void graph::set_vertices()
+    {
+        max_degree = CLIQUE_LIMIT = 0;
+        std::size_t cur, j, vert;
+        for (cur = 0; cur < vertices.size(); cur++)
+        {
+            vertices[cur].set_spos(this->edge_list.data(),
+                                   reinterpret_cast<u32*>(this->edge_bits.data()));
+            for (j = this->vertices[cur].spos + 1; j < this->vertices[cur].N; j++)
+            {
+                vert = edge_list[vertices[cur].elo + j];
+                vertices[cur].mcs += (vertices[vert].N >= vertices[cur].N);
+                vertices[vert].mcs += (vertices[vert].N <= vertices[cur].N);
+            }
+            if (vertices[cur].mcs > CLIQUE_LIMIT)
+            {
+                md_vert = cur;
+                CLIQUE_LIMIT = vertices[cur].mcs;
+            }
+            if (vertices[cur].N > max_degree) max_degree = vertices[cur].N;
+        }
         /*
          * Available memory in edge_bits ~= (|V| + 2|E|) - ceil(2|E|/64)
          * 	  max. degree for a vertex = d_max < |V|
@@ -177,14 +196,14 @@ namespace detail
          * Claim is that available memory is almost always greater than
          * max. search space required. (reusable search space)
          */
-        std::size_t size_per_step =
+        const std::size_t size_per_step =
             (max_degree % BITS_PER_SIZE_T != 0) + max_degree / BITS_PER_SIZE_T;
-        std::size_t spread = (search_end - search_start);
-        std::size_t max_space = max_degree * (size_per_step);
+        const std::size_t spread = (search_end - search_start);
+        const std::size_t max_space = 2 * (CLIQUE_LIMIT + 1) * (size_per_step);
 
         if (max_space >= spread)  // this is most likely impossible
         {
-            edge_bits.resize(edge_bits.size() + (max_space - spread + 1));
+            edge_bits.resize(edge_bits.size() + ((max_space + 1) - spread));
             search_end = edge_bits.size();
         }
 
@@ -193,15 +212,6 @@ namespace detail
                   << "; ratio = " << (1.0 * (search_end - search_start)) / (max_space)
                   << std::endl;
 #endif
-        this->set_vertices();
-    }
-
-    void graph::set_vertices()
-    {
-        for (std::size_t i = 0; i < vertices.size(); i++)
-            vertices[i].set_spos(this->edge_list.data(),
-                                 reinterpret_cast<u32*>(this->edge_bits.data()));
-        this->CLIQUE_LIMIT = this->max_degree;
     }
 
     void graph::disp() const

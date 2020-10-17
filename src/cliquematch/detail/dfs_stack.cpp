@@ -7,10 +7,10 @@ namespace detail
     std::size_t StackDFS::process_graph(graph& G)
     {
         if (!states.empty()) states.clear();
-        states.reserve(G.max_degree);
+        states.reserve(G.CLIQUE_LIMIT);
         for (i = 0; i < G.n_vert; i++)
         {
-            if (G.vertices[i].N <= G.CUR_MAX_CLIQUE_SIZE ||
+            if (G.vertices[i].mcs <= G.CUR_MAX_CLIQUE_SIZE ||
                 G.CUR_MAX_CLIQUE_SIZE >= G.CLIQUE_LIMIT)
                 continue;
             process_vertex(G, i);

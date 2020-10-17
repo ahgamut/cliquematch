@@ -19,7 +19,7 @@ namespace detail
         process_vertex(G, G.md_vert, res, cand);
         for (i = 0; i < G.n_vert && G.CUR_MAX_CLIQUE_SIZE < G.CLIQUE_LIMIT; i++)
         {
-            if (G.vertices[i].N <= G.CUR_MAX_CLIQUE_SIZE || i == G.md_vert) continue;
+            if (G.vertices[i].mcs <= G.CUR_MAX_CLIQUE_SIZE || i == G.md_vert) continue;
             process_vertex(G, i, res, cand);
         }
         G.clear_memory(2 * request_size);

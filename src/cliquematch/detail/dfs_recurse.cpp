@@ -12,7 +12,7 @@ namespace detail
         G.clear_memory(G.search_cur - G.search_start);
         for (; i < G.n_vert; i++)
         {
-            if (G.vertices[i].N <= G.CUR_MAX_CLIQUE_SIZE ||
+            if (G.vertices[i].mcs <= G.CUR_MAX_CLIQUE_SIZE ||
                 G.CUR_MAX_CLIQUE_SIZE >= G.CLIQUE_LIMIT)
                 continue;
             if (G.elapsed_time() > this->TIME_LIMIT) break;
