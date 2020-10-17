@@ -226,11 +226,12 @@ class TestA2AGraph(object):
 
         c1 = list(x for x in G.all_correspondences(size=1))
         assert len(c1) == G.n_vertices
-        c9 = list(x for x in G.all_correspondences(size=9))
-        assert len(c9) == 10
-        for x in c9:
-            assert set(x[0]) < set(ans[0])
-        c9b = list(x for x in G.all_correspondences(size=9, return_indices=False))
+        c9 = list(x for x in G.all_correspondences(size=len(ans[0]) - 1))
+        assert len(c9) == len(ans[0])
+
+        c9b = list(
+            x for x in G.all_correspondences(size=len(ans[0]) - 1, return_indices=False)
+        )
         assert len(c9) == len(c9b)
         for i in range(len(c9)):
             t0 = self.S1[c9[i][0]]
