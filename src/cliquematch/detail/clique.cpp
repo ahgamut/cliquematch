@@ -21,10 +21,8 @@ namespace detail
         else
         {
             RecursionDFS dfs(start_vert, time_limit);
-            if (this->elapsed_time() < time_limit)
-            {
-                if (use_dfs) start_vert = dfs.process_graph((*this));
-            }
+            this->start_time = std::chrono::steady_clock::now();
+            if (use_dfs) start_vert = dfs.process_graph((*this));
         }
         return this->elapsed_time();
     }

@@ -67,7 +67,6 @@ namespace detail
             }
             SearchState& cur_state = states.back();
             candidates_left = cur_state.cand.count();
-            clique_potential = candidates_left + clique_size;
 
             for (j = cur_state.start_at; j < G.vertices[cur].N; j++)
             {
@@ -75,6 +74,8 @@ namespace detail
                 vert = G.edge_list[G.vertices[cur].elo + j];
                 cur_state.cand.reset(j);
                 cur_state.start_at = j + 1;
+                candidates_left--;
+                clique_potential = candidates_left + 1 + clique_size;
 
                 to_remove.clear();
                 for (k = j + 1;
@@ -87,7 +88,7 @@ namespace detail
                     if (f != 1) to_remove.emplace_back(k);
                     f = 0;
                     clique_potential =
-                        (candidates_left - to_remove.size()) + clique_size;
+                        (candidates_left - to_remove.size()) + clique_size + 1;
                 }
 
                 if (clique_potential >= this->REQUIRED_SIZE)

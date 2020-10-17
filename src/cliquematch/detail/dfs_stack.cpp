@@ -49,7 +49,6 @@ namespace detail
             if (G.CUR_MAX_CLIQUE_SIZE >= G.CLIQUE_LIMIT) return;
             SearchState& cur_state = states.back();
             candidates_left = cur_state.cand.count();
-            clique_potential = candidates_left + clique_size;
 
             for (j = cur_state.start_at; j < G.vertices[cur].N; j++)
             {
@@ -57,6 +56,8 @@ namespace detail
                 vert = G.edge_list[G.vertices[cur].elo + j];
                 cur_state.cand.reset(j);
                 cur_state.start_at = j + 1;
+                candidates_left--;
+                clique_potential = candidates_left + 1 + clique_size;
 
                 to_remove.clear();
                 for (k = j + 1;
@@ -66,15 +67,15 @@ namespace detail
                     if (!cur_state.cand[k]) continue;
                     f = G.find_if_neighbors(vert, G.edge_list[G.vertices[cur].elo + k],
                                             ans);
-                    if (f != 1) to_remove.emplace_back(k);
+                    if (f != 1) to_remove.push_back(k);
                     f = 0;
                     clique_potential =
-                        (candidates_left - to_remove.size()) + clique_size;
+                        (candidates_left - to_remove.size()) + clique_size + 1;
                 }
 
                 if (clique_potential > G.CUR_MAX_CLIQUE_SIZE)
                 {
-                    if (candidates_left == to_remove.size() + 1)
+                    if (candidates_left == 0)
                     {
                         cur_state.res.set(j);
                         G.vertices[cur].bits.copy_data(cur_state.res);
