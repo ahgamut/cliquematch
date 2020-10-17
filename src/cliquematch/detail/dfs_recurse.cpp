@@ -30,7 +30,7 @@ namespace detail
         res.refer_from(G.load_memory(request_size), G.vertices[cur].N, false);
         cand.refer_from(G.load_memory(request_size), G.vertices[cur].N, false);
         res.set(G.vertices[cur].spos);
-        std::size_t i, vert, mcs_potential = 1;
+        std::size_t i, vert, clique_potential = 1;
         // only search thru neighbors with greater degrees
         // (this amortizes the search cost because
         // vertices with really low degree have fewer neighbors
@@ -43,9 +43,9 @@ namespace detail
                 (G.vertices[vert].N == G.vertices[cur].N && vert < cur))
                 continue;
             cand.set(i);
-            mcs_potential++;
+            clique_potential++;
         }
-        if (mcs_potential <= G.CUR_MAX_CLIQUE_SIZE) return;
+        if (clique_potential <= G.CUR_MAX_CLIQUE_SIZE) return;
 
         search_vertex(G, cur, cand, res);
     }
@@ -54,19 +54,19 @@ namespace detail
                                      const graphBits& prev_cand, graphBits& res)
     {
         std::size_t candidates_left = prev_cand.count();
-        std::size_t mcs_potential = candidates_left + res.count();
+        std::size_t clique_potential = candidates_left + res.count();
 
         if (G.elapsed_time() > this->TIME_LIMIT) return;
         if (G.CUR_MAX_CLIQUE_SIZE >= G.CLIQUE_LIMIT) return;
-        if (mcs_potential <= G.CUR_MAX_CLIQUE_SIZE) return;
+        if (clique_potential <= G.CUR_MAX_CLIQUE_SIZE) return;
 
         // no candidates left => clique cannot grow
-        // therefore mcs_potential is same as mcs
+        // therefore clique_potential is same as mcs
         if (candidates_left == 0)
         {
             G.vertices[cur].bits.copy_data(res);
-            G.vertices[cur].mcs = mcs_potential;
-            G.CUR_MAX_CLIQUE_SIZE = mcs_potential;
+            G.vertices[cur].mcs = clique_potential;
+            G.CUR_MAX_CLIQUE_SIZE = clique_potential;
             G.CUR_MAX_CLIQUE_LOC = cur;
             return;
         }

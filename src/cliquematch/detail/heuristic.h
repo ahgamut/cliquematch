@@ -18,7 +18,7 @@ namespace detail
     {
        private:
         std::vector<vtriple> neighbors;
-        std::size_t mcs_potential, candidates_left, cur_clique_size, cand_max;
+        std::size_t clique_potential, candidates_left, cur_clique_size, cand_max;
 
        public:
         std::size_t process_graph(graph&);

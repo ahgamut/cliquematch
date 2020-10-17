@@ -89,9 +89,9 @@ namespace detail
                 }
             }
 
-            mcs_potential = cur_clique_size + candidates_left;
+            clique_potential = cur_clique_size + candidates_left;
 
-            if (mcs_potential <= G.CUR_MAX_CLIQUE_SIZE)
+            if (clique_potential <= G.CUR_MAX_CLIQUE_SIZE)
             {
                 // heuristic assumption was not useful, because
                 // potential clique with neib cannot beat the maximum
