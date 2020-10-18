@@ -129,8 +129,7 @@ namespace core
         ss << "cliquematch.core.Graph object at " << this << "(";
         ss << "n_vertices=" << this->nvert << ",";
         ss << "n_edges=" << this->nedges << ",";
-        ss << "search_done=" << (this->current_vertex < this->nvert ? "True" : "False")
-           << ",";
+        ss << "search_done=" << (this->current_vertex < this->nvert ? "True" : "False");
         ss << ")";
         return ss.str();
     }

@@ -27,7 +27,7 @@ Note: this is `cliquematch v2`. If you're looking for `v1`, you can go to the [`
 MacOS builds are tested but wheels are not provided.
 
 ```bash
-pip install cliquematch>=2.0.0
+pip install cliquematch>=2.1.0
 ```
 
 ### Installing from source

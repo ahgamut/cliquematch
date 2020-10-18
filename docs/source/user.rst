@@ -14,6 +14,12 @@ Let's look at how `cliquematch` can be used as described above.
 Finding a Maximum Clique
 ------------------------
 
+.. note::
+
+    The below examples use ``python``. If you're using |R|_ and like to call
+    python packages via |reticulate|_, you can view the R Markdown file from
+    the examples_ in the Github repo.
+
 Finding a maximum clique in an undirected graph is a well known problem.  Most
 exact algorithms, including the one used in `cliquematch`, use some form of a
 depth-first search (DFS), along with some pruning techniques to speed up the
@@ -54,7 +60,8 @@ been loaded, we can provide various parameters to search for a clique with `~cli
     # 10287, 10902, 10903, 10904, 10905, 10906, 10907, 10908, 10909]
 
 * A ``lower_bound`` and an ``upper_bound`` can be set for the size for clique.
-* A ``time_limit`` can be set for the clique search.
+* A ``time_limit`` can be set for the clique search. If time limits are not 
+  needed, set `0` as the limit.
 * In case the graph is very large, to get a large clique quickly via a
   heuristic method, ``use_heuristic`` can be set to `True`, and
   ``use_dfs`` can be set to `False` to skip the depth-first
@@ -254,6 +261,11 @@ fields. Here are a couple of examples from the `Github repo`_:
 
 .. _maximum cliques: https://en.wikipedia.org/wiki/Clique_(graph_theory)#Definitions
 .. _Github repo: https://github.com/ahgamut/cliquematch
+.. |R| replace:: ``R``
+.. _R: https://www.r-project.org/about.html
+.. |reticulate| replace:: ``reticulate``
+.. _reticulate: https://rstudio.github.io/reticulate/
+.. _examples: https://github.com/ahgamut/cliquematch/tree/master/examples
 .. |ccmm| replace:: `This image matching algorithm <https://link.springer.com/article/10.1007/s10489-015-0646-1>`__
 .. |ccmm_impl| replace:: `like this <https://github.com/ahgamut/cliquematch/blob/master/examples/ccmm.py>`__
 .. |molec| replace:: `Simple molecular alignment <https://www.sciencedirect.com/science/article/abs/pii/S1093326397000892>`__
