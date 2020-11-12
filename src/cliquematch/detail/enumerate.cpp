@@ -20,12 +20,17 @@ namespace detail
         SearchState x(G.vertices[cur], G.load_memory(request_size),
                       G.load_memory(request_size));
         this->clique_potential = 1;
-        for (j = 0; j < G.vertices[cur].N; j++)
+        for (j = 0; j < G.vertices[cur].spos; j++)
         {
             vert = G.edge_list[G.vertices[cur].elo + j];
-            if (vert == cur || G.vertices[vert].N < G.vertices[cur].N ||
-                (G.vertices[vert].N == G.vertices[cur].N && vert < cur))
-                continue;
+            if (G.vertices[vert].N <= G.vertices[cur].N) continue;
+            x.cand.set(j);
+            this->clique_potential++;
+        }
+        for (j = G.vertices[cur].spos + 1; j < G.vertices[cur].N; j++)
+        {
+            vert = G.edge_list[G.vertices[cur].elo + j];
+            if (G.vertices[vert].N < G.vertices[cur].N) continue;
             x.cand.set(j);
             this->clique_potential++;
         }

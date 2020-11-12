@@ -43,19 +43,22 @@ namespace detail
         cur_clique_size = 1;
 
         // find all neighbors of cur and sort by decreasing degree
-        for (i = 0, j = 0; i < G.vertices[cur].N; i++)
+        for (i = 0, j = 0; i < G.vertices[cur].spos; i++)
         {
-            neighbors[j].id = G.edge_list[G.vertices[cur].elo + i];
-            neighbors[j].N = 0;
-            neighbors[j].pos = i;
-            if (neighbors[j].id == cur ||
-                G.vertices[neighbors[j].id].N < G.vertices[cur].N ||
-                (G.vertices[neighbors[j].id].N == G.vertices[cur].N &&
-                 neighbors[j].id < cur))
-                continue;
+            neighbors[j].load(G.edge_list[G.vertices[cur].elo + i], 0, i);
+            if (G.vertices[neighbors[j].id].N <= G.vertices[cur].N) continue;
             neighbors[j].N = G.vertices[neighbors[j].id].N;
-            cand.set(i);
             j++;
+            cand.set(i);
+            candidates_left++;
+        }
+        for (i = G.vertices[cur].spos + 1; i < G.vertices[cur].N; i++)
+        {
+            neighbors[j].load(G.edge_list[G.vertices[cur].elo + i], 0, i);
+            if (G.vertices[neighbors[j].id].N < G.vertices[cur].N) continue;
+            neighbors[j].N = G.vertices[neighbors[j].id].N;
+            j++;
+            cand.set(i);
             candidates_left++;
         }
         if (candidates_left <= G.CUR_MAX_CLIQUE_SIZE) return;
@@ -105,9 +108,6 @@ namespace detail
                 G.CUR_MAX_CLIQUE_SIZE = cur_clique_size;
                 G.CUR_MAX_CLIQUE_LOC = cur;
                 G.vertices[cur].bits.copy_data(res);
-                // cerr << "Heuristic in " << cur << " updated max_clique to "
-                //  << this->vertices[cur].mcs << "\n";
-
                 break;
             }
             // else, this clique still has potential to beat the maximum, and

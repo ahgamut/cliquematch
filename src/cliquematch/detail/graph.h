@@ -26,7 +26,6 @@ namespace detail
         std::size_t search_start, search_cur, search_end;
         std::chrono::time_point<std::chrono::steady_clock> start_time;
 
-        // add stuff for allocating searchstates using existing memory in edge_bits;
         short find_if_neighbors(const std::size_t v1_id, const std::size_t v2_id,
                                 std::size_t& v2_position) const
         {
@@ -37,11 +36,15 @@ namespace detail
         void set_vertices();
         void start_clock();
         double elapsed_time() const;
-        void clear_memory(const std::size_t N) { search_cur -= N; }
+        void clear_memory(const std::size_t N)
+        {
+            search_cur -= N;
+            for (std::size_t i = 0; i < N; i++) edge_bits[search_cur + i] = 0;
+        }
         u32* load_memory(const std::size_t N)
         {
             u32* loc = reinterpret_cast<u32*>(&(edge_bits[search_cur]));
-            for (std::size_t i = 0; i < N; i++) edge_bits[search_cur++] = 0;
+            search_cur += N;
             return loc;
         }
 

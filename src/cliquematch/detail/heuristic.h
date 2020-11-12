@@ -10,6 +10,12 @@ namespace detail
     struct vtriple
     {
         std::size_t id, N, pos;
+        void load(std::size_t _id, std::size_t _N, std::size_t _pos)
+        {
+            id = _id;
+            N = _N;
+            pos = _pos;
+        }
         inline bool operator<(const vtriple& b) const { return (this->N < b.N); }
         inline bool operator>(const vtriple& b) const { return (this->N > b.N); }
     };
