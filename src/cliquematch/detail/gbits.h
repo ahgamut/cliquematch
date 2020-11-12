@@ -1,9 +1,31 @@
 #ifndef GBITS_H
 #define GBITS_H
 
+/* gbits.h
+ *
+ * The graphBits class is designed to represent the sets involved in each step
+ * of the clique search. It operates on an array of 32-bit values as the
+ * bitset. All the single-bit/frequently-called operations are kept in the
+ * header, and all the "set"-like operations are in the implementation. Think
+ * of it as a slim runtime-version of std::bitset crossed with std::span from
+ * C++20.
+ *
+ * graphBits instances DO NOT check bounds while operating on the data.
+ * Wherever possible, they use their dlen attribute (i.e. ceil(number of bits
+ * used/32)) when looping over the entire bitset.
+ *
+ * graphBits instances use a raw pointer to 32-bit data. This pointer is like
+ * std::observer_ptr: can be NULL, used only to access the data, and never
+ * freed.
+ *
+ * Earlier implementations of the class had each instance individually allocate
+ * and manage memory, but that was horrible. Now all graphBits constructions DO
+ * NOT perform any memory management, require the CALLER to provide correct
+ * bounds, and can only be moved, not copied.
+ */
+
 #include <vector>
 #include <cstdint>
-
 namespace cliquematch
 {
 namespace detail
@@ -15,9 +37,10 @@ namespace detail
     class graphBits
     {
        private:
-        u32 pad_cover;
-        u32* data;
-        std::size_t valid_len, dlen;
+        u32 pad_cover;          // to ensure no stray bits after the end are counted
+        u32* data;              // simple pointer to external data
+        std::size_t valid_len;  // number of bits used (useful for debug)
+        std::size_t dlen;       // ceil(valid_len/32.0);
 
        public:
         graphBits& operator=(const graphBits&) = delete;
@@ -54,8 +77,8 @@ namespace detail
         }
         void refer_from(u32* ext_data, std::size_t n_bits, bool cleanout = false)
         {
-            this->data = ext_data;  // since someone else gives me the data, they should
-                                    // have inited
+            this->data = ext_data;  // CALLER gives me the data,
+            // they should have initialized it and checked bounds
             this->valid_len = n_bits;
             this->dlen = (n_bits % 32 != 0) + n_bits / 32;
             this->pad_cover =
@@ -65,11 +88,8 @@ namespace detail
         void clear(std::size_t N = 0)
         {
             std::size_t i = 0;
-            std::size_t clear_len;
-            if (N == 0 || N >= this->valid_len || 1 + (N / 32) >= this->dlen)
-                clear_len = this->dlen;
-            else
-                clear_len = 1 + N / 32;
+            std::size_t clear_len = 1 + N / 32;
+            if (N == 0 || clear_len > this->dlen) clear_len = this->dlen;
             for (i = 0; i < clear_len; i++) this->data[i] = 0;
         }
 
@@ -99,8 +119,8 @@ namespace detail
             return (this->data[i / 32] & mask) != 0;
         };
 
+        // std::size_t len() const { return this->valid_len; };
         std::size_t count() const;
-        std::size_t len() const { return this->valid_len; };
         graphBits& operator&=(const graphBits& other);
         graphBits& operator|=(const graphBits& other);
         graphBits& operator^=(const graphBits& other);

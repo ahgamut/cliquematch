@@ -1,11 +1,17 @@
+/* gbits.cpp
+ *
+ * Implementation of all the "set"-like operations in the graphBits class,
+ * along with functions to display/return the set being represented.
+ */
+
 #include <detail/gbits.h>
-#include <cassert>
 #include <iostream>
 
 namespace cliquematch
 {
 namespace detail
 {
+    // returns the number of bits on in n
     inline u32 bitcount(u32 n)
     {
         n = n - ((n >> 1) & 0x55555555);
@@ -52,7 +58,9 @@ namespace detail
     {
         // assert(this->valid_len == other.valid_len);
         for (std::size_t i = 0; i < this->dlen; i++)
-        { this->data[i] &= ~(other.data[i]); }
+        {
+            this->data[i] &= ~(other.data[i]);
+        }
         this->data[this->dlen - 1] &= this->pad_cover;
         return *this;
     }
