@@ -1,3 +1,15 @@
+/* dfs_recurse.cpp
+ *
+ * recursion-based implementation of the clique search. Note that dfs_stack.cpp
+ * implements the SAME algorithm, but with an explicit stack to track the
+ * recursion and some rearrangements for speedup.
+ *
+ * All variables are on the stack. No heap allocations are made. Heap memory
+ * from the graph object is re-used in the load_memory/clear_memory calls,
+ * which are explicitly pointed out; every load must have a matching clear or
+ * there will be memory corruption.
+ */
+
 #include <detail/dfs.h>
 #include <algorithm>
 #include <iostream>
@@ -9,7 +21,6 @@ namespace detail
     std::size_t RecursionDFS::process_graph(graph& G)
     {
         std::size_t i = start_vertex;
-        G.clear_memory(G.search_cur - G.search_start);
         for (; i < G.n_vert; i++)
         {
             if (G.vertices[i].mcs <= G.CUR_MAX_CLIQUE_SIZE ||
@@ -17,9 +28,8 @@ namespace detail
                 continue;
             if (G.elapsed_time() > this->TIME_LIMIT) break;
             process_vertex(G, i);
-            G.clear_memory(2 * request_size);
         }
-        // If we pause midway, I want to know where we stopped
+        // If paused midway due to time limits, I want to know where we stopped
         return i;
     }
 
@@ -27,10 +37,13 @@ namespace detail
     {
         request_size = (G.vertices[cur].N % BITS_PER_SIZE_T != 0) +
                        G.vertices[cur].N / BITS_PER_SIZE_T;
+
+        // "memory" allocations for cand, res at root of subtree
         graphBits res(G.load_memory(request_size), G.vertices[cur].N, false);
         graphBits cand(G.load_memory(request_size), G.vertices[cur].N, false);
         res.set(G.vertices[cur].spos);
         std::size_t j, vert, clique_potential = 1;
+
         // only search thru neighbors with greater degrees
         // (this amortizes the search cost because
         // vertices with really low degree have fewer neighbors
@@ -43,6 +56,10 @@ namespace detail
             cand.set(j);
             clique_potential++;
         }
+
+        // vertices with a greater label haven't been the root of a search tree
+        // yet, hence also consider those with equal degrees; the above loop
+        // will ensure the search subtree is not re-traversed
         for (j = G.vertices[cur].spos + 1; j < G.vertices[cur].N; j++)
         {
             vert = G.edge_list[G.vertices[cur].elo + j];
@@ -50,23 +67,29 @@ namespace detail
             cand.set(j);
             clique_potential++;
         }
-        if (clique_potential <= G.CUR_MAX_CLIQUE_SIZE) return;
 
-        search_vertex(G, cur, cand, res);
+        if (clique_potential > G.CUR_MAX_CLIQUE_SIZE) search_vertex(G, cur, cand, res);
+        // search complete
+        G.clear_memory(2 * request_size);  // releasing memory of cand, res
     }
 
     void RecursionDFS::search_vertex(graph& G, std::size_t cur,
                                      const graphBits& prev_cand, graphBits& res)
     {
+        // weak assumption: cand, res may lead to a clique larger than the current max
         std::size_t candidates_left = prev_cand.count();
         std::size_t clique_potential = candidates_left + res.count();
 
-        if (G.elapsed_time() > this->TIME_LIMIT) return;
-        if (G.CUR_MAX_CLIQUE_SIZE >= G.CLIQUE_LIMIT) return;
-        if (clique_potential <= G.CUR_MAX_CLIQUE_SIZE) return;
+        if (G.elapsed_time() > this->TIME_LIMIT)
+            return;  // out of time, stop searching the graph immediately
+        if (G.CUR_MAX_CLIQUE_SIZE >= G.CLIQUE_LIMIT)
+            return;  // reached required upper bound, no need to search
+        if (clique_potential <= G.CUR_MAX_CLIQUE_SIZE)
+            return;  // expanding this subtree will not beat the maximum
 
         // no candidates left => clique cannot grow
-        // therefore clique_potential is same as mcs
+        // therefore clique_potential is same as clique size
+        // and this clique has beaten the existing maximum
         if (candidates_left == 0)
         {
             G.vertices[cur].bits.copy_data(res);
@@ -76,9 +99,12 @@ namespace detail
             return;
         }
 
+        // This clique may beat the existing maximum
         // There exist candidates for possible clique expansion,
         // so go through them recursively
+
         graphBits cand, future_cand;
+        // "memory" allocations for cand and future_cand, remember to release
         cand.copy_from(prev_cand, G.load_memory(request_size));
         future_cand.copy_from(prev_cand, G.load_memory(request_size));
 
@@ -96,9 +122,12 @@ namespace detail
 
             // offset thru the edge list to get the neighbor vertex
             vert = G.edge_list[G.vertices[cur].elo + j];
+
             // assume vert is part of the clique
             res.set(j);
             cand.reset(j);
+
+            // copy the list of candidates to pass to the recursive call
             future_cand.copy_data(cand);
 
             // Check if the remaining candidates in cur are neighbors to vert
@@ -119,13 +148,16 @@ namespace detail
                 }
             }
 
+            // search the subtree with the new set of candidates
             search_vertex(G, cur, future_cand, res);
-            // we need to remove vert from clique consideration (undo
-            // assumption) because the next (future) candidate may not have
-            // it as part of the clique
+            // all potential cliques that can contain (cur, vert) have been searched
+
+            // remove vert from clique consideration because the future
+            // candidates will not have it as part of the clique
             res.reset(j);
         }
-        G.clear_memory(2 * request_size);
+        G.clear_memory(2 * request_size);  // releasing memory of cand, future_cand that
+                                           // were allocated at this subtree
     }
 }  // namespace detail
 }  // namespace cliquematch
