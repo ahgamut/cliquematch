@@ -1,3 +1,16 @@
+/* heuristic.cpp
+ *
+ * heuristic clique search. Sorts neighbors in decreasing order of degree and
+ * adds them one by one to the clique.
+ *
+ * One heap allocation is made: when process_graph is called,
+ * DegreeHeuristic::neighbors reserves space equal to the maximum degree of the
+ * graph. All other variables are on the stack. Heap memory from the graph
+ * object is re-used in the load_memory/clear_memory calls, which are
+ * explicitly pointed out; every load must have a matching clear or there will
+ * be memory corruption.
+ *
+ */
 #include <detail/heuristic.h>
 #include <algorithm>
 #include <iostream>
@@ -13,6 +26,7 @@ namespace detail
 
         request_size =
             (G.max_degree % BITS_PER_SIZE_T != 0) + G.max_degree / BITS_PER_SIZE_T;
+        // "memory" allocations for cand, res
         graphBits res(G.load_memory(request_size), G.max_degree);
         graphBits cand(G.load_memory(request_size), G.max_degree);
 
@@ -22,7 +36,7 @@ namespace detail
             if (G.vertices[i].mcs <= G.CUR_MAX_CLIQUE_SIZE || i == G.md_vert) continue;
             process_vertex(G, i, res, cand);
         }
-        G.clear_memory(2 * request_size);
+        G.clear_memory(2 * request_size);  // release memory
         return i;
     }
 
@@ -79,14 +93,15 @@ namespace detail
             candidates_left--;
 
             // assume neib is a worthwhile candidate
-            // modify candidate list using neib's neighbors
+            // modify candidate list: remove all vertices that are not adjacent to neib
             for (j = i + 1; j < cand_max; j++)
             {
-                if (G.find_if_neighbors(neighbors[j].id, neighbors[i].id, ans) == 1)
+                if (!cand[neighbors[j].pos] ||
+                    G.find_if_neighbors(neighbors[j].id, neighbors[i].id, ans) == 1)
                     continue;
                 else
                 {
-                    candidates_left -= cand[neighbors[j].pos];
+                    candidates_left--;
                     cand.reset(neighbors[j].pos);
                 }
             }
