@@ -12,10 +12,6 @@ env:
 
 jobs:
   include:
-  - name: Python 3.7.7 on macOS (xcode 11.2)
-    os: osx
-    osx_image: xcode11.2
-    language: shell
   - name: manylinux1 x86_64
     services:
     - docker

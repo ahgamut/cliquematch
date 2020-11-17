@@ -24,7 +24,6 @@ Note: this is `cliquematch v2`. If you're looking for `v1`, you can go to the [`
 ### Installing from a wheel
 
 [PyPI][wheels] wheels are available for Linux and Windows. 
-MacOS builds are tested but wheels are not provided.
 
 ```bash
 pip install cliquematch>=2.1.0

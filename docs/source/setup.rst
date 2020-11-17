@@ -11,8 +11,6 @@ Installing from a wheel
 
 `PyPI`_ wheels are available for Linux and Windows.  
 
-MacOS builds are tested but wheels are not provided.
-
 .. code:: bash
 
     pip install cliquematch>=2.1.0
