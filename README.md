@@ -5,6 +5,7 @@
 [![license](https://img.shields.io/github/license/ahgamut/cliquematch)][4]
 [![travis build](https://travis-ci.com/ahgamut/cliquematch.svg?branch=master)][5]
 [![appveyor build](https://ci.appveyor.com/api/projects/status/27r2qy8mbog04bhg?svg=true)][6]
+[![DOI](https://zenodo.org/badge/196044254.svg)][7]
 
 The `cliquematch` package aims to do two specific things:
 
@@ -54,6 +55,7 @@ pip3 install pybind11
 [4]: https://github.com/ahgamut/cliquematch/blob/master/LICENSE
 [5]: https://travis-ci.com/ahgamut/cliquematch
 [6]: https://ci.appveyor.com/project/ahgamut/cliquematch
+[7]: https://zenodo.org/badge/latestdoi/196044254
 [wiki]: https://en.wikipedia.org/wiki/Clique_(graph_theory)#Definitions
 [wheels]: https://pypi.org/project/cliquematch/
 [v1]: https://www.github.com/ahgamut/cliquematch/tree/v1/

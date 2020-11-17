@@ -4,7 +4,7 @@
 Finding correspondence via maximum cliques in large graphs
 ----------------------------------------------------------
 
-|pyvers| |license| |travis build| |appveyor build|
+|pyvers| |license| |travis build| |appveyor build| |doi|
 
 The `cliquematch` package aims to do two specific things:
  
@@ -46,6 +46,8 @@ packages (|networkx|_ and |igraph|_) for general graph analysis.
    :target: https://travis-ci.com/ahgamut/cliquematch
 .. |appveyor build| image:: https://ci.appveyor.com/api/projects/status/27r2qy8mbog04bhg?svg=true
    :target: https://ci.appveyor.com/project/ahgamut/cliquematch
+.. |doi| image:: https://zenodo.org/badge/196044254.svg
+   :target: https://zenodo.org/badge/latestdoi/196044254
 .. _maximum cliques: https://en.wikipedia.org/wiki/Clique_(graph_theory)#Definitions
 .. |networkx| replace:: ``networkx``
 .. _networkx: https://networkx.github.io/documentation/stable/
