@@ -80,15 +80,14 @@ namespace detail
             this->data = ext_data;  // CALLER gives me the data,
             // they should have initialized it and checked bounds
             this->valid_len = n_bits;
-            this->dlen = (n_bits % 32 != 0) + n_bits / 32;
-            this->pad_cover =
-                n_bits % 32 == 0 ? ALL_ONES : ALL_ONES << (32 - n_bits % 32);
+            this->dlen = ((n_bits & 0x1fu) != 0) + (n_bits >> 5);
+            this->pad_cover = ALL_ONES << (32 - (n_bits & 0x1fu));
             if (cleanout) this->clear();
         }
         void clear(std::size_t N = 0)
         {
             std::size_t i = 0;
-            std::size_t clear_len = 1 + N / 32;
+            std::size_t clear_len = 1 + (N >> 5);
             if (N == 0 || clear_len > this->dlen) clear_len = this->dlen;
             for (i = 0; i < clear_len; i++) this->data[i] = 0;
         }
@@ -96,27 +95,27 @@ namespace detail
         void set(std::size_t i)
         {
             // assert(i < this->valid_len);
-            u32 mask = MSB_32 >> (i % 32);
-            this->data[i / 32] |= mask;
+            u32 mask = MSB_32 >> (i & 0x1fu);
+            this->data[i >> 5] |= mask;
         };
         void reset(std::size_t i)
         {
             // assert(i < this->valid_len);
-            u32 mask = ~(MSB_32 >> (i % 32));
-            this->data[i / 32] &= mask;
+            u32 mask = ~(MSB_32 >> (i & 0x1fu));
+            this->data[i >> 5] &= mask;
         };
         void toggle(std::size_t i)
         {
             // assert(i < this->valid_len);
-            u32 mask = MSB_32 >> (i % 32);
-            this->data[i / 32] ^= mask;
+            u32 mask = MSB_32 >> (i & 0x1fu);
+            this->data[i >> 5] ^= mask;
         };
-        bool block_empty(std::size_t i) const { return (this->data[i / 32] == 0); };
+        bool block_empty(std::size_t i) const { return (this->data[i >> 5] == 0); };
         bool operator[](std::size_t i) const
         {
             // assert(i < this->valid_len);
-            u32 mask = MSB_32 >> (i % 32);
-            return (this->data[i / 32] & mask) != 0;
+            u32 mask = MSB_32 >> (i & 0x1fu);
+            return (this->data[i >> 5] & mask) != 0;
         };
 
         // std::size_t len() const { return this->valid_len; };

@@ -115,7 +115,7 @@ namespace detail
             // keep going until a candidate exists
             if (cand.block_empty(j))
             {
-                j += (31 - j % 32);
+                j += (31 - (j & 0x1fu));
                 continue;
             }
             if (!cand[j]) continue;
@@ -135,7 +135,7 @@ namespace detail
             {
                 if (future_cand.block_empty(k))
                 {
-                    k += (31 - k % 32);
+                    k += (31 - (k & 0x1fu));
                     continue;
                 }
                 if (!future_cand[k]) continue;
