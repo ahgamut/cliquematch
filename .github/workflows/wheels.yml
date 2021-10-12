@@ -1,0 +1,29 @@
+name: Build and test all wheels
+on:
+  push:
+    branches:
+      master
+
+jobs:
+  build_wheels:
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04, windows-2019, macos-10.15 ]
+    runs-on: ${{ matrix.os }}
+    name: build and test wheels on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.1.3
+        env:
+          CIBW_TEST_REQUIRES: pytest
+          CIBW_TEST_COMMAND: "pytest -v"
+          CIBW_ARCHS_LINUX: "x86_64"
+          CIBW_ARCHS_MACOS: "x86_64 universal2 arm64"
+          CIBW_ARCHS_WINDOWS: "AMD64"
+
+      - name: View generated wheels
+        run: ls -al ./wheelhouse
