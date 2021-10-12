@@ -9,7 +9,10 @@
 import pytest
 import cliquematch
 import numpy as np
+import os
 
+def get_location(fname):
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), fname)
 
 class TestGraph(object):
 
@@ -85,7 +88,7 @@ class TestGraph(object):
             G2 = cliquematch.Graph.from_adjlist(5, 6, adjlist)
 
     def test_filing(self):
-        G1 = cliquematch.Graph.from_file("./tests/sample_read1.mtx")
+        G1 = cliquematch.Graph.from_file(get_location("sample_read1.mtx"))
         assert G1.n_vertices == 5
         assert G1.n_edges == 6
         assert G1.to_adjlist() == [
@@ -97,7 +100,7 @@ class TestGraph(object):
             {1, 3},
         ]
 
-        G2 = cliquematch.Graph.from_file("./tests/sample_read2.mtx")
+        G2 = cliquematch.Graph.from_file(get_location("sample_read2.mtx"))
         assert G2.n_vertices == 5
         assert G2.n_edges == 6
         assert G2.to_adjlist() == [

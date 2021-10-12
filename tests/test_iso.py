@@ -10,7 +10,10 @@
 import pytest
 import numpy as np
 import cliquematch
+import os
 
+def get_location(fname):
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), fname)
 
 class TestIsoGraph(object):
 
@@ -23,8 +26,8 @@ class TestIsoGraph(object):
     * testing data access and dfs (too small for heuristic)
     """
 
-    S1 = cliquematch.Graph.from_file("./tests/sample_read1a.mtx")
-    S2 = cliquematch.Graph.from_file("./tests/sample_read1b.mtx")
+    S1 = cliquematch.Graph.from_file(get_location("sample_read1a.mtx"))
+    S2 = cliquematch.Graph.from_file(get_location("sample_read1b.mtx"))
 
     def test_loading(self):
         G = cliquematch.IsoGraph(self.S1, self.S2)
