@@ -29,9 +29,6 @@ jobs:
           CIBW_ARCHS_MACOS: "x86_64 arm64"
           CIBW_ARCHS_WINDOWS: "AMD64"
 
-      - name: View generated wheels
-        run: ls -al ./wheelhouse
-
       - name: upload wheel artifacts temporarily
         uses: actions/upload-artifact@v2
         with:
