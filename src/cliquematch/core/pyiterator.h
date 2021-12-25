@@ -16,13 +16,13 @@ namespace core
         std::shared_ptr<detail::CliqueEnumerator> en;
 
        public:
-        CliqueIterator(pygraph& p, pybind11::object rf, std::size_t clique_size)
+        CliqueIterator(pygraph& p, pybind11::object rf, u64 clique_size)
             : pg(p), rf(rf), en(new detail::CliqueEnumerator(clique_size))
         {
             if (!pg.inited || pg.nvert == 0)
                 throw CM_ERROR("trying to create iterator on uninitialized Graph");
         };
-        std::vector<std::size_t> next_clique();
+        std::vector<u64> next_clique();
     };
 
     class CorrespondenceIterator
@@ -31,18 +31,18 @@ namespace core
         pygraph& pg;
         pybind11::object rf;
         std::shared_ptr<detail::CliqueEnumerator> en;
-        std::size_t len1, len2;
+        u64 len1, len2;
 
        public:
-        CorrespondenceIterator(pygraph& p, pybind11::object rf, std::size_t len1,
-                               std::size_t len2, std::size_t clique_size)
+        CorrespondenceIterator(pygraph& p, pybind11::object rf, u64 len1, u64 len2,
+                               u64 clique_size)
             : pg(p), rf(rf), en(new detail::CliqueEnumerator(clique_size)), len1(len1),
               len2(len2)
         {
             if (!pg.inited || pg.nvert == 0)
                 throw CM_ERROR("trying to create iterator on uninitialized Graph");
         };
-        std::pair<std::vector<std::size_t>, std::vector<std::size_t>> next_clique();
+        std::pair<std::vector<u64>, std::vector<u64>> next_clique();
     };
 
 }  // namespace core

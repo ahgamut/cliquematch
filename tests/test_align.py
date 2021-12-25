@@ -25,7 +25,7 @@ class TestAlignGraph(object):
     """
 
     np.random.seed(824)
-    mask = np.ones((200, 200), dtype=np.bool)
+    mask = np.ones((200, 200), dtype=np.bool_)
     S1 = np.float64(np.random.uniform(0, 100, (20, 2)))
     S2 = np.float64(np.random.uniform(0, 100, (20, 2)))
 

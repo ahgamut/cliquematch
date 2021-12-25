@@ -12,19 +12,19 @@ namespace ext
 
     template <typename List1, typename List2, typename Delta1, typename Delta2,
               typename EpsType>
-    std::pair<std::vector<std::size_t>, std::vector<std::size_t>> edges_from_relsets(
-        std::size_t& n_vert, std::size_t& n_edges, const relset<List1, Delta1>& s1,
+    std::pair<std::vector<u64>, std::vector<u64>> edges_from_relsets(
+        u64& n_vert, u64& n_edges, const relset<List1, Delta1>& s1,
         const relset<List2, Delta2>& s2, const EpsType epsilon)
     {
-        std::size_t M = s1.N, N = s2.N;
-        std::size_t i, j;
+        u64 M = s1.N, N = s2.N;
+        u64 i, j;
         n_vert = M * N;
         n_edges = 0;
 
         if (M == 0 || N == 0)
             throw CM_ERROR("One of the sets is empty (initialization error)\n");
 
-        std::pair<std::vector<std::size_t>, std::vector<std::size_t>> Edges;
+        std::pair<std::vector<u64>, std::vector<u64>> Edges;
         Edges.first.resize(n_vert + 1);
         Edges.second.resize(n_vert + 1);
         for (i = 0; i < Edges.first.size(); i++)
@@ -32,14 +32,14 @@ namespace ext
             Edges.first[i] = i;
             Edges.second[i] = i;
         }
-        std::size_t v1, v2;
+        u64 v1, v2;
 
         auto base = s2.dists.data();
-        std::size_t len1 = s1.symmetric ? M * (M - 1) / 2 : M * (M - 1);
-        std::size_t len2 = s2.symmetric ? N * (N - 1) / 2 : N * (N - 1);
+        u64 len1 = s1.symmetric ? M * (M - 1) / 2 : M * (M - 1);
+        u64 len2 = s2.symmetric ? N * (N - 1) / 2 : N * (N - 1);
 
         EpsType cur_ub = 0, cur_lb = 0;
-        std::size_t ub_loc = len2, lb_loc = 0;
+        u64 ub_loc = len2, lb_loc = 0;
 
         short found1, found2;
 
@@ -83,22 +83,20 @@ namespace ext
 
     template <typename List1, typename List2, typename Delta1, typename Delta2,
               typename EpsType>
-    std::pair<std::vector<std::size_t>, std::vector<std::size_t>> efr_condition(
-        std::size_t& n_vert, std::size_t& n_edges, const relset<List1, Delta1>& s1,
+    std::pair<std::vector<u64>, std::vector<u64>> efr_condition(
+        u64& n_vert, u64& n_edges, const relset<List1, Delta1>& s1,
         const relset<List2, Delta2>& s2, const EpsType epsilon,
-        const std::function<bool(const std::size_t, const std::size_t,
-                                 const std::size_t, const std::size_t)>
-            cfunc)
+        const std::function<bool(const u64, const u64, const u64, const u64)> cfunc)
     {
-        std::size_t M = s1.N, N = s2.N;
-        std::size_t i, j;
+        u64 M = s1.N, N = s2.N;
+        u64 i, j;
         n_vert = M * N;
         n_edges = 0;
 
         if (M == 0 || N == 0)
             throw CM_ERROR("One of the sets is empty (initialization error)\n");
 
-        std::pair<std::vector<std::size_t>, std::vector<std::size_t>> Edges;
+        std::pair<std::vector<u64>, std::vector<u64>> Edges;
         Edges.first.resize(n_vert + 1);
         Edges.second.resize(n_vert + 1);
         for (i = 0; i < Edges.first.size(); i++)
@@ -106,14 +104,14 @@ namespace ext
             Edges.first[i] = i;
             Edges.second[i] = i;
         }
-        std::size_t v1, v2;
+        u64 v1, v2;
 
         auto base = s2.dists.data();
-        std::size_t len1 = s1.symmetric ? M * (M - 1) / 2 : M * (M - 1);
-        std::size_t len2 = s2.symmetric ? N * (N - 1) / 2 : N * (N - 1);
+        u64 len1 = s1.symmetric ? M * (M - 1) / 2 : M * (M - 1);
+        u64 len2 = s2.symmetric ? N * (N - 1) / 2 : N * (N - 1);
 
         EpsType cur_ub = 0, cur_lb = 0;
-        std::size_t ub_loc = len2, lb_loc = 0;
+        u64 ub_loc = len2, lb_loc = 0;
 
         short found1, found2;
 
@@ -167,16 +165,14 @@ namespace ext
     template <typename List1, typename List2, typename Delta1, typename Delta2,
               typename EpsType>
     bool build_edges_metric_only(
-        pygraph& pg, const List1& pts1, const std::size_t pts1_len, const List2& pts2,
-        const std::size_t pts2_len, const EpsType epsilon,
-        const std::function<Delta1(const List1&, const std::size_t, const std::size_t)>
-            d1,
+        pygraph& pg, const List1& pts1, const u64 pts1_len, const List2& pts2,
+        const u64 pts2_len, const EpsType epsilon,
+        const std::function<Delta1(const List1&, const u64, const u64)> d1,
         const bool is_d1_symmetric,
-        const std::function<Delta2(const List2&, const std::size_t, const std::size_t)>
-            d2,
+        const std::function<Delta2(const List2&, const u64, const u64)> d2,
         const bool is_d2_symmetric)
     {
-        std::size_t no_of_vertices, no_of_edges;
+        u64 no_of_vertices, no_of_edges;
         relset<List1, Delta1> ps1(pts1_len, d1, is_d1_symmetric);
         relset<List2, Delta2> ps2(pts2_len, d2, is_d2_symmetric);
         ps1.fill_dists(pts1);
@@ -191,15 +187,15 @@ namespace ext
     template <typename List1, typename List2, typename Delta1, typename Delta2,
               typename EpsType>
     bool build_edges_condition_only(
-        pygraph& pg, const List1& pts1, const std::size_t pts1_len, const List2& pts2,
-        const std::size_t pts2_len,
-        const std::function<bool(const List1&, const std::size_t, const std::size_t,
-                                 const List2&, const std::size_t, const std::size_t)>
+        pygraph& pg, const List1& pts1, const u64 pts1_len, const List2& pts2,
+        const u64 pts2_len,
+        const std::function<bool(const List1&, const u64, const u64, const List2&,
+                                 const u64, const u64)>
             cfunc)
     {
-        std::size_t no_of_vertices = pts1_len * pts2_len, no_of_edges = 0;
-        std::size_t i1, i2, j1, j2, v1, v2;
-        std::pair<std::vector<std::size_t>, std::vector<std::size_t>> edges;
+        u64 no_of_vertices = pts1_len * pts2_len, no_of_edges = 0;
+        u64 i1, i2, j1, j2, v1, v2;
+        std::pair<std::vector<u64>, std::vector<u64>> edges;
         edges.first.resize(no_of_vertices + 1);
         edges.second.resize(no_of_vertices + 1);
 
@@ -248,25 +244,20 @@ namespace ext
 
     template <typename List1, typename List2, typename Delta1, typename Delta2,
               typename EpsType>
-    bool build_edges(
-        pygraph& pg, const List1& pts1, const std::size_t pts1_len, const List2& pts2,
-        const std::size_t pts2_len, const EpsType epsilon,
-        const std::function<bool(const List1&, const std::size_t, const std::size_t,
-                                 const List2&, const std::size_t, const std::size_t)>
-            cfunc,
-        const std::function<Delta1(const List1&, const std::size_t, const std::size_t)>
-            d1,
-        const bool is_d1_symmetric,
-        const std::function<Delta2(const List2&, const std::size_t, const std::size_t)>
-            d2,
-        const bool is_d2_symmetric)
+    bool build_edges(pygraph& pg, const List1& pts1, const u64 pts1_len,
+                     const List2& pts2, const u64 pts2_len, const EpsType epsilon,
+                     const std::function<bool(const List1&, const u64, const u64,
+                                              const List2&, const u64, const u64)>
+                         cfunc,
+                     const std::function<Delta1(const List1&, const u64, const u64)> d1,
+                     const bool is_d1_symmetric,
+                     const std::function<Delta2(const List2&, const u64, const u64)> d2,
+                     const bool is_d2_symmetric)
     {
-        std::size_t no_of_vertices, no_of_edges;
-        auto cfwrap = [&pts1, &pts2, &cfunc](const std::size_t i, const std::size_t j,
-                                             const std::size_t i2,
-                                             const std::size_t j2) -> bool {
-            return cfunc(pts1, i, j, pts2, i2, j2);
-        };
+        u64 no_of_vertices, no_of_edges;
+        auto cfwrap = [&pts1, &pts2, &cfunc](const u64 i, const u64 j, const u64 i2,
+                                             const u64 j2) -> bool
+        { return cfunc(pts1, i, j, pts2, i2, j2); };
         relset<List1, Delta1> ps1(pts1_len, d1, is_d1_symmetric);
         relset<List2, Delta2> ps2(pts2_len, d2, is_d2_symmetric);
         ps1.fill_dists(pts1);
@@ -282,4 +273,3 @@ namespace ext
 }  // namespace ext
 }  // namespace cliquematch
 #endif /* EXT_TEMPLATE_HPP */
-

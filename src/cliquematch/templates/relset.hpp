@@ -11,9 +11,7 @@ namespace ext
     // template syntax brain hurty
     template <typename List, typename Delta>
     relset<List, Delta>::relset(
-        std::size_t N,
-        const std::function<Delta(const List&, const std::size_t, const std::size_t)>&
-            dfunc,
+        u64 N, const std::function<Delta(const List&, const u64, const u64)>& dfunc,
         bool symmetric)
         : symmetric(symmetric), N(N), delfunc(dfunc)
     {
@@ -26,7 +24,7 @@ namespace ext
     template <typename List, typename Delta>
     void relset<List, Delta>::fill_dists(const List& x)
     {
-        std::size_t i, j, count = 0;
+        u64 i, j, count = 0;
         for (i = 0; i < this->N; i++)
         {
             for (j = (this->symmetric ? i + 1 : 0); j < this->N; j++)
@@ -45,7 +43,7 @@ namespace ext
     template <typename List, typename Delta>
     void relset<List, Delta>::disp() const
     {
-        for (std::size_t i = 0; i < this->dists.size(); i++)
+        for (u64 i = 0; i < this->dists.size(); i++)
         {
             std::cout << this->dists[i].first << " " << this->dists[i].second << " "
                       << this->dists[i].dist << "\n";
@@ -55,4 +53,3 @@ namespace ext
 }  // namespace ext
 }  // namespace cliquematch
 #endif /* RELSET_HPP */
-

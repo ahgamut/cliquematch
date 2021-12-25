@@ -13,16 +13,14 @@ namespace ext
     struct relset
     {
         const bool symmetric;
-        const std::size_t N;
-        const std::function<Delta(const List&, const std::size_t, const std::size_t)>&
-            delfunc;
+        const u64 N;
+        const std::function<Delta(const List&, const u64, const u64)>& delfunc;
         // delfunc will do the accessing of List,
         // and return the distance value
         std::vector<pair_dist<Delta> > dists;
 
-        relset(std::size_t N,
-               const std::function<Delta(const List&, const std::size_t,
-                                         const std::size_t)>& dfunc,
+        relset(u64 N,
+               const std::function<Delta(const List&, const u64, const u64)>& dfunc,
                bool symmetric = true);
         relset& operator=(relset&) = delete;
         relset(const relset&) = delete;
@@ -33,4 +31,3 @@ namespace ext
 }  // namespace ext
 }  // namespace cliquematch
 #endif /* RELSET_H */
-

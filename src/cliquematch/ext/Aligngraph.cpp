@@ -1,7 +1,7 @@
 #include <ext/Aligngraph.h>
 
 using ULongMatrixR =
-    Eigen::Matrix<std::size_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    Eigen::Matrix<u64, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 namespace cliquematch
 {
@@ -11,16 +11,15 @@ namespace ext
                                const Eigen::Ref<BoolMatrixR> msk, Eigen::RowVector2d& c,
                                Eigen::Ref<DoubleMatrixR> rot_con,
                                Eigen::Ref<ULongMatrixR> RCU,
-                               const Eigen::Ref<DoubleMatrixR>& M1,
-                               const std::size_t i1, const std::size_t j1,
-                               const Eigen::Ref<DoubleMatrixR>& M2,
-                               const std::size_t i2, const std::size_t j2)
+                               const Eigen::Ref<DoubleMatrixR>& M1, const u64 i1,
+                               const u64 j1, const Eigen::Ref<DoubleMatrixR>& M2,
+                               const u64 i2, const u64 j2)
     {
         Eigen::Matrix<double, 4, 4> coeffs;
         Eigen::Matrix<double, 4, 1> rhs;
         Eigen::Matrix<double, 4, 1> answer;
 
-        std::size_t k, m_r = msk.rows(), m_c = msk.cols();
+        u64 k, m_r = msk.rows(), m_c = msk.cols();
         double a, b, msk_score = 0;
         double x1, y1, x2, y2, x3, y3, x4, y4;
         x1 = M2(i2, 0), y1 = M2(i2, 1);
@@ -40,10 +39,10 @@ namespace ext
         rot_con.col(1) = b * control.col(0) + a * control.col(1);
         rot_con.rowwise() += c;
 
-        RCU = rot_con.cast<std::size_t>();
+        RCU = rot_con.cast<u64>();
         // assumption is M1, M2, control_pts and therefore RCU all are in the same
         // coordinate system, i.e. (x,y) or (col, row)
-        for (k = 0; k < static_cast<std::size_t>(rot_con.rows()); k++)
+        for (k = 0; k < static_cast<u64>(rot_con.rows()); k++)
         {
             if (RCU(k, 1) < m_r && RCU(k, 0) < m_c && msk(RCU(k, 1), RCU(k, 0)))
                 msk_score++;
@@ -53,9 +52,9 @@ namespace ext
     }
 
     bool build_edges_with_filter(pygraph& pg, const Eigen::Ref<DoubleMatrixR>& pts1,
-                                 const std::size_t pts1_len,
+                                 const u64 pts1_len,
                                  const Eigen::Ref<DoubleMatrixR>& pts2,
-                                 const std::size_t pts2_len, const double epsilon,
+                                 const u64 pts2_len, const double epsilon,
                                  const Eigen::Ref<DoubleMatrixR> control_pts,
                                  const Eigen::Ref<BoolMatrixR> mask,
                                  const double percentage)
@@ -65,9 +64,10 @@ namespace ext
         ULongMatrixR _RCU(control_pts.rows(), control_pts.cols());
 
         auto rule_func = [&control_pts, &mask, &_c, &_rot_con, &_RCU, &percentage](
-                             const Eigen::Ref<DoubleMatrixR>& p1, const std::size_t i1,
-                             const std::size_t j1, const Eigen::Ref<DoubleMatrixR>& p2,
-                             const std::size_t i2, const std::size_t j2) -> bool {
+                             const Eigen::Ref<DoubleMatrixR>& p1, const u64 i1,
+                             const u64 j1, const Eigen::Ref<DoubleMatrixR>& p2,
+                             const u64 i2, const u64 j2) -> bool
+        {
             return filter_score(control_pts, mask, _c, _rot_con, _RCU, p1, i1, j1, p2,
                                 i2, j2) >= percentage;
         };

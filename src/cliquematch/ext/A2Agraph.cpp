@@ -6,24 +6,21 @@ namespace ext
 {
     template <>
     double dummy_comparison<Eigen::Ref<DoubleMatrixR>, double>(
-        const Eigen::Ref<DoubleMatrixR>& ll, const std::size_t i, const std::size_t j)
+        const Eigen::Ref<DoubleMatrixR>& ll, const u64 i, const u64 j)
     {
         return euc_dist0(ll.row(i), ll.row(j));
     }
     template bool build_edges(
-        pygraph& pg, const Eigen::Ref<DoubleMatrixR>& pts1, const std::size_t pts1_len,
-        const Eigen::Ref<DoubleMatrixR>& pts2, const std::size_t pts2_len,
-        const double epsilon,
-        const std::function<bool(const Eigen::Ref<DoubleMatrixR>&, const std::size_t,
-                                 const std::size_t, const Eigen::Ref<DoubleMatrixR>&,
-                                 const std::size_t, const std::size_t)>
+        pygraph& pg, const Eigen::Ref<DoubleMatrixR>& pts1, const u64 pts1_len,
+        const Eigen::Ref<DoubleMatrixR>& pts2, const u64 pts2_len, const double epsilon,
+        const std::function<bool(const Eigen::Ref<DoubleMatrixR>&, const u64, const u64,
+                                 const Eigen::Ref<DoubleMatrixR>&, const u64,
+                                 const u64)>
             cfunc,
-        std::function<double(const Eigen::Ref<DoubleMatrixR>&, const std::size_t,
-                             const std::size_t)>
+        std::function<double(const Eigen::Ref<DoubleMatrixR>&, const u64, const u64)>
             d1,
         const bool is_d1_symmetric,
-        std::function<double(const Eigen::Ref<DoubleMatrixR>&, const std::size_t,
-                             const std::size_t)>
+        std::function<double(const Eigen::Ref<DoubleMatrixR>&, const u64, const u64)>
             d2,
         const bool is_d2_symmetric);
     template struct relset<Eigen::Ref<DoubleMatrixR>, double>;

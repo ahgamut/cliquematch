@@ -16,4 +16,3 @@ using BoolMatrixR =
     Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 }  // namespace cliquematch
 #endif /* EIGEN_WRAP_H */
-

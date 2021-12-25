@@ -22,7 +22,7 @@ namespace cliquematch
 {
 namespace detail
 {
-    std::size_t StackDFS::process_graph(graph& G)
+    u64 StackDFS::process_graph(graph& G)
     {
         // the upper bound on clique size is the maximum depth on the stack
         this->states.reserve(G.CLIQUE_LIMIT);
@@ -38,11 +38,11 @@ namespace detail
         return i;
     }
 
-    void StackDFS::process_vertex(graph& G, std::size_t cur)
+    void StackDFS::process_vertex(graph& G, u64 cur)
     {
         f = 0;
-        request_size = (G.vertices[cur].N % BITS_PER_SIZE_T != 0) +
-                       G.vertices[cur].N / BITS_PER_SIZE_T;
+        request_size =
+            (G.vertices[cur].N % BITS_PER_U64 != 0) + G.vertices[cur].N / BITS_PER_U64;
         // "memory" allocations for cand, res at root of subtree
         SearchState x(G.vertices[cur], G.load_memory(request_size),
                       G.load_memory(request_size));

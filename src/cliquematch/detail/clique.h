@@ -22,10 +22,10 @@ namespace detail
     class CliqueOperator
     {
        public:
-        std::size_t request_size;
+        u64 request_size;
         CliqueOperator() { request_size = 0; }
         virtual ~CliqueOperator() = default;
-        virtual std::size_t process_graph(graph&) = 0;
+        virtual u64 process_graph(graph&) = 0;
     };
 }  // namespace detail
 }  // namespace cliquematch

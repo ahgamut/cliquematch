@@ -31,18 +31,19 @@ void init_pygraph(pybind11::module& m)
         .def("_get_correspondence", &pygraph::get_correspondence, "len1"_a, "len2"_a,
              "lower_bound"_a = 1, "upper_bound"_a = 0xFFFF, "time_limit"_a = 0.0,
              "use_heuristic"_a = true, "use_dfs"_a = true, "continue_search"_a = false)
-        .def("all_cliques",
-             [](py::object s, std::size_t clique_size) {
-                 return cm_core::CliqueIterator(s.cast<pygraph&>(), s, clique_size);
-             },
-             "size"_a)
-        .def("_all_correspondences",
-             [](py::object s, std::size_t len1, std::size_t len2,
-                std::size_t clique_size) {
-                 return cm_core::CorrespondenceIterator(s.cast<pygraph&>(), s, len1,
-                                                        len2, clique_size);
-             },
-             "len1"_a, "len2"_a, "size"_a)
+        .def(
+            "all_cliques",
+            [](py::object s, u64 clique_size)
+            { return cm_core::CliqueIterator(s.cast<pygraph&>(), s, clique_size); },
+            "size"_a)
+        .def(
+            "_all_correspondences",
+            [](py::object s, u64 len1, u64 len2, u64 clique_size)
+            {
+                return cm_core::CorrespondenceIterator(s.cast<pygraph&>(), s, len1,
+                                                       len2, clique_size);
+            },
+            "len1"_a, "len2"_a, "size"_a)
         .def_static("from_file", &cm_core::from_file,
                     "Constructs `Graph` instance from reading a Matrix Market file",
                     arg("filename"), py::return_value_policy::move)

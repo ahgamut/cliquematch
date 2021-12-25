@@ -53,23 +53,6 @@ ext_modules = [
 ]
 
 
-def has_flag(compiler, flagname):
-    """Return a boolean indicating whether a flag name is supported on
-    the specified compiler.
-    """
-    import tempfile
-
-    with tempfile.NamedTemporaryFile("w", suffix=".cpp") as f:
-        print("Testing for flag %s" % (flagname))
-        f.write("int main (int argc, char **argv) { return 0; }")
-        try:
-            compiler.compile([f.name], extra_postargs=[flagname])
-        except Exception as e:
-            print(e)
-            return False
-    return True
-
-
 class BuildExt(_build_ext):
     """A custom build extension for adding compiler-specific options."""
 
@@ -89,8 +72,7 @@ class BuildExt(_build_ext):
         ct = self.compiler.compiler_type
         opts = self.c_opts.get(ct)
         if ct == "unix":
-            if has_flag(self.compiler, "-fvisibility=hidden"):
-                opts.append("-fvisibility=hidden")
+            opts.append("-fvisibility=hidden")
             if self.compiler.compiler_so:
                 if "-g" in self.compiler.compiler_so:
                     self.compiler.compiler_so.remove("-g")

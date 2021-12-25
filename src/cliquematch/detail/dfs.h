@@ -28,31 +28,31 @@ namespace detail
     {
        private:
         std::vector<SearchState> states;  // used like a stack with push_back/pop_back
-        std::vector<std::size_t> to_remove;  // vertices to remove from a candidate
+        std::vector<u64> to_remove;       // vertices to remove from a candidate
 
         // the below variables have equivalent declared locally
         // in the member functions of RecursionDFS.
-        std::size_t candidates_left, clique_size, clique_potential;
-        std::size_t i, j, k, vert, ans;
+        u64 candidates_left, clique_size, clique_potential;
+        u64 i, j, k, vert, ans;
         short f;
 
        public:
-        void process_vertex(graph&, std::size_t);
-        std::size_t process_graph(graph&);
+        void process_vertex(graph&, u64);
+        u64 process_graph(graph&);
         ~StackDFS() = default;
     };
 
     class RecursionDFS : public CliqueOperator
     {
        private:
-        std::size_t start_vertex;
+        u64 start_vertex;
         double TIME_LIMIT;
 
        public:
-        void process_vertex(graph&, std::size_t);
-        void search_vertex(graph&, std::size_t, const graphBits&, graphBits&);
-        std::size_t process_graph(graph&);
-        RecursionDFS(std::size_t v, double t) : start_vertex(v), TIME_LIMIT(t){};
+        void process_vertex(graph&, u64);
+        void search_vertex(graph&, u64, const graphBits&, graphBits&);
+        u64 process_graph(graph&);
+        RecursionDFS(u64 v, double t) : start_vertex(v), TIME_LIMIT(t){};
         ~RecursionDFS() = default;
     };
 
@@ -60,17 +60,17 @@ namespace detail
     {
        private:
         std::vector<SearchState> states;
-        std::vector<std::size_t> to_remove;
-        std::size_t candidates_left, clique_size, clique_potential;
-        std::size_t i, j, k, vert, ans, cur;
-        const std::size_t REQUIRED_SIZE;
+        std::vector<u64> to_remove;
+        u64 candidates_left, clique_size, clique_potential;
+        u64 i, j, k, vert, ans, cur;
+        const u64 REQUIRED_SIZE;
         short f;
 
        public:
-        std::size_t process_graph(graph&);
+        u64 process_graph(graph&);
         void process_vertex(graph&);
         bool load_vertex(graph&);
-        CliqueEnumerator(std::size_t size) : cur(1), REQUIRED_SIZE(size){};
+        CliqueEnumerator(u64 size) : cur(1), REQUIRED_SIZE(size){};
         CliqueEnumerator() = delete;
         ~CliqueEnumerator() = default;
     };

@@ -11,10 +11,8 @@ namespace ext
 {
     extern template struct relset<py::object, double>;
     extern template double dummy_comparison<py::object, double>(const py::object&,
-                                                                const std::size_t,
-                                                                const std::size_t);
+                                                                const u64, const u64);
 }  // namespace ext
 }  // namespace cliquematch
 
 #endif /* L2LGRAPH_H */
-

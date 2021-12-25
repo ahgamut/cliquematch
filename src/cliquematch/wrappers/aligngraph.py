@@ -27,7 +27,7 @@ class MaskFilter(object):
         self.mask = img_mask
         self.percentage = percentage
         self._tformed_pts = np.zeros(control_pts.shape, dtype=np.uint)
-        self._valids = np.zeros(len(self.pts), dtype=np.bool)
+        self._valids = np.zeros(len(self.pts), dtype=np.bool_)
         self._ctx = 0
         self._query = np.zeros((4, 4), np.float32)
         self._rhs = np.zeros((4, 1), np.float32)

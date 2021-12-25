@@ -19,13 +19,12 @@ namespace cliquematch
 {
 namespace detail
 {
-    std::size_t DegreeHeuristic::process_graph(graph& G)
+    u64 DegreeHeuristic::process_graph(graph& G)
     {
-        std::size_t i;
+        u64 i;
         neighbors.resize(G.max_degree);
 
-        request_size =
-            (G.max_degree % BITS_PER_SIZE_T != 0) + G.max_degree / BITS_PER_SIZE_T;
+        request_size = (G.max_degree % BITS_PER_U64 != 0) + G.max_degree / BITS_PER_U64;
         // "memory" allocations for cand, res
         graphBits res(G.load_memory(request_size), G.max_degree);
         graphBits cand(G.load_memory(request_size), G.max_degree);
@@ -40,7 +39,7 @@ namespace detail
         return i;
     }
 
-    void DegreeHeuristic::process_vertex(graph& G, std::size_t cur, graphBits& res,
+    void DegreeHeuristic::process_vertex(graph& G, u64 cur, graphBits& res,
                                          graphBits& cand)
     {
         // heuristic assumes that higher degree neighbors are
@@ -51,8 +50,8 @@ namespace detail
         cand.clear(G.vertices[cur].N);
         res.set(G.vertices[cur].spos);
 
-        std::size_t ans;
-        std::size_t i, j;
+        u64 ans;
+        u64 i, j;
         candidates_left = 0;
         cur_clique_size = 1;
 

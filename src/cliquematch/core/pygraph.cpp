@@ -38,9 +38,8 @@ namespace core
         this->G = other.G;
         other.inited = false;
     }
-    void pygraph::load_graph(
-        std::size_t n_vertices, std::size_t n_edges,
-        std::pair<std::vector<std::size_t>, std::vector<std::size_t>>&& edges)
+    void pygraph::load_graph(u64 n_vertices, u64 n_edges,
+                             std::pair<std::vector<u64>, std::vector<u64>>&& edges)
     {
         this->nvert = n_vertices;
         this->nedges = n_edges;
@@ -63,11 +62,9 @@ namespace core
         this->current_vertex = 0;
     }
 
-    std::vector<std::size_t> pygraph::get_max_clique(std::size_t lower_bound,
-                                                     std::size_t upper_bound,
-                                                     double time_limit,
-                                                     bool use_heuristic, bool use_dfs,
-                                                     bool continue_search)
+    std::vector<u64> pygraph::get_max_clique(u64 lower_bound, u64 upper_bound,
+                                             double time_limit, bool use_heuristic,
+                                             bool use_dfs, bool continue_search)
     {
         if (!continue_search)
             current_vertex = 0;
@@ -88,12 +85,11 @@ namespace core
         return ans;
     }
 
-    std::pair<std::vector<std::size_t>, std::vector<std::size_t>>
-    pygraph::get_correspondence2(std::size_t len1, std::size_t len2,
-                                 std::vector<std::size_t> clique)
+    std::pair<std::vector<u64>, std::vector<u64>> pygraph::get_correspondence2(
+        u64 len1, u64 len2, std::vector<u64> clique)
     {
-        std::pair<std::vector<std::size_t>, std::vector<std::size_t>> ans;
-        std::size_t i, t1, t2;
+        std::pair<std::vector<u64>, std::vector<u64>> ans;
+        u64 i, t1, t2;
         for (i = 0; i < clique.size(); i++)
         {
             if (clique[i] == 0)
@@ -110,11 +106,9 @@ namespace core
         return ans;
     }
 
-    std::pair<std::vector<std::size_t>, std::vector<std::size_t>>
-    pygraph::get_correspondence(std::size_t len1, std::size_t len2,
-                                std::size_t lower_bound, std::size_t upper_bound,
-                                double time_limit, bool use_heuristic, bool use_dfs,
-                                bool continue_search)
+    std::pair<std::vector<u64>, std::vector<u64>> pygraph::get_correspondence(
+        u64 len1, u64 len2, u64 lower_bound, u64 upper_bound, double time_limit,
+        bool use_heuristic, bool use_dfs, bool continue_search)
     {
         return this->get_correspondence2(
             len1, len2,
@@ -136,7 +130,7 @@ namespace core
 
     pygraph from_file(std::string filename)
     {
-        std::size_t no_of_vertices, no_of_edges;
+        u64 no_of_vertices, no_of_edges;
         pygraph pg;
         auto edges =
             detail::mmio4_reader(filename.c_str(), no_of_vertices, no_of_edges);
@@ -147,18 +141,18 @@ namespace core
         return pg;
     }
 
-    pygraph from_edgelist(ndarray<std::size_t> edge_list1, std::size_t no_of_vertices)
+    pygraph from_edgelist(ndarray<u64> edge_list1, u64 no_of_vertices)
     {
         //	std::cout<<"Constructing graph from the list of edges (Nx2 matrix)\n";
-        std::size_t no_of_edges = 0;
-        std::size_t v1, v2;
+        u64 no_of_edges = 0;
+        u64 v1, v2;
         auto edge_list = edge_list1.unchecked<2>();
-        std::pair<std::vector<std::size_t>, std::vector<std::size_t>> edges;
+        std::pair<std::vector<u64>, std::vector<u64>> edges;
         edges.first.resize(no_of_vertices + 1);
         edges.second.resize(no_of_vertices + 1);
         pygraph pg;
 
-        for (std::size_t i = 0; i < edges.first.size(); i++)
+        for (u64 i = 0; i < edges.first.size(); i++)
         {
             edges.first[i] = i;
             edges.second[i] = i;
@@ -196,15 +190,15 @@ namespace core
             throw CM_ERROR("Adjacency matrix has to be a square matrix!!\n");
         else
         {
-            std::size_t no_of_vertices = adjmat.shape(0);
-            std::size_t no_of_edges = 0;
+            u64 no_of_vertices = adjmat.shape(0);
+            u64 no_of_edges = 0;
             pygraph pg;
 
-            std::pair<std::vector<std::size_t>, std::vector<std::size_t>> edges;
+            std::pair<std::vector<u64>, std::vector<u64>> edges;
 
-            for (std::size_t i = 0; i < no_of_vertices; i++)
+            for (u64 i = 0; i < no_of_vertices; i++)
             {
-                for (std::size_t j = 0; j < no_of_vertices; j++)
+                for (u64 j = 0; j < no_of_vertices; j++)
                 {
                     if (adjmat(i, j) || i == j)
                     {
@@ -224,18 +218,17 @@ namespace core
             return pg;
         }
     }
-    pygraph from_adj_list(std::size_t n_vertices, std::size_t n_edges,
-                          std::vector<std::set<std::size_t>> edges)
+    pygraph from_adj_list(u64 n_vertices, u64 n_edges, std::vector<std::set<u64>> edges)
     {
-        std::size_t e = 0;
+        u64 e = 0;
         if (edges.size() > 0 && !edges[0].empty())
             throw CM_ERROR("0 is used as sentinel value, set 0 should be empty\n");
         if (n_vertices != edges.size() - 1)
             throw CM_ERROR("Number of vertices don't match!\n");
 
-        std::pair<std::vector<std::size_t>, std::vector<std::size_t>> edges2;
+        std::pair<std::vector<u64>, std::vector<u64>> edges2;
         pygraph pg;
-        for (std::size_t i = 0; i < edges.size(); i++)
+        for (u64 i = 0; i < edges.size(); i++)
         {
             edges2.first.push_back(i);
             edges2.second.push_back(i);
@@ -255,19 +248,21 @@ namespace core
         return pg;
     }
 
-    ndarray<std::size_t> pygraph::to_edgelist() const
+    ndarray<u64> pygraph::to_edgelist() const
     {
         check_loaded();
-        ndarray<std::size_t> elist1(this->nedges * 2);
-        elist1.resize({this->nedges, static_cast<std::size_t>(2)});
+        ndarray<u64> elist1(this->nedges * 2);
+        elist1.resize({this->nedges, static_cast<u64>(2)});
         auto elist = elist1.mutable_unchecked<2>();
-        std::size_t k = 0, N = this->nedges;
-        this->G->send_data([&elist, &k, &N](std::size_t i, std::size_t j) {
-            // I could use N for checking bounds
-            elist(k, 0) = i;
-            elist(k, 1) = j;
-            k++;
-        });
+        u64 k = 0, N = this->nedges;
+        this->G->send_data(
+            [&elist, &k, &N](u64 i, u64 j)
+            {
+                // I could use N for checking bounds
+                elist(k, 0) = i;
+                elist(k, 1) = j;
+                k++;
+            });
         return elist1;
     }
 
@@ -285,8 +280,7 @@ namespace core
         f << this->nvert << " ";
         f << this->nvert << " ";
         f << this->nedges << "\n";
-        this->G->send_data(
-            [&f](std::size_t i, std::size_t j) { f << i << " " << j << "\n"; });
+        this->G->send_data([&f](u64 i, u64 j) { f << i << " " << j << "\n"; });
         f.close();
     }
 
@@ -297,39 +291,44 @@ namespace core
         adjmat1.resize({this->nvert, this->nvert});
         auto adjmat = adjmat1.mutable_unchecked<2>();
         // zero out while initializing ??
-        for (std::size_t i = 0; i < this->nvert; i++)
-            for (std::size_t j = 0; j < this->nvert; ++j) { adjmat(i, j) = false; }
+        for (u64 i = 0; i < this->nvert; i++)
+            for (u64 j = 0; j < this->nvert; ++j) { adjmat(i, j) = false; }
 
         // internals are 1-indexed , so subtract by one
         // out of bounds can only happen if either is zero,
         // which means there is already an error elsewhere
-        this->G->send_data([&adjmat](std::size_t i, std::size_t j) {
-            adjmat(i - 1, j - 1) = true;
-            adjmat(j - 1, i - 1) = true;
-        });
+        this->G->send_data(
+            [&adjmat](u64 i, u64 j)
+            {
+                adjmat(i - 1, j - 1) = true;
+                adjmat(j - 1, i - 1) = true;
+            });
         return adjmat1;
     }
 
-    std::vector<std::set<std::size_t>> pygraph::to_adj_list() const
+    std::vector<std::set<u64>> pygraph::to_adj_list() const
     {
         check_loaded();
-        std::vector<std::set<std::size_t>> edges(this->nvert + 1);
-        this->G->send_data([&edges](std::size_t i, std::size_t j) {
-            edges[i].insert(j);
-            edges[j].insert(i);
-        });
+        std::vector<std::set<u64>> edges(this->nvert + 1);
+        this->G->send_data(
+            [&edges](u64 i, u64 j)
+            {
+                edges[i].insert(j);
+                edges[j].insert(i);
+            });
         return edges;
     }
 
-    std::set<std::size_t> pygraph::get_vertex_data(std::size_t i) const
+    std::set<u64> pygraph::get_vertex_data(u64 i) const
     {
         if (i > this->nvert) throw CM_ERROR("Vertex index out of bounds");
         return this->G->vertex_data(i);
     }
 
     // Subgraph isomorphisms
-    std::pair<std::vector<std::size_t>, std::vector<std::size_t>> iso_edges(
-        std::size_t& nv, std::size_t& ne, const pygraph& g1, const pygraph& g2)
+    std::pair<std::vector<u64>, std::vector<u64>> iso_edges(u64& nv, u64& ne,
+                                                            const pygraph& g1,
+                                                            const pygraph& g2)
     {
         return iso_edges(nv, ne, *(g1.G), *(g2.G));
     }

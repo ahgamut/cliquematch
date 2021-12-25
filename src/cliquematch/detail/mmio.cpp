@@ -8,8 +8,9 @@ namespace cliquematch
 {
 namespace detail
 {
-    std::pair<std::vector<std::size_t>, std::vector<std::size_t>> mmio4_reader(
-        const char* filename, std::size_t& n_vert, std::size_t& n_edges)
+    std::pair<std::vector<u64>, std::vector<u64>> mmio4_reader(const char* filename,
+                                                               u64& n_vert,
+                                                               u64& n_edges)
     {
         using namespace std;
         ifstream f(filename, ios::in);
@@ -24,8 +25,8 @@ namespace detail
         // and some properties
         while (f.peek() == '%' || f.peek() == '#') f.ignore(2048, '\n');
 
-        std::size_t n_loops = 0, n_invalids = 0, dummy, i, j;
-        std::size_t v1, v2;
+        u64 n_loops = 0, n_invalids = 0, dummy, i, j;
+        u64 v1, v2;
 
         // the file then has the number of vertices twice
         // followed by the number of edges
@@ -33,7 +34,7 @@ namespace detail
         f >> dummy;
         f >> n_edges;
 
-        pair<vector<std::size_t>, vector<std::size_t>> Edges;
+        pair<vector<u64>, vector<u64>> Edges;
         // each edge is going to stored twice
         // plus dummy loop edges for easier cliques
         // plus a sentinel vertex to show errors

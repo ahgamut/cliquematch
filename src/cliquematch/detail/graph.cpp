@@ -10,27 +10,20 @@ namespace cliquematch
 {
 namespace detail
 {
-    /* I use std::size_t everywhere except for when loading a graphBits instance,
-     * where I need to know I am definitely getting a 32bit value to work with.
-     * The assertion is just to know that a reinterpret_cast<u32*>(std::size_t*)
-     * isn't going to cause errors
+    /* I use u64 everywhere, so I know I am definitely getting a 64bit value
+     * to work with during any calculation.
      */
-    static_assert(sizeof(std::size_t) >= sizeof(u32),
-                  "cannot pack 32bit values into std::size_t");
-    constexpr std::size_t U32_PER_SIZE_T = sizeof(std::size_t) / sizeof(u32);
 
     /* Insertion sort performed on a pair of arrays simultaneously.
      * Results in the pair (p0[i], p1[i]) sorted in increasing order
      * from start to end
      */
-    void insertionSort(std::size_t* p0, std::size_t* p1, std::size_t start,
-                       std::size_t end)
+    void insertionSort(u64* p0, u64* p1, u64 start, u64 end)
     {
-        for (std::size_t i = start + 1; i < end; i++)
+        for (u64 i = start + 1; i < end; i++)
         {
-            for (std::size_t j = i;
-                 j != start &&
-                 (p0[j - 1] != p0[j] ? p0[j - 1] > p0[j] : p1[j - 1] > p1[j]);
+            for (u64 j = i; j != start && (p0[j - 1] != p0[j] ? p0[j - 1] > p0[j]
+                                                              : p1[j - 1] > p1[j]);
                  j--)
             {
                 std::swap(p0[j], p0[j - 1]);
@@ -45,13 +38,12 @@ namespace detail
      * Results in the pair (p0[i], p1[i]) sorted in increasing order
      * from start to end
      */
-    void radixSort(std::size_t* p0, std::size_t* p1, std::size_t start, std::size_t end,
-                   std::size_t shift = 0, bool key_first = true,
-                   const std::size_t max_shift = 28)
+    void radixSort(u64* p0, u64* p1, u64 start, u64 end, u64 shift = 0,
+                   bool key_first = true, const u64 max_shift = 28)
     {
-        std::size_t i, j, k;
-        std::size_t starts[16] = {0};
-        std::size_t ends[16] = {0};
+        u64 i, j, k;
+        u64 starts[16] = {0};
+        u64 ends[16] = {0};
         auto p = key_first ? p0 : p1;
 
         for (i = start; i < end; i++) ends[(p[i] >> shift) & 0xF]++;
@@ -105,11 +97,10 @@ namespace detail
      * if (p0[i] == p0[j] && p1[i] == p1[j]) then p0[j], p1[j] are removed
      * CALLER has to resize the array after completion
      */
-    std::size_t modUnique(std::size_t* p0, std::size_t* p1, std::size_t start,
-                          std::size_t end)
+    u64 modUnique(u64* p0, u64* p1, u64 start, u64 end)
     {
         if (start == end) return end;
-        std::size_t result = start;
+        u64 result = start;
         while (++start != end)
         {
             if ((p0[result] != p0[start] || p1[result] != p1[start]) &&
@@ -126,11 +117,9 @@ namespace detail
      * the custom radixSort+unique is faster than std::sort+unique on a vector<pair>,
      * not to mention the memory savings in the graph constructor
      */
-    void clean_edges(
-        std::size_t n_vert,
-        std::pair<std::vector<std::size_t>, std::vector<std::size_t>>& edges)
+    void clean_edges(u64 n_vert, std::pair<std::vector<u64>, std::vector<u64>>& edges)
     {
-        std::size_t m = n_vert, radix_shift = 0;
+        u64 m = n_vert, radix_shift = 0;
         for (; m != 0; m >>= 4) radix_shift += 4;
         radix_shift -= 4;
         radixSort(edges.first.data(), edges.second.data(), 0, edges.first.size(),
@@ -154,8 +143,8 @@ namespace detail
         CLIQUE_LIMIT = 0xFFFF;
     }
 
-    graph::graph(const std::size_t n_vert, const std::size_t n_edges,
-                 std::pair<std::vector<std::size_t>, std::vector<std::size_t>>&& edges)
+    graph::graph(const u64 n_vert, const u64 n_edges,
+                 std::pair<std::vector<u64>, std::vector<u64>>&& edges)
         : graph()
     {
         clean_edges(n_vert + 1, edges);
@@ -175,11 +164,11 @@ namespace detail
          * clear_memory() instead of making repeated calls to the heap for
          * small allocations.
          *
-         * edge_bits is vector<size_t> to enable the swap. Earlier it was vector<u32>.
-         * So I have to use reinterpret_cast<u32*> to use this memory.
+         * edge_bits is vector<u64>. no need to reinterpret_cast<u64*> to use this
+         * memory.
          */
 
-        std::size_t i, j;
+        u64 i, j;
         for (i = 0; i < this->n_vert; i++)
         {
             for (j = 0; el_size + j < edge_list.size() && edge_bits[el_size + j] == i;
@@ -188,7 +177,7 @@ namespace detail
 
             this->vertices[i].refer_from(i, j, this->el_size, this->eb_size);
             this->el_size += j;
-            this->eb_size += (j % BITS_PER_SIZE_T != 0) + j / BITS_PER_SIZE_T;
+            this->eb_size += (j % BITS_PER_U64 != 0) + j / BITS_PER_U64;
         }
 
         search_start = 1 + eb_size;
@@ -200,17 +189,16 @@ namespace detail
 
     /* call set_spos() for each vertex of the graph, collect rudimentary
      * heuristics like maximum degree and maximum clique size for each vertex,
-     * and esnure adequate memory is present for the clique search
+     * and ensure adequate memory is present for the clique search
      */
     void graph::set_vertices()
     {
         max_degree = CLIQUE_LIMIT = 0;
-        std::size_t cur, j, vert;
+        u64 cur, j, vert;
         // this loop may benefit from being parallelized
         for (cur = 0; cur < vertices.size(); cur++)
         {
-            vertices[cur].set_spos(this->edge_list.data(),
-                                   reinterpret_cast<u32*>(this->edge_bits.data()));
+            vertices[cur].set_spos(this->edge_list.data(), this->edge_bits.data());
             for (j = this->vertices[cur].spos + 1; j < this->vertices[cur].N; j++)
             {
                 // vert always has greater id than cur
@@ -230,10 +218,10 @@ namespace detail
             if (vertices[cur].N > max_degree) max_degree = vertices[cur].N;
         }
 
-        const std::size_t size_per_step =
-            (max_degree % BITS_PER_SIZE_T != 0) + max_degree / BITS_PER_SIZE_T;
-        const std::size_t spread = (search_end - search_start);
-        const std::size_t max_space = 2 * (CLIQUE_LIMIT + 1) * (size_per_step);
+        const u64 size_per_step =
+            (max_degree % BITS_PER_U64 != 0) + max_degree / BITS_PER_U64;
+        const u64 spread = (search_end - search_start);
+        const u64 max_space = 2 * (CLIQUE_LIMIT + 1) * (size_per_step);
         /*
          * Available memory in edge_bits ~= (|V| + 2|E|) - ceil(2|E|/64) max.
          * degree for a vertex = d_max < |V|
@@ -258,44 +246,44 @@ namespace detail
 
     void graph::disp() const
     {
-        for (std::size_t i = 0; i < this->n_vert; i++)
+        for (u64 i = 0; i < this->n_vert; i++)
             this->vertices[i].disp(this->edge_list.data());
     }
 
     // pass edges one by one to external function
-    void graph::send_data(std::function<void(std::size_t, std::size_t)> dfunc) const
+    void graph::send_data(std::function<void(u64, u64)> dfunc) const
     {
-        for (std::size_t i = 0; i < this->n_vert; i++)
+        for (u64 i = 0; i < this->n_vert; i++)
         {
-            for (std::size_t k = this->vertices[i].spos + 1; k < this->vertices[i].N;
-                 k++)
+            for (u64 k = this->vertices[i].spos + 1; k < this->vertices[i].N; k++)
                 dfunc(i, this->edge_list[this->vertices[i].elo + k]);
         }
     }
 
     // return all neighbors of a vertex as a set
-    std::set<std::size_t> graph::vertex_data(std::size_t i) const
+    std::set<u64> graph::vertex_data(u64 i) const
     {
-        auto ans = std::set<std::size_t>(
+        auto ans = std::set<u64>(
             this->edge_list.begin() + this->vertices[i].elo,
             this->edge_list.begin() + this->vertices[i].elo + this->vertices[i].N);
         ans.erase(ans.find(i));
         return ans;
     }
 
-    std::pair<std::vector<std::size_t>, std::vector<std::size_t>> iso_edges(
-        std::size_t& num_vertices, std::size_t& num_edges, const graph& g1,
-        const graph& g2)
+    std::pair<std::vector<u64>, std::vector<u64>> iso_edges(u64& num_vertices,
+                                                            u64& num_edges,
+                                                            const graph& g1,
+                                                            const graph& g2)
     {
         // subtract 1 from each because 0 is a sentinel vertex for graph
         num_vertices = (g1.n_vert - 1) * (g2.n_vert - 1);
         num_edges = 0;
-        std::pair<std::vector<std::size_t>, std::vector<std::size_t>> edges;
+        std::pair<std::vector<u64>, std::vector<u64>> edges;
         edges.first.resize(num_vertices + 1);
         edges.second.resize(num_vertices + 1);
 
-        std::size_t i1, i2, j1, j2, v1, v2;
-        std::size_t k, l;
+        u64 i1, i2, j1, j2, v1, v2;
+        u64 k, l;
         short f1, f2;
 
         for (l = 0; l < edges.first.size(); l++)

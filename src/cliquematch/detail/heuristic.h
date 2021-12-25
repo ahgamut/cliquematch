@@ -9,8 +9,8 @@ namespace detail
 {
     struct vtriple
     {
-        std::size_t id, N, pos;
-        void load(std::size_t _id, std::size_t _N, std::size_t _pos)
+        u64 id, N, pos;
+        void load(u64 _id, u64 _N, u64 _pos)
         {
             id = _id;
             N = _N;
@@ -24,11 +24,11 @@ namespace detail
     {
        private:
         std::vector<vtriple> neighbors;
-        std::size_t clique_potential, candidates_left, cur_clique_size, cand_max;
+        u64 clique_potential, candidates_left, cur_clique_size, cand_max;
 
        public:
-        std::size_t process_graph(graph&);
-        void process_vertex(graph&, std::size_t, graphBits&, graphBits&);
+        u64 process_graph(graph&);
+        void process_vertex(graph&, u64, graphBits&, graphBits&);
         DegreeHeuristic() = default;
         ~DegreeHeuristic() = default;
     };

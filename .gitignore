@@ -1,5 +1,6 @@
 # Byte-compiled / optimized / DLL files
 memtest/*
+memtest/cm_base
 !memtest/README.md
 !memtest/Makefile
 !memtest/main.cpp

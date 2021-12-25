@@ -6,7 +6,7 @@ namespace ext
 {
     bool build_edges_for_iso(pygraph& pg, const pygraph& s1, const pygraph& s2)
     {
-        std::size_t no_of_vertices, no_of_edges;
+        u64 no_of_vertices, no_of_edges;
         if (s1.nvert == 0 || s2.nvert == 0)
             throw CM_ERROR("One of the inputs is an empty graph");
 

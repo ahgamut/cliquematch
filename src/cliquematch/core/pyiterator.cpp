@@ -5,9 +5,9 @@ namespace cliquematch
 {
 namespace core
 {
-    std::vector<std::size_t> CliqueIterator::next_clique()
+    std::vector<u64> CliqueIterator::next_clique()
     {
-        std::size_t v;
+        u64 v;
         while (true)
         {
             v = en->process_graph(*(pg.G));
@@ -17,10 +17,9 @@ namespace core
         throw pybind11::stop_iteration();
     }
 
-    std::pair<std::vector<std::size_t>, std::vector<std::size_t>>
-    CorrespondenceIterator::next_clique()
+    std::pair<std::vector<u64>, std::vector<u64>> CorrespondenceIterator::next_clique()
     {
-        std::size_t v;
+        u64 v;
         while (true)
         {
             v = en->process_graph(*(pg.G));

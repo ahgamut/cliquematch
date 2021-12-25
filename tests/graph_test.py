@@ -28,7 +28,7 @@ class TestGraph(object):
     """
 
     def test_adjmat(self):
-        adjmat = np.zeros((5, 5), dtype=np.bool)
+        adjmat = np.zeros((5, 5), dtype=np.bool_)
         adjmat[0, 1:] = True
         adjmat[1, [0, 3]] = True
         adjmat[2, [0, 4]] = True
@@ -40,7 +40,7 @@ class TestGraph(object):
         assert G1.n_edges == np.sum(adjmat) / 2
         assert np.sum(adjmat ^ G1.to_matrix()) == 0
 
-        badmat = np.zeros((5, 4), dtype=np.bool)
+        badmat = np.zeros((5, 4), dtype=np.bool_)
         with pytest.raises(RuntimeError):
             G2 = cliquematch.Graph.from_matrix(badmat)
 

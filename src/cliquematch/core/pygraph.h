@@ -9,10 +9,12 @@
 #include <set>
 #include <vector>
 #include <utility>
+#include <cstdint>
 #include <cmath>
 // need to #include<cmath> before pybind11/numpy otherwise issues with ::hypot
 #include <pybind11/numpy.h>
 
+typedef uint64_t u64;
 namespace cliquematch
 {
 namespace detail
@@ -35,44 +37,38 @@ namespace core
 
        public:
         bool finished_all;
-        std::size_t nvert, nedges;
-        std::size_t current_vertex;
+        u64 nvert, nedges;
+        u64 current_vertex;
 
         pygraph();
         pygraph(pygraph&&);
         pygraph(const pygraph&) = delete;
         pygraph& operator=(pygraph&) = delete;
         virtual ~pygraph();
-        void load_graph(
-            std::size_t, std::size_t,
-            std::pair<std::vector<std::size_t>, std::vector<std::size_t>>&&);
+        void load_graph(u64, u64, std::pair<std::vector<u64>, std::vector<u64>>&&);
         void check_loaded() const;
-        std::vector<std::size_t> get_max_clique(std::size_t lower_bound = 1,
-                                                std::size_t upper_bound = 0xFFFF,
-                                                double time_limit = -1,
-                                                bool use_heuristic = true,
-                                                bool use_dfs = true,
-                                                bool continue_search = false);
+        std::vector<u64> get_max_clique(u64 lower_bound = 1, u64 upper_bound = 0xFFFF,
+                                        double time_limit = -1,
+                                        bool use_heuristic = true, bool use_dfs = true,
+                                        bool continue_search = false);
         void reset_search();
-        std::pair<std::vector<std::size_t>, std::vector<std::size_t>>
-        get_correspondence(std::size_t len1, std::size_t len2,
-                           std::size_t lower_bound = 1,
-                           std::size_t upper_bound = 0xFFFF, double time_limit = -1,
-                           bool use_heuristic = true, bool use_dfs = true,
-                           bool continue_search = false);
-        std::pair<std::vector<std::size_t>, std::vector<std::size_t>>
-        get_correspondence2(std::size_t len1, std::size_t len2,
-                            std::vector<std::size_t> clique);
+        std::pair<std::vector<u64>, std::vector<u64>> get_correspondence(
+            u64 len1, u64 len2, u64 lower_bound = 1, u64 upper_bound = 0xFFFF,
+            double time_limit = -1, bool use_heuristic = true, bool use_dfs = true,
+            bool continue_search = false);
+        std::pair<std::vector<u64>, std::vector<u64>> get_correspondence2(
+            u64 len1, u64 len2, std::vector<u64> clique);
 
         std::string showdata() const;
         ndarray<bool> to_adj_matrix() const;
-        ndarray<std::size_t> to_edgelist() const;
-        std::vector<std::set<std::size_t>> to_adj_list() const;
+        ndarray<u64> to_edgelist() const;
+        std::vector<std::set<u64>> to_adj_list() const;
         void to_file(std::string filename) const;
-        std::set<std::size_t> get_vertex_data(std::size_t i) const;
+        std::set<u64> get_vertex_data(u64 i) const;
 
-        friend std::pair<std::vector<std::size_t>, std::vector<std::size_t>> iso_edges(
-            std::size_t&, std::size_t&, const pygraph&, const pygraph&);
+        friend std::pair<std::vector<u64>, std::vector<u64>> iso_edges(u64&, u64&,
+                                                                       const pygraph&,
+                                                                       const pygraph&);
         friend class pygraphDeleter;
         friend class CliqueIterator;
         friend class CorrespondenceIterator;
@@ -84,11 +80,10 @@ namespace core
         void operator()(pygraph* pg);
     };
     pygraph from_adj_matrix(ndarray<bool> adjmat);
-    pygraph from_edgelist(ndarray<std::size_t> edge_list, std::size_t no_of_vertices);
+    pygraph from_edgelist(ndarray<u64> edge_list, u64 no_of_vertices);
     pygraph from_file(std::string filename);
-    pygraph from_adj_list(std::size_t n_vertices, std::size_t n_edges,
-                          std::vector<std::set<std::size_t>> edges);
+    pygraph from_adj_list(u64 n_vertices, u64 n_edges,
+                          std::vector<std::set<u64>> edges);
 }  // namespace core
 }  // namespace cliquematch
 #endif /* PYGRAPH_H */
-

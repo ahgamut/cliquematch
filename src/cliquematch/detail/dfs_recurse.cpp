@@ -18,9 +18,9 @@ namespace cliquematch
 {
 namespace detail
 {
-    std::size_t RecursionDFS::process_graph(graph& G)
+    u64 RecursionDFS::process_graph(graph& G)
     {
-        std::size_t i = start_vertex;
+        u64 i = start_vertex;
         for (; i < G.n_vert; i++)
         {
             if (G.vertices[i].mcs <= G.CUR_MAX_CLIQUE_SIZE ||
@@ -33,16 +33,16 @@ namespace detail
         return i;
     }
 
-    void RecursionDFS::process_vertex(graph& G, std::size_t cur)
+    void RecursionDFS::process_vertex(graph& G, u64 cur)
     {
-        request_size = (G.vertices[cur].N % BITS_PER_SIZE_T != 0) +
-                       G.vertices[cur].N / BITS_PER_SIZE_T;
+        request_size =
+            (G.vertices[cur].N % BITS_PER_U64 != 0) + G.vertices[cur].N / BITS_PER_U64;
 
         // "memory" allocations for cand, res at root of subtree
         graphBits res(G.load_memory(request_size), G.vertices[cur].N, false);
         graphBits cand(G.load_memory(request_size), G.vertices[cur].N, false);
         res.set(G.vertices[cur].spos);
-        std::size_t j, vert, clique_potential = 1;
+        u64 j, vert, clique_potential = 1;
 
         // only search thru neighbors with greater degrees
         // (this amortizes the search cost because
@@ -73,12 +73,12 @@ namespace detail
         G.clear_memory(2 * request_size);  // releasing memory of cand, res
     }
 
-    void RecursionDFS::search_vertex(graph& G, std::size_t cur,
-                                     const graphBits& prev_cand, graphBits& res)
+    void RecursionDFS::search_vertex(graph& G, u64 cur, const graphBits& prev_cand,
+                                     graphBits& res)
     {
         // weak assumption: cand, res may lead to a clique larger than the current max
-        std::size_t candidates_left = prev_cand.count();
-        std::size_t clique_potential = candidates_left + res.count();
+        u64 candidates_left = prev_cand.count();
+        u64 clique_potential = candidates_left + res.count();
 
         if (G.elapsed_time() > this->TIME_LIMIT)
             return;  // out of time, stop searching the graph immediately
@@ -108,14 +108,14 @@ namespace detail
         cand.copy_from(prev_cand, G.load_memory(request_size));
         future_cand.copy_from(prev_cand, G.load_memory(request_size));
 
-        std::size_t j, k, vert, ans;
+        u64 j, k, vert, ans;
         short f = 0;
         for (j = 0; j < G.vertices[cur].N; j++)
         {
             // keep going until a candidate exists
             if (cand.block_empty(j))
             {
-                j += (31 - (j & 0x1fu));
+                j += (63 - (j & 0x3fu));
                 continue;
             }
             if (!cand[j]) continue;
@@ -135,7 +135,7 @@ namespace detail
             {
                 if (future_cand.block_empty(k))
                 {
-                    k += (31 - (k & 0x1fu));
+                    k += (63 - (k & 0x3fu));
                     continue;
                 }
                 if (!future_cand[k]) continue;

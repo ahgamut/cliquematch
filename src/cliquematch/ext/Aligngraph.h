@@ -8,9 +8,9 @@ namespace cliquematch
 namespace ext
 {
     bool build_edges_with_filter(pygraph& pg, const Eigen::Ref<DoubleMatrixR>& pts1,
-                                 const std::size_t pts1_len,
+                                 const u64 pts1_len,
                                  const Eigen::Ref<DoubleMatrixR>& pts2,
-                                 const std::size_t pts2_len, const double epsilon,
+                                 const u64 pts2_len, const double epsilon,
                                  const Eigen::Ref<DoubleMatrixR> control_pts,
                                  const Eigen::Ref<BoolMatrixR> mask,
                                  const double percentage = 0.8);

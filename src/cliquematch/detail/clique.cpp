@@ -12,7 +12,7 @@ namespace cliquematch
 {
 namespace detail
 {
-    double graph::find_max_cliques(std::size_t& start_vert, bool use_heur, bool use_dfs,
+    double graph::find_max_cliques(u64& start_vert, bool use_heur, bool use_dfs,
                                    double time_limit)
     {
         DegreeHeuristic heur;
@@ -33,11 +33,11 @@ namespace detail
         return this->elapsed_time();
     }
 
-    std::vector<std::size_t> graph::get_max_clique() const
+    std::vector<u64> graph::get_max_clique() const
     {
         return this->get_max_clique(this->CUR_MAX_CLIQUE_LOC);
     }
-    std::vector<std::size_t> graph::get_max_clique(std::size_t i) const
+    std::vector<u64> graph::get_max_clique(u64 i) const
     {
         return this->vertices[i].give_clique(this->edge_list.data());
     }

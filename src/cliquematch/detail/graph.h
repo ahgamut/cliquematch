@@ -22,7 +22,8 @@
  *
  * The constructor accepts a pair<vector>&& instead of vector<pair>& so that
  * the memory used for reading the edges can be swapped into the graph. This
- * saves a LOT of memory, but the tradeoff is the use of reinterpret_cast.
+ * saves a LOT of memory, but the tradeoff is the use of raw pointers, and
+ * custom memory management.
 
  * Earlier (4) was allocated on the heap, but now has been combined with (3).
  * There is some internal bookkeeping done for the clique search, but overall
@@ -41,20 +42,20 @@ namespace cliquematch
 namespace detail
 {
     // to help CALLERs of load_memory/clear_memory
-    constexpr std::size_t BITS_PER_SIZE_T = 8 * sizeof(std::size_t);
+    constexpr u64 BITS_PER_U64 = 8 * sizeof(u64);
 
     class graph
     {
        private:
-        std::vector<std::size_t> edge_list;  // store raw list of edges
-        std::vector<std::size_t> edge_bits;  // store all clique bitsets (padded)
-        std::vector<vertex> vertices;        // store all contextual vertex info
-        std::size_t el_size;                 // edge_list.size(), computed separately
-        std::size_t eb_size;                 // amount of memory used for bitsets
+        std::vector<u64> edge_list;    // store raw list of edges
+        std::vector<u64> edge_bits;    // store all clique bitsets (padded)
+        std::vector<vertex> vertices;  // store all contextual vertex info
+        u64 el_size;                   // edge_list.size(), computed separately
+        u64 eb_size;                   // amount of memory used for bitsets
 
         // to handle the extra memory available in edge_bits
-        std::size_t search_start, search_cur, search_end;
-        u32* load_memory(const std::size_t N)
+        u64 search_start, search_cur, search_end;
+        u64* load_memory(const u64 N)
         {
             /* Take available memory owned by edge_bits and return it
              * to a graphBits object to use during the clique search. It's not
@@ -65,14 +66,14 @@ namespace detail
              * either globally or within the graph), but this is fast enough
              * for now. Check graph.cpp and dfs_stack.cpp for more context.
              */
-            u32* loc = reinterpret_cast<u32*>(&(edge_bits[search_cur]));
+            u64* loc = &(edge_bits[search_cur]);
             search_cur += N;
             return loc;
         }
-        void clear_memory(const std::size_t N)
+        void clear_memory(const u64 N)
         {
             search_cur -= N;
-            for (std::size_t i = 0; i < N; i++) edge_bits[search_cur + i] = 0;
+            for (u64 i = 0; i < N; i++) edge_bits[search_cur + i] = 0;
         }
 
         // to handle checking the time during the search
@@ -86,8 +87,8 @@ namespace detail
         }
 
         // find if two vertices are neighbors, if yes, return valid position
-        short find_if_neighbors(const std::size_t v1_id, const std::size_t v2_id,
-                                std::size_t& v2_position) const
+        short find_if_neighbors(const u64 v1_id, const u64 v2_id,
+                                u64& v2_position) const
         {
             return binary_find(&(this->edge_list[this->vertices[v1_id].elo]),
                                this->vertices[v1_id].N, v2_id, v2_position);
@@ -96,40 +97,41 @@ namespace detail
         void set_vertices();  // used by constructor to set vertex data
 
        public:
-        std::size_t n_vert;               // number of vertices in the graph
-        std::size_t max_degree, md_vert;  // md_vert = vertex that has max_degree
+        u64 n_vert;               // number of vertices in the graph
+        u64 max_degree, md_vert;  // md_vert = vertex that has max_degree
 
         // in early implementations these were global variables within
         // graph.cpp, i.e. it is a big deal when these change during the search
 
-        std::size_t CLIQUE_LIMIT;  // upper bound on the clique size for this graph
-        std::size_t CUR_MAX_CLIQUE_SIZE;  // size of the CUR_MAX_CLIQUE
-        std::size_t CUR_MAX_CLIQUE_LOC;   // vertex ID containing the CUR_MAX_CLIQUE
+        u64 CLIQUE_LIMIT;         // upper bound on the clique size for this graph
+        u64 CUR_MAX_CLIQUE_SIZE;  // size of the CUR_MAX_CLIQUE
+        u64 CUR_MAX_CLIQUE_LOC;   // vertex ID containing the CUR_MAX_CLIQUE
 
         // basic functions
         graph();
         // notice that edges are consumed (CALLER needs to std::move)
-        graph(const std::size_t n_vert, const std::size_t n_edges,
-              std::pair<std::vector<std::size_t>, std::vector<std::size_t>>&& edges);
+        graph(const u64 n_vert, const u64 n_edges,
+              std::pair<std::vector<u64>, std::vector<u64>>&& edges);
 
         // call with starting vertex to compute cliques
-        double find_max_cliques(std::size_t& start_vert, bool use_heur = false,
+        double find_max_cliques(u64& start_vert, bool use_heur = false,
                                 bool use_dfs = true, double time_limit = -1);
         // return the overall max clique
-        std::vector<std::size_t> get_max_clique() const;
+        std::vector<u64> get_max_clique() const;
         // return the max clique stored for vertex i
-        std::vector<std::size_t> get_max_clique(std::size_t i) const;
+        std::vector<u64> get_max_clique(u64 i) const;
         // return all neighbors of a vertex
-        std::set<std::size_t> vertex_data(std::size_t i) const;
+        std::set<u64> vertex_data(u64 i) const;
         // pass edges one by one to external function
-        void send_data(std::function<void(std::size_t, std::size_t)>) const;
+        void send_data(std::function<void(u64, u64)>) const;
 
         // display data for debugging
         void disp() const;
 
         // construct a correspondence graph for subgraph isomorphisms
-        friend std::pair<std::vector<std::size_t>, std::vector<std::size_t>> iso_edges(
-            std::size_t&, std::size_t&, const graph&, const graph&);
+        friend std::pair<std::vector<u64>, std::vector<u64>> iso_edges(u64&, u64&,
+                                                                       const graph&,
+                                                                       const graph&);
 
         // clique search objects need access to internal data
         friend class RecursionDFS;
@@ -141,4 +143,3 @@ namespace detail
 }  // namespace cliquematch
 
 #endif /* GRAPH_H */
-

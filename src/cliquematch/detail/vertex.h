@@ -30,14 +30,13 @@ namespace detail
      * the parameters are usually the list of neighbors of a vertex,
      * the vertex degree, a potential neighbor, and the location of the neighbor
      */
-    inline short binary_find(const std::size_t* const a, const std::size_t N,
-                             const std::size_t val, std::size_t& loc)
+    inline short binary_find(const u64* const a, const u64 N, const u64 val, u64& loc)
     {
         /* modified binary search, returns location by reference
          * return 1 if found, 0 if not found
          * returns -1 only if value is greater than the array
          */
-        std::size_t beg = 0, end = N - 1, mid = beg + ((end - beg) >> 1);
+        u64 beg = 0, end = N - 1, mid = beg + ((end - beg) >> 1);
         if (a[end] < val)
         {
             loc = end;
@@ -66,12 +65,12 @@ namespace detail
 
     struct vertex
     {
-        std::size_t id;    // vertex number
-        std::size_t N;     // # neighbors + 1 (the vertex itself)
-        std::size_t spos;  // (Self-POSition) its own location in the list of neighbors
-        std::size_t elo;   // edge_list offset
-        std::size_t ebo;   // edge_bits offset (with correct padding)
-        std::size_t mcs;   // *M*aximum *C*lique *S*ize for a search at this vertex
+        u64 id;    // vertex number
+        u64 N;     // # neighbors + 1 (the vertex itself)
+        u64 spos;  // (Self-POSition) its own location in the list of neighbors
+        u64 elo;   // edge_list offset
+        u64 ebo;   // edge_bits offset (with correct padding)
+        u64 mcs;   // *M*aximum *C*lique *S*ize for a search at this vertex
 
         graphBits bits;
 
@@ -89,7 +88,7 @@ namespace detail
             this->mcs = 0;
         }
         // store degree and offsets
-        void refer_from(std::size_t id, std::size_t N, std::size_t elo, std::size_t ebo)
+        void refer_from(u64 id, u64 N, u64 elo, u64 ebo)
         {
             this->id = id;
             this->N = N;
@@ -99,7 +98,7 @@ namespace detail
             this->spos = 0;
         }
         // compute spos and load bitset data
-        void set_spos(std::size_t* el_base, u32* eb_base)
+        void set_spos(u64* el_base, u64* eb_base)
         {
             // no need to check returned value because it should always be 1
             binary_find(&el_base[this->elo], this->N, this->id, this->spos);
@@ -107,13 +106,12 @@ namespace detail
             this->bits.set(this->spos);
         }
         // display the neighbors given the raw data
-        void disp(const std::size_t*) const;
-        void clique_disp(const std::size_t*) const;
+        void disp(const u64*) const;
+        void clique_disp(const u64*) const;
         // return a clique computed starting at this vertex
-        std::vector<std::size_t> give_clique(const std::size_t*) const;
+        std::vector<u64> give_clique(const u64*) const;
     };
 
 }  // namespace detail
 }  // namespace cliquematch
 #endif /* VERTEX_H */
-

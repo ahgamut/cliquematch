@@ -12,7 +12,7 @@ namespace ext
     template <class T>
     struct pair_dist
     {
-        std::size_t first, second;
+        u64 first, second;
         T dist;
         bool operator>(const pair_dist<T> &BB) const { return (this->dist > BB.dist); }
         bool operator<(const pair_dist<T> &BB) const { return (this->dist < BB.dist); }
@@ -28,10 +28,9 @@ namespace ext
     };
 
     template <class T>
-    short binary_find2(const pair_dist<T> *const a, const std::size_t N, const T &val,
-                       std::size_t &loc)
+    short binary_find2(const pair_dist<T> *const a, const u64 N, const T &val, u64 &loc)
     {
-        std::size_t beg = 0, end = N - 1, mid = beg + ((end - beg) >> 1);
+        u64 beg = 0, end = N - 1, mid = beg + ((end - beg) >> 1);
         if (a[end] < val)
         {
             loc = end;
@@ -65,4 +64,3 @@ namespace ext
 }  // namespace ext
 }  // namespace cliquematch
 #endif /* PAIR_DIST_HPP */
-

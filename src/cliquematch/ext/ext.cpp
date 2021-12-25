@@ -5,4 +5,3 @@ namespace py = pybind11;
  * Is it possible to have core.so (with pygraph) and ext.so (with subclasses)
  * to which core is dynamically linked?
  */
-

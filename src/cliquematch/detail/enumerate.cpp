@@ -38,8 +38,8 @@ namespace detail
     // return true if the vertex this->cur can possibly build a clique of REQUIRED_SIZE
     bool CliqueEnumerator::load_vertex(graph& G)
     {
-        request_size = (G.vertices[cur].N % BITS_PER_SIZE_T != 0) +
-                       G.vertices[cur].N / BITS_PER_SIZE_T;
+        request_size =
+            (G.vertices[cur].N % BITS_PER_U64 != 0) + G.vertices[cur].N / BITS_PER_U64;
 
         // "memory" allocations for cand, res at root of subtree
         SearchState x(G.vertices[cur], G.load_memory(request_size),
@@ -85,7 +85,7 @@ namespace detail
 
     // return id of the vertex where a clique of REQUIRED_SIZE was found
     // CALLER checks if returned value > G.n_vert => search is complete
-    std::size_t CliqueEnumerator::process_graph(graph& G)
+    u64 CliqueEnumerator::process_graph(graph& G)
     {
         if (this->REQUIRED_SIZE == 0)
         {  // 0 cliques of size 0, dummy case

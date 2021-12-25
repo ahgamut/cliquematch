@@ -10,7 +10,7 @@
  * implicit/recomputed at every call in RecursionDFS).
  *
  * As each SearchState object contains two graphBits objects, SearchStates do
- * not manage memory, can only be moved, and require raw u32* pointers from the
+ * not manage memory, can only be moved, and require raw u64* pointers from the
  * CALLER.
  *
  */
@@ -22,13 +22,13 @@ namespace detail
 {
     struct SearchState
     {
-        const std::size_t id;  // index of the neighbor that's been added to the clique
-        std::size_t start_at;  // index where the search should start
+        const u64 id;  // index of the neighbor that's been added to the clique
+        u64 start_at;  // index where the search should start
         graphBits res, cand;
 
         SearchState() : id(0){};
-        SearchState(std::size_t id) : id(id), start_at(id + 1){};
-        SearchState(const vertex& ver, u32* res_ptr, u32* cand_ptr)
+        SearchState(u64 id) : id(id), start_at(id + 1){};
+        SearchState(const vertex& ver, u64* res_ptr, u64* cand_ptr)
             : id(ver.spos), start_at(0), res(res_ptr, ver.N), cand(cand_ptr, ver.N)
         {
             this->res.set(this->id);
@@ -37,7 +37,7 @@ namespace detail
             : id(tmp.id), start_at(tmp.start_at), res(std::move(tmp.res)),
               cand(std::move(tmp.cand)){};
 
-        void refer_from(u32* cand_ptr, const graphBits& prev_cand,
+        void refer_from(u64* cand_ptr, const graphBits& prev_cand,
                         const graphBits& prev_res)
         {
             // this is similar to the recursive call in RecursionDFS::search_vertex:
