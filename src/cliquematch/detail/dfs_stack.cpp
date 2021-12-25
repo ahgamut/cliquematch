@@ -112,8 +112,10 @@ namespace detail
                      k++)
                 {
                     if (!cur_state.cand[k]) continue;
-                    f = G.find_if_neighbors(vert, G.edge_list[G.vertices[cur].elo + k],
-                                            ans);
+                    f = binary_find(
+                        &(G.edge_list[G.vertices[vert].elo + G.vertices[vert].spos]),
+                        G.vertices[vert].N - G.vertices[vert].spos,
+                        G.edge_list[G.vertices[cur].elo + k], ans);
                     if (f != 1) to_remove.push_back(k);
                     f = 0;
                     clique_potential =

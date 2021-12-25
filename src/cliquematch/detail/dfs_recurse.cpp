@@ -139,8 +139,10 @@ namespace detail
                     continue;
                 }
                 if (!future_cand[k]) continue;
-                f = G.find_if_neighbors(vert, G.edge_list[G.vertices[cur].elo + k],
-                                        ans);
+                f = binary_find(
+                    &(G.edge_list[G.vertices[vert].elo + G.vertices[vert].spos]),
+                    G.vertices[vert].N - G.vertices[vert].spos,
+                    G.edge_list[G.vertices[cur].elo + k], ans);
                 if (f != 1)
                 {
                     future_cand.reset(k);
