@@ -21,6 +21,7 @@ namespace detail
     u64 RecursionDFS::process_graph(graph& G)
     {
         u64 i = start_vertex;
+        process_vertex(G, G.md_vert);
         for (; i < G.n_vert; i++)
         {
             if (G.vertices[i].mcs <= G.CUR_MAX_CLIQUE_SIZE ||

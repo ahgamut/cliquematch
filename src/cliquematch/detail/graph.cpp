@@ -229,8 +229,8 @@ namespace detail
             vertices[cur].mcs = mcs;
             if (mcs > CLIQUE_LIMIT)
             {
-                    md_vert = cur;
-                    CLIQUE_LIMIT = mcs;
+                md_vert = cur;
+                CLIQUE_LIMIT = mcs;
             }
         }
 

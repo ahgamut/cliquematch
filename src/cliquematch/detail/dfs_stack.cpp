@@ -27,6 +27,7 @@ namespace detail
         // the upper bound on clique size is the maximum depth on the stack
         this->states.reserve(G.CLIQUE_LIMIT);
         this->to_remove.reserve(G.CLIQUE_LIMIT);
+        this->process_vertex(G, G.md_vert);
         for (i = 0; i < G.n_vert; i++)
         {
             if (G.vertices[i].mcs <= G.CUR_MAX_CLIQUE_SIZE ||
