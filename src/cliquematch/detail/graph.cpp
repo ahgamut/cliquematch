@@ -82,6 +82,8 @@ namespace detail
 
         starts[0] = start;
         for (i = 1; i < 16; i++) starts[i] = ends[i - 1];
+        // parallelization gives 2x speedup
+        // #pragma omp parallel for
         for (i = 0; i < 16; i++)
         {
             if (starts[i] >= ends[i])
@@ -168,38 +170,46 @@ namespace detail
          * memory.
          */
 
-        u64 i, j;
+        u64 i, j, spos, el_size_max = edge_list.size();
+        u64* el_base = edge_list.data();
+        u64* eb_base = edge_bits.data();
         for (i = 0; i < this->n_vert; i++)
         {
-            for (j = 0; el_size + j < edge_list.size() && edge_bits[el_size + j] == i;
-                 j++)
+            spos = 0;
+            for (j = 0; el_size + j < el_size_max && edge_bits[el_size + j] == i; j++)
+            {
                 edge_bits[el_size + j] = 0;
+                if (edge_list[el_size + j] == i) spos = j;
+            }
 
             this->vertices[i].refer_from(i, j, this->el_size, this->eb_size);
+            this->vertices[i].set_spos(el_base, eb_base, spos);
             this->el_size += j;
             this->eb_size += (j % BITS_PER_U64 != 0) + j / BITS_PER_U64;
+            if (j > max_degree) max_degree = j;
         }
 
         search_start = 1 + eb_size;
         search_cur = search_start;
         search_end = edge_bits.size();
 
-        this->set_vertices();
+        this->set_bounds();
     }
 
     /* call set_spos() for each vertex of the graph, collect rudimentary
      * heuristics like maximum degree and maximum clique size for each vertex,
      * and ensure adequate memory is present for the clique search
      */
-    void graph::set_vertices()
+    void graph::set_bounds()
     {
-        max_degree = CLIQUE_LIMIT = 0;
-        u64 cur, j, vert, mcs;
-        // this loop may benefit from being parallelized
-        for (cur = 0; cur < vertices.size(); cur++)
+        u64 cur, j, vert, mcs, size = vertices.size();
+        CLIQUE_LIMIT = 0;
+
+        // this loop doesn't benefit from being parallelized
+        // because the CLIQUE_LIMIT check requires atomics
+        for (cur = 0; cur < size; cur++)
         {
             mcs = 0;
-            vertices[cur].set_spos(this->edge_list.data(), this->edge_bits.data());
             for (j = 0; j < this->vertices[cur].spos; j++)
             {
                 // vert always has greater id than cur
@@ -219,10 +229,9 @@ namespace detail
             vertices[cur].mcs = mcs;
             if (mcs > CLIQUE_LIMIT)
             {
-                md_vert = cur;
-                CLIQUE_LIMIT = mcs;
+                    md_vert = cur;
+                    CLIQUE_LIMIT = mcs;
             }
-            if (vertices[cur].N > max_degree) max_degree = vertices[cur].N;
         }
 
         const u64 size_per_step =

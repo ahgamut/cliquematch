@@ -196,6 +196,8 @@ namespace core
 
             std::pair<std::vector<u64>, std::vector<u64>> edges;
 
+            edges.first.push_back(0);
+            edges.second.push_back(0);
             for (u64 i = 0; i < no_of_vertices; i++)
             {
                 for (u64 j = 0; j < no_of_vertices; j++)

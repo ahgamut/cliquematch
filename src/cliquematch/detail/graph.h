@@ -94,7 +94,7 @@ namespace detail
                                this->vertices[v1_id].N, v2_id, v2_position);
         }
 
-        void set_vertices();  // used by constructor to set vertex data
+        void set_bounds();  // used by constructor to set bounds for search
 
        public:
         u64 n_vert;               // number of vertices in the graph

@@ -98,10 +98,9 @@ namespace detail
             this->spos = 0;
         }
         // compute spos and load bitset data
-        void set_spos(u64* el_base, u64* eb_base)
+        void set_spos(u64* el_base, u64* eb_base, u64 spos)
         {
-            // no need to check returned value because it should always be 1
-            binary_find(&el_base[this->elo], this->N, this->id, this->spos);
+            this->spos = spos;
             this->bits.refer_from(&eb_base[this->ebo], this->N);
             this->bits.set(this->spos);
         }
