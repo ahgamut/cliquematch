@@ -3,24 +3,24 @@ LINKFLAGS= -fno-omit-frame-pointer
 VALFLAGS = --tool=memcheck --leak-check=full --leak-resolution=high --show-leak-kinds=all --errors-for-leak-kinds=all
 SRC_DIR = ../src/cliquematch/detail
 SRC_FILES = clique.cpp dfs_recurse.cpp dfs_stack.cpp gbits.cpp graph.cpp heuristic.cpp mmio.cpp vertex.cpp enumerate.cpp
-OBJS = $(patsubst %.cpp,%.o,$(SRC_FILES) main.cpp)
+OBJS = $(patsubst %.cpp,build/%.o,$(SRC_FILES) main.cpp)
 
-all: cm_base
+all: build/cm_base
 
-main.o: main.cpp
+build/main.o: main.cpp
 	$(CXX) $^ $(CXXFLAGS) -o $@
 
-%.o: $(SRC_DIR)/%.cpp
+build/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $^ $(CXXFLAGS) -o $@
 
-cm_base: $(OBJS)
+build/cm_base: $(OBJS)
 	$(CXX) $^ $(LINKFLAGS) -o $@
 
-test: cm_base cond-mat-2003.mtx
-	valgrind $(VALFLAGS) ./cm_base cond-mat-2003.mtx 0
+test: build/cm_base cond-mat-2003.mtx
+	valgrind $(VALFLAGS) ./build/cm_base cond-mat-2003.mtx 0
 
-run: cm_base cond-mat-2003.mtx
-	./cm_base cond-mat-2003.mtx 0
+run: build/cm_base cond-mat-2003.mtx
+	./build/cm_base cond-mat-2003.mtx 0
 
 clean:
-	rm -f cm_base *.o
+	rm -f build/cm_base build/*.o

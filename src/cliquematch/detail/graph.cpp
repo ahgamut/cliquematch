@@ -194,26 +194,33 @@ namespace detail
     void graph::set_vertices()
     {
         max_degree = CLIQUE_LIMIT = 0;
-        u64 cur, j, vert;
+        u64 cur, j, vert, mcs;
         // this loop may benefit from being parallelized
         for (cur = 0; cur < vertices.size(); cur++)
         {
+            mcs = 0;
             vertices[cur].set_spos(this->edge_list.data(), this->edge_bits.data());
-            for (j = this->vertices[cur].spos + 1; j < this->vertices[cur].N; j++)
+            for (j = 0; j < this->vertices[cur].spos; j++)
             {
                 // vert always has greater id than cur
                 vert = edge_list[vertices[cur].elo + j];
                 // degree of vert has to be >= degree of cur
                 // to be considered while searching from cur
-                vertices[cur].mcs += (vertices[vert].N >= vertices[cur].N);
-                // degree of vert has to be < degree of cur
-                // to be considered while searching from vert
-                vertices[vert].mcs += (vertices[vert].N < vertices[cur].N);
+                mcs += (vertices[vert].N > vertices[cur].N);
             }
-            if (vertices[cur].mcs > CLIQUE_LIMIT)
+            for (; j < this->vertices[cur].N; j++)
+            {
+                // vert always has greater id than cur
+                vert = edge_list[vertices[cur].elo + j];
+                // degree of vert has to be >= degree of cur
+                // to be considered while searching from cur
+                mcs += (vertices[vert].N >= vertices[cur].N);
+            }
+            vertices[cur].mcs = mcs;
+            if (mcs > CLIQUE_LIMIT)
             {
                 md_vert = cur;
-                CLIQUE_LIMIT = vertices[cur].mcs;
+                CLIQUE_LIMIT = mcs;
             }
             if (vertices[cur].N > max_degree) max_degree = vertices[cur].N;
         }

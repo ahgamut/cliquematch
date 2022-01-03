@@ -30,6 +30,8 @@ examples/*.png
 *.o
 
 # Distribution / packaging
+build
+dist
 .Python
 build/
 develop-eggs/
