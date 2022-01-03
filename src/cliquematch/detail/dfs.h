@@ -34,7 +34,7 @@ namespace detail
         // in the member functions of RecursionDFS.
         u64 candidates_left, clique_size, clique_potential;
         u64 i, j, k, vert, ans;
-        short f;
+        BFResult f;
 
        public:
         void process_vertex(graph&, u64);
@@ -64,7 +64,7 @@ namespace detail
         u64 candidates_left, clique_size, clique_potential;
         u64 i, j, k, vert, ans, cur;
         const u64 REQUIRED_SIZE;
-        short f;
+        BFResult f;
 
        public:
         u64 process_graph(graph&);

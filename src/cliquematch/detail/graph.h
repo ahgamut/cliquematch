@@ -87,7 +87,7 @@ namespace detail
         }
 
         // find if two vertices are neighbors, if yes, return valid position
-        short find_if_neighbors(const u64 v1_id, const u64 v2_id,
+        BFResult find_if_neighbors(const u64 v1_id, const u64 v2_id,
                                 u64& v2_position) const
         {
             return binary_find(&(this->edge_list[this->vertices[v1_id].elo]),

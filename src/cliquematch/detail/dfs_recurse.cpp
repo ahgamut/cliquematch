@@ -110,7 +110,7 @@ namespace detail
         future_cand.copy_from(prev_cand, G.load_memory(request_size));
 
         u64 j, k, vert, ans;
-        short f = 0;
+        BFResult f = NOT_FOUND;
         for (j = 0; j < G.vertices[cur].N; j++)
         {
             // keep going until a candidate exists
@@ -144,10 +144,10 @@ namespace detail
                     &(G.edge_list[G.vertices[vert].elo + G.vertices[vert].spos]),
                     G.vertices[vert].N - G.vertices[vert].spos,
                     G.edge_list[G.vertices[cur].elo + k], ans);
-                if (f != 1)
+                if (f != FOUND)
                 {
                     future_cand.reset(k);
-                    f = 0;
+                    f = NOT_FOUND;
                 }
             }
 

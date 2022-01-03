@@ -102,7 +102,7 @@ namespace detail
         // the upper bound on clique size is the maximum depth on the stack
         this->states.reserve(G.CLIQUE_LIMIT);
         this->to_remove.reserve(G.CLIQUE_LIMIT);
-        f = 0;
+        f = NOT_FOUND;
 
         while (cur < G.n_vert)  // go through all vertices of the graph
         {
@@ -150,8 +150,8 @@ namespace detail
                         &(G.edge_list[G.vertices[vert].elo + G.vertices[vert].spos]),
                         G.vertices[vert].N - G.vertices[vert].spos,
                         G.edge_list[G.vertices[cur].elo + k], ans);
-                    if (f != 1) to_remove.push_back(k);
-                    f = 0;
+                    if (f != FOUND) to_remove.push_back(k);
+                    f = NOT_FOUND;
                     clique_potential =
                         (candidates_left - to_remove.size()) + clique_size + 1;
                 }

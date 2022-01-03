@@ -26,41 +26,49 @@ namespace cliquematch
 {
 namespace detail
 {
+    enum BFResult : int8_t
+    {
+        FOUND = 1,
+        NOT_FOUND = 0,
+        OUTSIDE = -1
+    };
+
     /* this function is called to check if two vertices are neighbors
      * the parameters are usually the list of neighbors of a vertex,
      * the vertex degree, a potential neighbor, and the location of the neighbor
      */
-    inline short binary_find(const u64* const a, const u64 N, const u64 val, u64& loc)
+    inline BFResult binary_find(const u64* const a, const u64 N, const u64 val,
+                                u64& loc)
     {
         /* modified binary search, returns location by reference
-         * return 1 if found, 0 if not found
-         * returns -1 only if value is greater than the array
+         * return FOUND if found, NOT_FOUND if not found
+         * returns OUTSIDE only if value is greater than the array
          */
-        u64 beg = 0, end = N - 1, mid = beg + ((end - beg) >> 1);
+        u64 beg = 0, end = N - 1, mid;
         if (a[end] < val)
         {
             loc = end;
-            return -1;
+            return OUTSIDE;
         }
         else if (a[beg] > val)
         {
             loc = beg;
-            return 0;
+            return NOT_FOUND;
         }
         while (beg <= end)
         {
+            mid = beg + ((end - beg) >> 1);
             if (a[mid] == val)
             {
                 loc = mid;
-                return 1;
+                return FOUND;
             }
             else if (a[mid] < val)
                 beg = mid + 1;
             else
                 end = mid - 1;
-            mid = beg + ((end - beg) >> 1);
         }
-        return 0;
+        return NOT_FOUND;
     }
 
     struct vertex
@@ -100,6 +108,7 @@ namespace detail
         // compute spos and load bitset data
         void set_spos(u64* el_base, u64* eb_base, u64 spos)
         {
+            // assert(el_base[this->elo + spos] == this->id);
             this->spos = spos;
             this->bits.refer_from(&eb_base[this->ebo], this->N);
             this->bits.set(this->spos);

@@ -41,7 +41,7 @@ namespace detail
 
     void StackDFS::process_vertex(graph& G, u64 cur)
     {
-        f = 0;
+        f = NOT_FOUND;
         request_size =
             (G.vertices[cur].N % BITS_PER_U64 != 0) + G.vertices[cur].N / BITS_PER_U64;
         // "memory" allocations for cand, res at root of subtree
@@ -117,8 +117,8 @@ namespace detail
                         &(G.edge_list[G.vertices[vert].elo + G.vertices[vert].spos]),
                         G.vertices[vert].N - G.vertices[vert].spos,
                         G.edge_list[G.vertices[cur].elo + k], ans);
-                    if (f != 1) to_remove.push_back(k);
-                    f = 0;
+                    if (f != FOUND) to_remove.push_back(k);
+                    f = NOT_FOUND;
                     clique_potential =
                         (candidates_left - to_remove.size()) + clique_size + 1;
                 }

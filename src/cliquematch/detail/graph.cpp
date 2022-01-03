@@ -300,7 +300,7 @@ namespace detail
 
         u64 i1, i2, j1, j2, v1, v2;
         u64 k, l;
-        short f1, f2;
+        BFResult f1, f2;
 
         for (l = 0; l < edges.first.size(); l++)
         {
