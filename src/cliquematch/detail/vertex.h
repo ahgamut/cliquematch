@@ -67,7 +67,6 @@ namespace detail
 
     struct vertex
     {
-        u64 id;    // vertex number
         u64 N;     // # neighbors + 1 (the vertex itself)
         u64 spos;  // (Self-POSition) its own location in the list of neighbors
         u64 elo;   // edge_list offset
@@ -76,13 +75,8 @@ namespace detail
 
         graphBits bits;
 
-        // operators provided in case sorting is used to speed up the search
-        bool operator>(const vertex& BB) const { return (this->mcs > BB.mcs); }
-        bool operator<(const vertex& BB) const { return (this->mcs < BB.mcs); }
-
         vertex()
         {
-            this->id = 0;
             this->N = 0;
             this->spos = 0;
             this->elo = 0;
@@ -90,9 +84,8 @@ namespace detail
             this->mcs = 0;
         }
         // store degree and offsets
-        void refer_from(u64 id, u64 N, u64 elo, u64 ebo)
+        void refer_from(u64 N, u64 elo, u64 ebo)
         {
-            this->id = id;
             this->N = N;
             this->elo = elo;
             this->ebo = ebo;
@@ -100,16 +93,18 @@ namespace detail
             this->spos = 0;
         }
         // compute spos and load bitset data
-        void set_spos(u64* el_base, u64* eb_base, u64 spos)
+        void set_spos(u64* eb_base, u64 spos)
         {
             // assert(el_base[this->elo + spos] == this->id);
             this->spos = spos;
             this->bits.refer_from(&eb_base[this->ebo], this->N);
             this->bits.set(this->spos);
         }
+
         // display the neighbors given the raw data
-        void disp(const u64*) const;
+        void disp(const u64, const u64*) const;
         void clique_disp(const u64*) const;
+
         // return a clique computed starting at this vertex
         std::vector<u64> give_clique(const u64*) const;
     };

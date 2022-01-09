@@ -170,7 +170,6 @@ namespace detail
          */
 
         u64 i, j, spos, el_size_max = edge_list.size();
-        u64* el_base = edge_list.data();
         u64* eb_base = edge_bits.data();
         for (i = 0; i < this->n_vert; i++)
         {
@@ -181,8 +180,8 @@ namespace detail
                 if (edge_list[el_size + j] == i) spos = j;
             }
 
-            this->vertices[i].refer_from(i, j, this->el_size, this->eb_size);
-            this->vertices[i].set_spos(el_base, eb_base, spos);
+            this->vertices[i].refer_from(j, this->el_size, this->eb_size);
+            this->vertices[i].set_spos(eb_base, spos);
             this->el_size += j;
             this->eb_size += (j % BITS_PER_U64 != 0) + j / BITS_PER_U64;
             if (j > max_degree) max_degree = j;
@@ -243,15 +242,16 @@ namespace detail
          * -> max. clique search depth = d_max < |V|
          * -> max. search space required = d_max x ceil(d_max/64) (dividing by
          *  64-bit for bitsets to be safe) Claim is that available memory is
-         *  almost always greater than max. search space required. (reusable
-         *  search space)
+         *  almost always greater than maximum search space required.
+         *
+         *  (assume that search space is reusable)
          *
          * the condition in the below line is almost always false, due to
          * the above calculation (may happen for really small or dense graphs)
          */
         if (spread < max_space + 1)
         {
-            std::cout << "search spread: " << spread
+            std::cerr << "search spread: " << spread
                       << "; max requirement: " << max_space << "; ratio = "
                       << (1.0 * (search_end - search_start)) / (max_space) << std::endl;
             edge_bits.resize(eb_size + max_space + 1);
@@ -262,7 +262,7 @@ namespace detail
     void graph::disp() const
     {
         for (u64 i = 0; i < this->n_vert; i++)
-            this->vertices[i].disp(this->edge_list.data());
+            this->vertices[i].disp(i, this->edge_list.data());
     }
 
     // pass edges one by one to external function

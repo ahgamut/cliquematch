@@ -10,10 +10,10 @@ namespace cliquematch
 {
 namespace detail
 {
-    void vertex::disp(const u64* el_base) const
+    void vertex::disp(const u64 id, const u64* el_base) const
     {
         if (this->N <= 1 || this->mcs <= 1) return;
-        std::cout << "Vertex " << this->id << " has " << this->N << " edges\n";
+        std::cout << "Vertex " << id << " has " << this->N << " edges\n";
         for (u64 i = 0; i < this->N; i++) std::cerr << el_base[this->elo + i] << " ";
         std::cout << "Current Clique: ";
         this->bits.show();
