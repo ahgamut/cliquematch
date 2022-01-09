@@ -96,7 +96,7 @@ namespace detail
             for (j = i + 1; j < cand_max; j++)
             {
                 if (!cand[neighbors[j].pos] ||
-                    G.find_if_neighbors(neighbors[j].id, neighbors[i].id, ans) == 1)
+                    G.find_if_neighbors(neighbors[j].id, neighbors[i].id, ans) == FOUND)
                     continue;
                 else
                 {
@@ -118,10 +118,11 @@ namespace detail
                 // there are no candidates left =>
                 // potential has been realized and beaten the current maximum
                 // so save the clique's data as the new global maximum
-                G.vertices[cur].mcs = cur_clique_size;
                 G.CUR_MAX_CLIQUE_SIZE = cur_clique_size;
                 G.CUR_MAX_CLIQUE_LOC = cur;
                 G.vertices[cur].bits.copy_data(res);
+                /* Note that we are not saving cur.mcs because a proper search through
+                 * the vertex may give a larger clique */
                 break;
             }
             // else, this clique still has potential to beat the maximum, and

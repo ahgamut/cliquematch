@@ -26,40 +26,45 @@ namespace detail
     u64 graphBits::count() const
     {
         u64 sum = 0;
-        this->data[this->dlen - 1] &= this->pad_cover;
-        for (u64 i = 0; i < this->dlen; i++) sum += bitcount(this->data[i]);
+        u64 dlen = ((this->valid_len & 0x3fu) != 0) + (this->valid_len >> 6);
+        this->data[dlen - 1] &= this->pad_cover;
+        for (u64 i = 0; i < dlen; i++) sum += bitcount(this->data[i]);
         return sum;
     }
 
     graphBits& graphBits::operator&=(const graphBits& other)
     {
         // assert(this->valid_len == other.valid_len);
-        for (u64 i = 0; i < this->dlen; i++) { this->data[i] &= other.data[i]; }
-        this->data[this->dlen - 1] &= this->pad_cover;
+        u64 dlen = ((this->valid_len & 0x3fu) != 0) + (this->valid_len >> 6);
+        for (u64 i = 0; i < dlen; i++) { this->data[i] &= other.data[i]; }
+        this->data[dlen - 1] &= this->pad_cover;
         return *this;
     }
 
     graphBits& graphBits::operator|=(const graphBits& other)
     {
         // assert(this->valid_len == other.valid_len);
-        for (u64 i = 0; i < this->dlen; i++) { this->data[i] |= other.data[i]; }
-        this->data[this->dlen - 1] &= this->pad_cover;
+        u64 dlen = ((this->valid_len & 0x3fu) != 0) + (this->valid_len >> 6);
+        for (u64 i = 0; i < dlen; i++) { this->data[i] |= other.data[i]; }
+        this->data[dlen - 1] &= this->pad_cover;
         return *this;
     }
 
     graphBits& graphBits::operator^=(const graphBits& other)
     {
         // assert(this->valid_len == other.valid_len);
-        for (u64 i = 0; i < this->dlen; i++) { this->data[i] ^= other.data[i]; }
-        this->data[this->dlen - 1] &= this->pad_cover;
+        u64 dlen = ((this->valid_len & 0x3fu) != 0) + (this->valid_len >> 6);
+        for (u64 i = 0; i < dlen; i++) { this->data[i] ^= other.data[i]; }
+        this->data[dlen - 1] &= this->pad_cover;
         return *this;
     }
 
     graphBits& graphBits::operator-=(const graphBits& other)
     {
         // assert(this->valid_len == other.valid_len);
-        for (u64 i = 0; i < this->dlen; i++) { this->data[i] &= ~(other.data[i]); }
-        this->data[this->dlen - 1] &= this->pad_cover;
+        u64 dlen = ((this->valid_len & 0x3fu) != 0) + (this->valid_len >> 6);
+        for (u64 i = 0; i < dlen; i++) { this->data[i] &= ~(other.data[i]); }
+        this->data[dlen - 1] &= this->pad_cover;
         return *this;
     }
 

@@ -114,11 +114,6 @@ namespace detail
         for (j = 0; j < G.vertices[cur].N; j++)
         {
             // keep going until a candidate exists
-            if (cand.block_empty(j))
-            {
-                j += (63 - (j & 0x3fu));
-                continue;
-            }
             if (!cand[j]) continue;
 
             // offset thru the edge list to get the neighbor vertex
@@ -134,11 +129,6 @@ namespace detail
             // Check if the remaining candidates in cur are neighbors to vert
             for (k = j + 1; k < G.vertices[cur].N; k++)
             {
-                if (future_cand.block_empty(k))
-                {
-                    k += (63 - (k & 0x3fu));
-                    continue;
-                }
                 if (!future_cand[k]) continue;
                 f = binary_find(
                     &(G.edge_list[G.vertices[vert].elo + G.vertices[vert].spos]),

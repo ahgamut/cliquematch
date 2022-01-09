@@ -26,21 +26,22 @@
 
 #include <vector>
 #include <cstdint>
+
 typedef uint64_t u64;
+
 namespace cliquematch
 {
 namespace detail
 {
-    constexpr u64 ALL_ONES = 0xFFFFFFFFFFFFFFFF;
-    constexpr u64 MSB_64 = 0x8000000000000000;
+    constexpr u64 ALL_ONES = 0xFFFFFFFFFFFFFFFFULL;
+    constexpr u64 MSB_64 = 0x8000000000000000ULL;
 
     class graphBits
     {
        private:
-        u64 pad_cover;  // to ensure no stray bits after the end are counted
         u64* data;      // simple pointer to external data
+        u64 pad_cover;  // to ensure no stray bits after the end are counted
         u64 valid_len;  // number of bits used (useful for debug)
-        u64 dlen;       // ceil(valid_len/64.0);
 
        public:
         graphBits& operator=(const graphBits&) = delete;
@@ -49,7 +50,6 @@ namespace detail
         {
             this->data = other.data;
             this->valid_len = other.valid_len;
-            this->dlen = other.dlen;
             this->pad_cover = other.pad_cover;
         }
         graphBits(u64* ext_data, u64 n_bits, bool cleanout = false)
@@ -58,7 +58,6 @@ namespace detail
         }
         void copy_from(const graphBits& other, u64* data_ptr)
         {
-            this->dlen = other.dlen;
             this->valid_len = other.valid_len;
             this->pad_cover = other.pad_cover;
             this->data = data_ptr;
@@ -66,21 +65,20 @@ namespace detail
         }
         void copy_data(const graphBits& other)
         {
-            std::copy(other.data, other.data + this->dlen, this->data);
+            u64 dlen = ((this->valid_len & 0x3fu) != 0) + (this->valid_len >> 6);
+            std::copy(other.data, other.data + dlen, this->data);
         }
         void refer_from(const graphBits& other)
         {
             this->data = other.data;
             this->pad_cover = other.pad_cover;
             this->valid_len = other.valid_len;
-            this->dlen = other.dlen;
         }
         void refer_from(u64* ext_data, u64 n_bits, bool cleanout = false)
         {
             this->data = ext_data;  // CALLER gives me the data,
             // they should have initialized it and checked bounds
             this->valid_len = n_bits;
-            this->dlen = ((n_bits & 0x3fu) != 0) + (n_bits >> 6);
             this->pad_cover = ALL_ONES << (64 - (n_bits & 0x3fu));
             if (cleanout) this->clear();
         }
@@ -88,7 +86,8 @@ namespace detail
         {
             u64 i = 0;
             u64 clear_len = 1 + (N >> 6);
-            if (N == 0 || clear_len > this->dlen) clear_len = this->dlen;
+            u64 dlen = ((this->valid_len & 0x3fu) != 0) + (this->valid_len >> 6);
+            if (N == 0 || clear_len > dlen) clear_len = dlen;
             for (i = 0; i < clear_len; i++) this->data[i] = 0;
         }
 

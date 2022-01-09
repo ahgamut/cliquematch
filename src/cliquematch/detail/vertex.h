@@ -30,7 +30,7 @@ namespace detail
     {
         FOUND = 1,
         NOT_FOUND = 0,
-        OUTSIDE = -1
+        OUTSIDE = -1 /* unused, use if a[end] < val */
     };
 
     /* this function is called to check if two vertices are neighbors
@@ -42,15 +42,9 @@ namespace detail
     {
         /* modified binary search, returns location by reference
          * return FOUND if found, NOT_FOUND if not found
-         * returns OUTSIDE only if value is greater than the array
          */
         u64 beg = 0, end = N - 1, mid;
-        if (a[end] < val)
-        {
-            loc = end;
-            return OUTSIDE;
-        }
-        else if (a[beg] > val)
+        if (a[beg] > val)
         {
             loc = beg;
             return NOT_FOUND;
