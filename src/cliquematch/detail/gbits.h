@@ -52,7 +52,7 @@ namespace detail
             this->valid_len = other.valid_len;
             this->pad_cover = other.pad_cover;
         }
-        graphBits(u64* ext_data, u64 n_bits, bool cleanout = false)
+        graphBits(u64* ext_data, const u64 n_bits, const bool cleanout = false)
         {
             this->refer_from(ext_data, n_bits, cleanout);
         }
@@ -74,7 +74,7 @@ namespace detail
             this->pad_cover = other.pad_cover;
             this->valid_len = other.valid_len;
         }
-        void refer_from(u64* ext_data, u64 n_bits, bool cleanout = false)
+        void refer_from(u64* ext_data, const u64 n_bits, const bool cleanout = false)
         {
             this->data = ext_data;  // CALLER gives me the data,
             // they should have initialized it and checked bounds
@@ -82,7 +82,7 @@ namespace detail
             this->pad_cover = ALL_ONES << (64 - (n_bits & 0x3fu));
             if (cleanout) this->clear();
         }
-        void clear(u64 N = 0)
+        void clear(const u64 N = 0)
         {
             u64 i = 0;
             u64 clear_len = 1 + (N >> 6);
@@ -91,26 +91,26 @@ namespace detail
             for (i = 0; i < clear_len; i++) this->data[i] = 0;
         }
 
-        void set(u64 i)
+        void set(const u64 i)
         {
             // assert(i < this->valid_len);
             u64 mask = MSB_64 >> (i & 0x3fu);
             this->data[i >> 6] |= mask;
         };
-        void reset(u64 i)
+        void reset(const u64 i)
         {
             // assert(i < this->valid_len);
             u64 mask = ~(MSB_64 >> (i & 0x3fu));
             this->data[i >> 6] &= mask;
         };
-        void toggle(u64 i)
+        void toggle(const u64 i)
         {
             // assert(i < this->valid_len);
             u64 mask = MSB_64 >> (i & 0x3fu);
             this->data[i >> 6] ^= mask;
         };
-        bool block_empty(u64 i) const { return (this->data[i >> 6] == 0); };
-        bool operator[](u64 i) const
+        bool block_empty(const u64 i) const { return (this->data[i >> 6] == 0); };
+        bool operator[](const u64 i) const
         {
             // assert(i < this->valid_len);
             u64 mask = MSB_64 >> (i & 0x3fu);
