@@ -27,7 +27,7 @@ namespace detail
         // the upper bound on clique size is the maximum depth on the stack
         this->states.reserve(G.CLIQUE_LIMIT);
         this->to_remove.reserve(G.CLIQUE_LIMIT);
-        this->process_vertex(G, G.md_vert);
+        this->process_vertex(G, G.CUR_MAX_CLIQUE_LOCATION);
         for (i = 0; i < G.n_vert; i++)
         {
             if (G.vertices[i].mcs <= G.CUR_MAX_CLIQUE_SIZE ||
@@ -136,7 +136,7 @@ namespace detail
                         G.vertices[cur].bits.copy_data(cur_state.res);
                         G.vertices[cur].mcs = clique_potential;
                         G.CUR_MAX_CLIQUE_SIZE = clique_potential;
-                        G.CUR_MAX_CLIQUE_LOC = cur;
+                        G.CUR_MAX_CLIQUE_LOCATION = cur;
 
                         // search can now continue without vert
                         cur_state.res.reset(j);

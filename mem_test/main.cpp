@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     std::cout << "\n\n";
 
     G->CUR_MAX_CLIQUE_SIZE = 1;
-    G->CUR_MAX_CLIQUE_LOC = start_vertex = 0;
+    G->CUR_MAX_CLIQUE_LOCATION = start_vertex = 0;
     clique_time = G->find_max_cliques(start_vertex, false, true, 10);
     ans = G->get_max_clique();
     std::cout << "Clique finding (via recursion) took " << clique_time
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     std::cout << "\n\n";
 
     G->CUR_MAX_CLIQUE_SIZE = 1;
-    G->CUR_MAX_CLIQUE_LOC = start_vertex = 0;
+    G->CUR_MAX_CLIQUE_LOCATION = start_vertex = 0;
     clique_time = G->find_max_cliques(start_vertex, false, true, -1);
     ans = G->get_max_clique();
     std::cout << "Clique finding (via stack) took " << clique_time

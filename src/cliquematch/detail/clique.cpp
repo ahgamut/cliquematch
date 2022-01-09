@@ -35,7 +35,7 @@ namespace detail
 
     std::vector<u64> graph::get_max_clique() const
     {
-        return this->get_max_clique(this->CUR_MAX_CLIQUE_LOC);
+        return this->get_max_clique(this->CUR_MAX_CLIQUE_LOCATION);
     }
     std::vector<u64> graph::get_max_clique(u64 i) const
     {

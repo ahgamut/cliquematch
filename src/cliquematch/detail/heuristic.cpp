@@ -29,10 +29,10 @@ namespace detail
         graphBits res(G.load_memory(request_size), G.max_degree);
         graphBits cand(G.load_memory(request_size), G.max_degree);
 
-        process_vertex(G, G.md_vert, res, cand);
+        process_vertex(G, G.CUR_MAX_CLIQUE_LOCATION, res, cand);
         for (i = 0; i < G.n_vert && G.CUR_MAX_CLIQUE_SIZE < G.CLIQUE_LIMIT; i++)
         {
-            if (G.vertices[i].mcs <= G.CUR_MAX_CLIQUE_SIZE || i == G.md_vert) continue;
+            if (G.vertices[i].mcs <= G.CUR_MAX_CLIQUE_SIZE) continue;
             process_vertex(G, i, res, cand);
         }
         G.clear_memory(2 * request_size);  // release memory
@@ -119,7 +119,7 @@ namespace detail
                 // potential has been realized and beaten the current maximum
                 // so save the clique's data as the new global maximum
                 G.CUR_MAX_CLIQUE_SIZE = cur_clique_size;
-                G.CUR_MAX_CLIQUE_LOC = cur;
+                G.CUR_MAX_CLIQUE_LOCATION = cur;
                 G.vertices[cur].bits.copy_data(res);
                 /* Note that we are not saving cur.mcs because a proper search through
                  * the vertex may give a larger clique */

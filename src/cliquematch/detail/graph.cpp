@@ -137,10 +137,9 @@ namespace detail
         el_size = 0;
         eb_size = 0;
         max_degree = 0;
-        md_vert = 0;
         search_start = 0;
         search_end = 0;
-        CUR_MAX_CLIQUE_LOC = 0;
+        CUR_MAX_CLIQUE_LOCATION = 0;
         CUR_MAX_CLIQUE_SIZE = 0;
         CLIQUE_LIMIT = 0xFFFF;
     }
@@ -229,7 +228,7 @@ namespace detail
             vertices[cur].mcs = mcs;
             if (mcs > CLIQUE_LIMIT)
             {
-                md_vert = cur;
+                CUR_MAX_CLIQUE_LOCATION = cur;
                 CLIQUE_LIMIT = mcs;
             }
         }

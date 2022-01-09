@@ -88,7 +88,7 @@ namespace detail
 
         // find if two vertices are neighbors, if yes, return valid position
         BFResult find_if_neighbors(const u64 v1_id, const u64 v2_id,
-                                u64& v2_position) const
+                                   u64& v2_position) const
         {
             return binary_find(&(this->edge_list[this->vertices[v1_id].elo]),
                                this->vertices[v1_id].N, v2_id, v2_position);
@@ -97,15 +97,15 @@ namespace detail
         void set_bounds();  // used by constructor to set bounds for search
 
        public:
-        u64 n_vert;               // number of vertices in the graph
-        u64 max_degree, md_vert;  // md_vert = vertex that has max_degree
+        u64 n_vert;  // number of vertices in the graph
+        u64 max_degree;
 
         // in early implementations these were global variables within
         // graph.cpp, i.e. it is a big deal when these change during the search
 
-        u64 CLIQUE_LIMIT;         // upper bound on the clique size for this graph
-        u64 CUR_MAX_CLIQUE_SIZE;  // size of the CUR_MAX_CLIQUE
-        u64 CUR_MAX_CLIQUE_LOC;   // vertex ID containing the CUR_MAX_CLIQUE
+        u64 CLIQUE_LIMIT;             // upper bound on the clique size for this graph
+        u64 CUR_MAX_CLIQUE_SIZE;      // size of the CUR_MAX_CLIQUE
+        u64 CUR_MAX_CLIQUE_LOCATION;  // vertex ID containing the CUR_MAX_CLIQUE
 
         // basic functions
         graph();
