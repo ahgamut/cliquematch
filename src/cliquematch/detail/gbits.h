@@ -30,6 +30,7 @@
 #ifdef _MSC_VER
 #include <intrin.h>
 #pragma intrinsic(_BitScanReverse64)
+#pragma intrinsic(_lzcnt_u64)
 #endif
 
 typedef uint64_t u64;
@@ -44,10 +45,10 @@ namespace detail
     inline u64 clz(const u64 n)
     {
 #ifdef _MSC_VER
-        unsigned long index;
-        _BitScanReverse64(&index, n);
-        return static_cast<u64>(index);
+        /* MSVC docs for amd64 guarantee _lzcnt_u64 */
+        return _lzcnt_u64(n);
 #else
+        /* minimum clang/gcc version? */
         return __builtin_clzll(n);
 #endif
     }
