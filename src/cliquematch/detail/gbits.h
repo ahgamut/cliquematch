@@ -44,9 +44,9 @@ namespace detail
     inline u64 clz(const u64 n)
     {
 #ifdef _MSC_VER
-        u64 index;
+        unsigned long index;
         _BitScanReverse64(&index, n);
-        return index;
+        return static_cast<u64>(index);
 #else
         return __builtin_clzll(n);
 #endif
