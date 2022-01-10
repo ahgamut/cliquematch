@@ -62,7 +62,7 @@ namespace detail
         std::vector<SearchState> states;
         std::vector<u64> to_remove;
         u64 candidates_left, clique_size, clique_potential;
-        u64 i, j, k, vert, ans, cur;
+        u64 j, k, vert, ans, cur;
         const u64 REQUIRED_SIZE;
         BFResult f;
 

@@ -97,22 +97,26 @@ namespace detail
             // are changed every time the stack changes,
             // calling res.count() is unnecessary.
 
-            for (j = cur_state.start_at; j < G.vertices[cur].N; j++)
+            // in case cur_state.start_at was cleared,
+            // move to the next valid position now,
+            // so when we return to cur_state it is proper
+            cur_state.start_at = cur_state.cand.next(cur_state.start_at);
+
+            for (j = cur_state.start_at; j < G.vertices[cur].N; j = cur_state.start_at)
             {
-                if (!cur_state.cand[j]) continue;
-                vert = G.edge_list[G.vertices[cur].elo + j];
                 cur_state.cand.reset(j);
-                cur_state.start_at = j + 1;
+                cur_state.start_at = cur_state.cand.next(j + 1);
                 candidates_left--;
                 clique_potential = candidates_left + 1 + clique_size;
 
+                vert = G.edge_list[G.vertices[cur].elo + j];
+
                 // ensure only the vertices found in the below loop are removed later
                 to_remove.clear();
-                for (k = j + 1;
+                for (k = cur_state.start_at;
                      k < G.vertices[cur].N && clique_potential > G.CUR_MAX_CLIQUE_SIZE;
-                     k++)
+                     k = cur_state.cand.next(k + 1))
                 {
-                    if (!cur_state.cand[k]) continue;
                     f = binary_find(
                         &(G.edge_list[G.vertices[vert].elo + G.vertices[vert].spos]),
                         G.vertices[vert].N - G.vertices[vert].spos,

@@ -12,7 +12,7 @@ namespace cliquematch
 namespace detail
 {
     // returns the number of bits on in n
-    static const inline u64 bitcount(u64 n)
+    static inline u64 bitcount(u64 n)
     {
         n = n - ((n >> 1) & 0x5555555555555555);
         n = (n & 0x3333333333333333) + ((n >> 2) & 0x3333333333333333);

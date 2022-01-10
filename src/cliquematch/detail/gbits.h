@@ -27,6 +27,11 @@
 #include <vector>
 #include <cstdint>
 
+#ifdef _MSC_VER
+#include <intrin.h>
+#pragma intrinsic(_BitScanReverse64)
+#endif
+
 typedef uint64_t u64;
 
 namespace cliquematch
@@ -35,6 +40,17 @@ namespace detail
 {
     constexpr u64 ALL_ONES = 0xFFFFFFFFFFFFFFFFULL;
     constexpr u64 MSB_64 = 0x8000000000000000ULL;
+
+    inline u64 clz(const u64 n)
+    {
+#ifdef _MSC_VER
+        u64 index;
+        _BitScanReverse64(&index, n);
+        return index;
+#else
+        return __builtin_clzll(n);
+#endif
+    }
 
     class graphBits
     {
@@ -116,6 +132,20 @@ namespace detail
             u64 mask = MSB_64 >> (i & 0x3fu);
             return (this->data[i >> 6] & mask) != 0;
         };
+        u64 next(const u64 i)
+        {
+            if (i < valid_len)
+            {
+                const u64 base = (i >> 6);
+                const u64 mask = this->data[base] & (ALL_ONES >> (i & 0x3fu));
+                if (mask)
+                    return (base << 6) + clz(mask);
+                else
+                    return next((base + 1) << 6);
+            }
+            else
+                return this->valid_len;
+        }
 
         // u64 len() const { return this->valid_len; };
         u64 count() const;
