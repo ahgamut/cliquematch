@@ -2,7 +2,7 @@
 #define PYITERATOR_H
 
 #include <core/pygraph.h>
-#include <detail/dfs.h>
+#include <detail/graph/dfs.h>
 
 namespace cliquematch
 {

@@ -10,7 +10,7 @@
  * there will be memory corruption.
  */
 
-#include <detail/dfs.h>
+#include <detail/graph/dfs.h>
 #include <algorithm>
 #include <iostream>
 

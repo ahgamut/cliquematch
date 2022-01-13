@@ -3,7 +3,7 @@
  * Contains functions to display/return cliques corresponding to the given vertex
  * instance.
  */
-#include <detail/vertex.h>
+#include <detail/graph/vertex.h>
 #include <iostream>
 
 namespace cliquematch

@@ -16,7 +16,7 @@
  *
  * Compare with RecursionDFS when changing the implementation.
  */
-#include <detail/dfs.h>
+#include <detail/graph/dfs.h>
 
 namespace cliquematch
 {

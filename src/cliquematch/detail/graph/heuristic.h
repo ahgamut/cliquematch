@@ -1,7 +1,7 @@
 #ifndef HEURISTIC_H
 #define HEURISTIC_H
 
-#include <detail/clique.h>
+#include <detail/graph/clique.h>
 
 namespace cliquematch
 {

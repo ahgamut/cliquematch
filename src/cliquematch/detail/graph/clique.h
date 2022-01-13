@@ -13,7 +13,7 @@
  * individual vertices, and have additional data members.
  *
  */
-#include <detail/graph.h>
+#include <detail/graph/graph.h>
 
 namespace cliquematch
 {

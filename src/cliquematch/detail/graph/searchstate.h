@@ -14,7 +14,7 @@
  * CALLER.
  *
  */
-#include <detail/vertex.h>
+#include <detail/graph/vertex.h>
 
 namespace cliquematch
 {

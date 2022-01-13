@@ -17,8 +17,8 @@
  *
  */
 
-#include <detail/clique.h>
-#include <detail/searchstate.h>
+#include <detail/graph/clique.h>
+#include <detail/graph/searchstate.h>
 
 namespace cliquematch
 {

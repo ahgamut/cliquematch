@@ -11,7 +11,7 @@
  * be memory corruption.
  *
  */
-#include <detail/heuristic.h>
+#include <detail/graph/heuristic.h>
 #include <algorithm>
 #include <iostream>
 

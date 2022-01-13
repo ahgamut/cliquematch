@@ -4,9 +4,9 @@
  * find_max_cliques() is just a wrapper over the preferred order of calling the
  * clique search operations.
  */
-#include <detail/graph.h>
-#include <detail/dfs.h>
-#include <detail/heuristic.h>
+#include <detail/graph/graph.h>
+#include <detail/graph/dfs.h>
+#include <detail/graph/heuristic.h>
 
 namespace cliquematch
 {

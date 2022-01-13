@@ -1,6 +1,6 @@
-#include <detail/graph.h>
-#include <detail/mmio.h>
-#include <detail/dfs.h>
+#include <detail/graph/graph.h>
+#include <detail/graph/mmio.h>
+#include <detail/graph/dfs.h>
 #include <cstdlib>
 #include <chrono>
 #include <iostream>

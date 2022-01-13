@@ -1,5 +1,5 @@
-#include <detail/mmio.h>
-#include <detail/graph.h>
+#include <detail/graph/mmio.h>
+#include <detail/graph/graph.h>
 #include <core/pygraph.h>
 #include <cstdlib>
 #include <cstring>

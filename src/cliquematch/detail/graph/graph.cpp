@@ -3,7 +3,7 @@
  * Provides methods for the constructing a graph instance and exporting its
  * internal data.
  */
-#include <detail/graph.h>
+#include <detail/graph/graph.h>
 #include <iostream>
 
 namespace cliquematch

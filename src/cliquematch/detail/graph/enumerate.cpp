@@ -18,7 +18,7 @@
  * size 25, then CliqueEnumerator will enumerate at least 25 cliques of size 24
  * (the sub-cliques of S).
  */
-#include <detail/dfs.h>
+#include <detail/graph/dfs.h>
 
 namespace cliquematch
 {

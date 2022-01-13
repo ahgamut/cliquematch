@@ -31,7 +31,7 @@
  * new/deletes.
  */
 
-#include <detail/vertex.h>
+#include <detail/graph/vertex.h>
 #include <chrono>
 #include <functional>
 #include <set>
