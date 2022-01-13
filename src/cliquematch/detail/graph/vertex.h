@@ -26,45 +26,6 @@ namespace cliquematch
 {
 namespace detail
 {
-    enum BFResult : int8_t
-    {
-        FOUND = 1,
-        NOT_FOUND = 0,
-        OUTSIDE = -1 /* unused, use if a[end] < val */
-    };
-
-    /* this function is called to check if two vertices are neighbors
-     * the parameters are usually the list of neighbors of a vertex,
-     * the vertex degree, a potential neighbor, and the location of the neighbor
-     */
-    inline BFResult binary_find(const u64* const a, const u64 N, const u64 val,
-                                u64& loc)
-    {
-        /* modified binary search, returns location by reference
-         * return FOUND if found, NOT_FOUND if not found
-         */
-        u64 beg = 0, end = N - 1, mid;
-        if (a[beg] > val)
-        {
-            loc = beg;
-            return NOT_FOUND;
-        }
-        while (beg <= end)
-        {
-            mid = beg + ((end - beg) >> 1);
-            if (a[mid] == val)
-            {
-                loc = mid;
-                return FOUND;
-            }
-            else if (a[mid] < val)
-                beg = mid + 1;
-            else
-                end = mid - 1;
-        }
-        return NOT_FOUND;
-    }
-
     struct vertex
     {
         u64 N;     // # neighbors + 1 (the vertex itself)

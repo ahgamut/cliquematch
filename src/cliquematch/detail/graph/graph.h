@@ -41,8 +41,6 @@ namespace cliquematch
 {
 namespace detail
 {
-    // to help CALLERs of load_memory/clear_memory
-    constexpr u64 BITS_PER_U64 = 8 * sizeof(u64);
 
     class graph
     {

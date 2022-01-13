@@ -25,7 +25,7 @@
  */
 
 #include <vector>
-#include <cstdint>
+#include <detail/utils.h>
 
 #ifdef _MSC_VER
 #include <intrin.h>
@@ -33,7 +33,6 @@
 #pragma intrinsic(_lzcnt_u64)
 #endif
 
-typedef uint64_t u64;
 
 namespace cliquematch
 {

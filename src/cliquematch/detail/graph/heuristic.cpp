@@ -76,7 +76,7 @@ namespace detail
         }
         if (candidates_left <= G.CUR_MAX_CLIQUE_SIZE) return;
         std::sort(neighbors.begin(), neighbors.begin() + candidates_left,
-                  std::greater<vtriple>());
+                  std::greater<vdata>());
 
         cand_max = candidates_left;
         // let neib be a high-degree neighbor of cur that hasn't been searched earlier

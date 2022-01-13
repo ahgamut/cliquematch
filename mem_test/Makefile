@@ -3,11 +3,14 @@ LINKFLAGS= -fno-omit-frame-pointer
 VALFLAGS = --tool=memcheck --leak-check=full --leak-resolution=high --show-leak-kinds=all --errors-for-leak-kinds=all
 SRC_DIR = ../src/cliquematch/detail/graph
 SRC_FILES = clique.cpp dfs_recurse.cpp dfs_stack.cpp gbits.cpp graph.cpp heuristic.cpp mmio.cpp vertex.cpp enumerate.cpp
-OBJS = $(patsubst %.cpp,build/%.o,$(SRC_FILES) main.cpp)
+OBJS = $(patsubst %.cpp,build/%.o,$(SRC_FILES) main.cpp utils.cpp)
 
 all: build/cm_base
 
 build/main.o: main.cpp
+	$(CXX) $^ $(CXXFLAGS) -o $@
+
+build/utils.o: ../src/cliquematch/detail/utils.cpp
 	$(CXX) $^ $(CXXFLAGS) -o $@
 
 build/%.o: $(SRC_DIR)/%.cpp
