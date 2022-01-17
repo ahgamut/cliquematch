@@ -109,20 +109,19 @@ namespace detail
                 candidates_left--;
                 clique_potential = candidates_left + 1 + clique_size;
 
-                vert = G.edge_list[G.vertices[cur].elo + j];
-
                 // ensure only the vertices found in the below loop are removed later
                 to_remove.clear();
+                
+                vert = G.edge_list[G.vertices[cur].elo + j];
+                ans = G.vertices[vert].spos;
                 for (k = cur_state.start_at;
                      k < G.vertices[cur].N && clique_potential > G.CUR_MAX_CLIQUE_SIZE;
                      k = cur_state.cand.next(k + 1))
                 {
-                    f = binary_find(
-                        &(G.edge_list[G.vertices[vert].elo + G.vertices[vert].spos]),
-                        G.vertices[vert].N - G.vertices[vert].spos,
-                        G.edge_list[G.vertices[cur].elo + k], ans);
+                    f = binary_find(&(G.edge_list[G.vertices[vert].elo + ans]),
+                                    G.vertices[vert].N - ans,
+                                    G.edge_list[G.vertices[cur].elo + k], ans);
                     if (f != FOUND) to_remove.push_back(k);
-                    f = NOT_FOUND;
                     clique_potential =
                         (candidates_left - to_remove.size()) + clique_size + 1;
                 }
@@ -131,8 +130,9 @@ namespace detail
                 if (clique_potential > G.CUR_MAX_CLIQUE_SIZE)
                 {
                     // no candidates left => clique cannot grow
-                    // therefore clique_potential = clique size + 1; the edge (cur,
-                    // vert) and this clique has beaten the existing maximum
+
+                    // clique_potential = clique size + 1 ie the edge (cur, vert)
+                    // this clique has beaten the existing maximum
                     if (candidates_left == 0)
                     {
                         // include vert as part of the clique and copy

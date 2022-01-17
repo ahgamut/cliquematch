@@ -93,7 +93,7 @@ namespace detail
             return cur;
         }
         else if (this->REQUIRED_SIZE == 1 && cur < G.n_vert)
-        {  // every vertex is a clique of size 1, dummy casse
+        {  // every vertex is a clique of size 1, dummy case
             G.vertices[cur].bits.clear();
             G.vertices[cur].bits.set(G.vertices[cur].spos);
             return cur++;
@@ -133,7 +133,6 @@ namespace detail
             for (j = cur_state.start_at; j < G.vertices[cur].N; j++)
             {
                 if (!cur_state.cand[j]) continue;
-                vert = G.edge_list[G.vertices[cur].elo + j];
                 cur_state.cand.reset(j);
                 cur_state.start_at = j + 1;
                 candidates_left--;
@@ -141,15 +140,17 @@ namespace detail
 
                 // ensure only the vertices found in the below loop are removed later
                 to_remove.clear();
+                
+                vert = G.edge_list[G.vertices[cur].elo + j];
+                ans = G.vertices[vert].spos;
                 for (k = j + 1;
                      k < G.vertices[cur].N && clique_potential >= this->REQUIRED_SIZE;
                      k++)
                 {
                     if (!cur_state.cand[k]) continue;
-                    f = binary_find(
-                        &(G.edge_list[G.vertices[vert].elo + G.vertices[vert].spos]),
-                        G.vertices[vert].N - G.vertices[vert].spos,
-                        G.edge_list[G.vertices[cur].elo + k], ans);
+                    f = binary_find(&(G.edge_list[G.vertices[vert].elo + ans]),
+                                    G.vertices[vert].N - ans,
+                                    G.edge_list[G.vertices[cur].elo + k], ans);
                     if (f != FOUND) to_remove.push_back(k);
                     f = NOT_FOUND;
                     clique_potential =

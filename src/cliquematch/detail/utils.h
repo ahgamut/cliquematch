@@ -13,12 +13,11 @@ namespace detail
 {
     // to help CALLERs of load_memory/clear_memory
     constexpr u64 BITS_PER_U64 = 8 * sizeof(u64);
-    
+
     enum BFResult : int8_t
     {
         FOUND = 1,
         NOT_FOUND = 0,
-        OUTSIDE = -1 /* unused, use if a[end] < val */
     };
 
     /* this function is called to check if two vertices are neighbors
@@ -37,6 +36,11 @@ namespace detail
             loc = beg;
             return NOT_FOUND;
         }
+        else if (a[end] < val)
+        {
+            loc = end;
+            return NOT_FOUND;
+        }
         while (beg <= end)
         {
             mid = beg + ((end - beg) >> 1);
@@ -50,6 +54,8 @@ namespace detail
             else
                 end = mid - 1;
         }
+        // if val is not found within the given range,
+        // loc is never assigned a value during the loop
         return NOT_FOUND;
     }
 

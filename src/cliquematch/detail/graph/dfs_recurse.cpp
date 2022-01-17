@@ -125,15 +125,15 @@ namespace detail
 
             // copy the list of candidates to pass to the recursive call
             future_cand.copy_data(cand);
+            ans = G.vertices[vert].spos;
 
             // Check if the remaining candidates in cur are neighbors to vert
             for (k = j + 1; k < G.vertices[cur].N; k++)
             {
                 if (!future_cand[k]) continue;
-                f = binary_find(
-                    &(G.edge_list[G.vertices[vert].elo + G.vertices[vert].spos]),
-                    G.vertices[vert].N - G.vertices[vert].spos,
-                    G.edge_list[G.vertices[cur].elo + k], ans);
+                f = binary_find(&(G.edge_list[G.vertices[vert].elo + ans]),
+                                G.vertices[vert].N - ans,
+                                G.edge_list[G.vertices[cur].elo + k], ans);
                 if (f != FOUND)
                 {
                     future_cand.reset(k);
