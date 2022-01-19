@@ -20,7 +20,7 @@
  * require the CALLER to ensure the data they refer to are valid.
  */
 
-#include <detail/graph/gbits.h>
+#include <detail/gbits.h>
 
 namespace cliquematch
 {

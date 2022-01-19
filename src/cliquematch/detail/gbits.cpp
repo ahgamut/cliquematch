@@ -4,7 +4,7 @@
  * along with functions to display/return the set being represented.
  */
 
-#include <detail/graph/gbits.h>
+#include <detail/gbits.h>
 #include <iostream>
 
 namespace cliquematch
