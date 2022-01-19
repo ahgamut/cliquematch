@@ -27,7 +27,7 @@ namespace detail
         graphBits res, cand;
 
         SearchState() : id(0){};
-        SearchState(u64 id) : id(id), start_at(id + 1){};
+        SearchState(u64 id) : id(id), start_at(id){};
         SearchState(const vertex& ver, u64* res_ptr, u64* cand_ptr)
             : id(ver.spos), start_at(0), res(res_ptr, ver.N), cand(cand_ptr, ver.N)
         {

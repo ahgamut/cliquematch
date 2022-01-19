@@ -102,7 +102,6 @@ namespace detail
         // the upper bound on clique size is the maximum depth on the stack
         this->states.reserve(G.CLIQUE_LIMIT);
         this->to_remove.reserve(G.CLIQUE_LIMIT);
-        f = NOT_FOUND;
 
         while (cur < G.n_vert)  // go through all vertices of the graph
         {
@@ -140,21 +139,23 @@ namespace detail
 
                 // ensure only the vertices found in the below loop are removed later
                 to_remove.clear();
-                
+
                 vert = G.edge_list[G.vertices[cur].elo + j];
-                ans = G.vertices[vert].spos;
+                start = G.vertices[vert].spos + 1;
+
                 for (k = j + 1;
                      k < G.vertices[cur].N && clique_potential >= this->REQUIRED_SIZE;
                      k++)
                 {
                     if (!cur_state.cand[k]) continue;
-                    f = binary_find(&(G.edge_list[G.vertices[vert].elo + ans]),
-                                    G.vertices[vert].N - ans,
-                                    G.edge_list[G.vertices[cur].elo + k], ans);
-                    if (f != FOUND) to_remove.push_back(k);
-                    f = NOT_FOUND;
+                    if (binary_find(&(G.edge_list[G.vertices[vert].elo + start]),
+                                    G.vertices[vert].N - start,
+                                    G.edge_list[G.vertices[cur].elo + k], ans) != FOUND)
+                        to_remove.push_back(k);
+
                     clique_potential =
                         (candidates_left - to_remove.size()) + clique_size + 1;
+                    start += ans;
                 }
 
                 // is it possible to produce a clique of REQUIRED_SIZE?

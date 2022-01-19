@@ -33,8 +33,7 @@ namespace detail
         // the below variables have equivalent declared locally
         // in the member functions of RecursionDFS.
         u64 candidates_left, clique_size, clique_potential;
-        u64 i, j, k, vert, ans;
-        BFResult f;
+        u64 i, j, k, vert, start, ans;
 
        public:
         void process_vertex(graph&, u64);
@@ -62,9 +61,8 @@ namespace detail
         std::vector<SearchState> states;
         std::vector<u64> to_remove;
         u64 candidates_left, clique_size, clique_potential;
-        u64 j, k, vert, ans, cur;
+        u64 j, k, vert, start, ans, cur;
         const u64 REQUIRED_SIZE;
-        BFResult f;
 
        public:
         u64 process_graph(graph&);

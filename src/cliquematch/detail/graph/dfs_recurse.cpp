@@ -109,8 +109,7 @@ namespace detail
         cand.copy_from(prev_cand, G.load_memory(request_size));
         future_cand.copy_from(prev_cand, G.load_memory(request_size));
 
-        u64 j, k, vert, ans;
-        BFResult f = NOT_FOUND;
+        u64 j, k, vert, start, ans = 0;
         for (j = 0; j < G.vertices[cur].N; j++)
         {
             // keep going until a candidate exists
@@ -125,20 +124,19 @@ namespace detail
 
             // copy the list of candidates to pass to the recursive call
             future_cand.copy_data(cand);
-            ans = G.vertices[vert].spos;
+            start = G.vertices[vert].spos + 1;
 
             // Check if the remaining candidates in cur are neighbors to vert
             for (k = j + 1; k < G.vertices[cur].N; k++)
             {
                 if (!future_cand[k]) continue;
-                f = binary_find(&(G.edge_list[G.vertices[vert].elo + ans]),
-                                G.vertices[vert].N - ans,
-                                G.edge_list[G.vertices[cur].elo + k], ans);
-                if (f != FOUND)
+                if (binary_find(&(G.edge_list[G.vertices[vert].elo + start]),
+                                G.vertices[vert].N - start,
+                                G.edge_list[G.vertices[cur].elo + k], ans) != FOUND)
                 {
                     future_cand.reset(k);
-                    f = NOT_FOUND;
                 }
+                start += ans;
             }
 
             // search the subtree with the new set of candidates

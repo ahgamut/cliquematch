@@ -41,7 +41,6 @@ namespace detail
 
     void StackDFS::process_vertex(graph& G, u64 cur)
     {
-        f = NOT_FOUND;
         request_size =
             (G.vertices[cur].N % BITS_PER_U64 != 0) + G.vertices[cur].N / BITS_PER_U64;
         // "memory" allocations for cand, res at root of subtree
@@ -83,6 +82,7 @@ namespace detail
         states.push_back(std::move(x));
         clique_size = 1;
 
+        u64 start = 0;
         while (!states.empty())
         {
             if (G.CUR_MAX_CLIQUE_SIZE >= G.CLIQUE_LIMIT) break;
@@ -111,17 +111,20 @@ namespace detail
 
                 // ensure only the vertices found in the below loop are removed later
                 to_remove.clear();
-                
+
                 vert = G.edge_list[G.vertices[cur].elo + j];
-                ans = G.vertices[vert].spos;
+                start = G.vertices[vert].spos;
+
                 for (k = cur_state.start_at;
                      k < G.vertices[cur].N && clique_potential > G.CUR_MAX_CLIQUE_SIZE;
                      k = cur_state.cand.next(k + 1))
                 {
-                    f = binary_find(&(G.edge_list[G.vertices[vert].elo + ans]),
-                                    G.vertices[vert].N - ans,
-                                    G.edge_list[G.vertices[cur].elo + k], ans);
-                    if (f != FOUND) to_remove.push_back(k);
+                    if (binary_find(&(G.edge_list[G.vertices[vert].elo + start]),
+                                    G.vertices[vert].N - start,
+                                    G.edge_list[G.vertices[cur].elo + k], ans) != FOUND)
+                        to_remove.push_back(k);
+
+                    start += ans;
                     clique_potential =
                         (candidates_left - to_remove.size()) + clique_size + 1;
                 }

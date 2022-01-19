@@ -30,32 +30,27 @@ namespace detail
         /* modified binary search, returns location by reference
          * return FOUND if found, NOT_FOUND if not found
          */
-        u64 beg = 0, end = N - 1, mid;
-        if (a[beg] > val)
-        {
-            loc = beg;
-            return NOT_FOUND;
-        }
-        else if (a[end] < val)
+        u64 beg = 0, end = N - 1;
+        if (a[end] < val)
         {
             loc = end;
             return NOT_FOUND;
         }
+        else if (a[beg] > val)
+        {
+            loc = beg;
+            return NOT_FOUND;
+        }
         while (beg <= end)
         {
-            mid = beg + ((end - beg) >> 1);
-            if (a[mid] == val)
-            {
-                loc = mid;
+            loc = beg + ((end - beg) >> 1);
+            if (a[loc] == val)
                 return FOUND;
-            }
-            else if (a[mid] < val)
-                beg = mid + 1;
+            else if (a[loc] < val)
+                beg = loc + 1;
             else
-                end = mid - 1;
+                end = loc - 1;
         }
-        // if val is not found within the given range,
-        // loc is never assigned a value during the loop
         return NOT_FOUND;
     }
 
