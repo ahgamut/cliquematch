@@ -147,13 +147,21 @@ namespace detail
     }
 
     // return all neighbors of a vertex as a set
-    std::set<u64> nwgraph::vertex_data(u64 i) const
+    std::pair<double, std::set<u64>> nwgraph::vertex_data(u64 i) const
     {
         auto ans = std::set<u64>(
             this->edge_list.begin() + this->vertices[i].elo,
             this->edge_list.begin() + this->vertices[i].elo + this->vertices[i].N);
         ans.erase(ans.find(i));
-        return ans;
+        return std::make_pair(this->vertices[i].weight, std::move(ans));
+    }
+
+    std::vector<double> nwgraph::get_all_weights() const
+    {
+        std::vector<double> wts;
+        wts.resize(this->n_vert);
+        for (u64 i = 0; i < this->n_vert; i++) wts[i] = this->vertices[i].weight;
+        return wts;
     }
 
 }  // namespace detail

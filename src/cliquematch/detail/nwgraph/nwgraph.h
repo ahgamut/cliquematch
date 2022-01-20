@@ -77,8 +77,10 @@ namespace detail
         std::vector<u64> get_max_clique(u64) const;
         // compute the weight of a given clique
         double get_clique_weight(const std::vector<u64>&) const;
+        // return all the vertex weights
+        std::vector<double> get_all_weights() const;
         // return all neighbors of a vertex
-        std::set<u64> vertex_data(u64) const;
+        std::pair<double, std::set<u64>> vertex_data(u64) const;
         // pass edges one by one to external function
         void send_data(std::function<void(u64, u64)>) const;
 
