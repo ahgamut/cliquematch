@@ -25,11 +25,11 @@ build/cm_nw: $(WTOBJS)
 
 test: build/cm_base build/cm_nw cond-mat-2003.mtx
 	valgrind $(VALFLAGS) ./build/cm_base cond-mat-2003.mtx 0
-	valgrind $(VALFLAGS) ./build/cm_nw
+	valgrind $(VALFLAGS) ./build/cm_nw cond-mat-2003.mtx
 
 run: build/cm_base build/cm_nw cond-mat-2003.mtx
 	./build/cm_base cond-mat-2003.mtx 0
-	./build/cm_nw
+	./build/cm_nw cond-mat-2003.mtx
 
 clean:
 	rm -f build/cm_base build/cm_nw

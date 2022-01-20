@@ -121,7 +121,7 @@ namespace detail
                 // ensure only the vertices found in the below loop are removed later
                 to_remove.clear();
                 for (k = j + 1;
-                     k < G.vertices[cur].N && clique_potential > this->REQUIRED_WEIGHT;
+                     k < G.vertices[cur].N && clique_potential >= this->REQUIRED_WEIGHT;
                      k++)
                 {
                     if (!cur_state.cand[k]) continue;

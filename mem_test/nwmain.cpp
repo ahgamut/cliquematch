@@ -1,5 +1,6 @@
 #include <detail/nwgraph/nwgraph.h>
 #include <detail/nwgraph/nwclique.h>
+#include <detail/mmio.h>
 #include <cstdlib>
 #include <chrono>
 #include <iostream>
@@ -9,85 +10,65 @@
 
 namespace cmd = cliquematch::detail;
 
-void setup(std::pair<std::vector<u64>, std::vector<u64>>& edges,
-           std::vector<double>& weights)
+int main(int argc, char** argv)
 {
-    u64 nvert = 5;
-    u64 nedges = 6;
-
-    edges.first.reserve(nvert + 1 + (2 * nedges));
-    edges.second.reserve(nvert + 1 + (2 * nedges));
-    weights.reserve(nvert + 1);
-
-    edges.first.push_back(1);
-    edges.second.push_back(2);
-    edges.first.push_back(2);
-    edges.second.push_back(1);
-
-    edges.first.push_back(1);
-    edges.second.push_back(3);
-    edges.first.push_back(3);
-    edges.second.push_back(1);
-
-    edges.first.push_back(1);
-    edges.second.push_back(4);
-    edges.first.push_back(4);
-    edges.second.push_back(1);
-
-    edges.first.push_back(1);
-    edges.second.push_back(5);
-    edges.first.push_back(5);
-    edges.second.push_back(1);
-
-    edges.first.push_back(2);
-    edges.second.push_back(4);
-    edges.first.push_back(4);
-    edges.second.push_back(2);
-
-    edges.first.push_back(3);
-    edges.second.push_back(5);
-    edges.first.push_back(5);
-    edges.second.push_back(3);
-
-    weights.push_back(0);
-    edges.first.push_back(0);
-    edges.second.push_back(0);
-    for (u64 i = 1; i <= nvert; i++)
+    if (argc < 2)
     {
-        weights.push_back(1.1);
+        std::cout << "cm_nw <mtx file>" << std::endl;
+        return 1;
+    }
+    std::vector<double> weights;
+    u64 start_vertex = 0, no_of_vertices = 0, no_of_edges = 0;
+
+    auto start = std::chrono::steady_clock::now();
+    auto edges = cmd::mmio4_reader(argv[1], no_of_vertices, no_of_edges);
+    weights.reserve(no_of_vertices + 1);
+    weights.push_back(0);
+    for (u64 i = 1; i <= no_of_vertices; i++)
+    {
+        weights.push_back(1);
         edges.first.push_back(i);
         edges.second.push_back(i);
     }
-}
+    auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
+        std::chrono::steady_clock::now() - start);
+    auto reading_time = static_cast<double>(elapsed.count()) / 1e6;
 
-int main()
-{
-    std::pair<std::vector<u64>, std::vector<u64>> e;
-    std::vector<double> w;
-    u64 start_vertex = 0;
+    start = std::chrono::steady_clock::now();
+    auto G = new cmd::nwgraph(no_of_vertices, no_of_edges, std::move(edges),
+                              std::move(weights));
+    elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
+        std::chrono::steady_clock::now() - start);
+    auto loading_time = static_cast<double>(elapsed.count()) / 1e6;
+    std::cout << "File reading took " << reading_time << "s" << std::endl;
+    std::cout << "Graph loading took " << loading_time << "s" << std::endl;
 
-    setup(e, w);
-    std::cout << e.first.size() << " " << w.size() << std::endl;
-
-    auto G = new cmd::nwgraph(5, 6, std::move(e), std::move(w));
-
+    start = std::chrono::steady_clock::now();
     G->find_max_cliques(start_vertex, true, false);
+    elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
+        std::chrono::steady_clock::now() - start);
+    auto heuristic_time = static_cast<double>(elapsed.count()) / 1e6;
     auto ans = G->get_max_clique();
-    std::cout << "Via Heuristic we get a clique of weight: "
+    std::cout << heuristic_time << "s: Via Heuristic we get a clique of weight: "
               << G->get_clique_weight(ans) << std::endl;
     for (auto& x : ans) { std::cout << x << " "; }
     std::cout << std::endl;
 
     start_vertex = 0;
 
+    start = std::chrono::steady_clock::now();
     G->find_max_cliques(start_vertex, false, true);
+    elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
+        std::chrono::steady_clock::now() - start);
+    auto dfs_time = static_cast<double>(elapsed.count()) / 1e6;
     auto ans2 = G->get_max_clique();
-    std::cout << "Via DFS we get a clique of weight: " << G->get_clique_weight(ans2)
+    std::cout << dfs_time
+              << "s: Via DFS we get a clique of weight: " << G->get_clique_weight(ans2)
               << std::endl;
     for (auto& x : ans2) { std::cout << x << " "; }
     std::cout << std::endl;
 
-    double clique_weight = G->get_clique_weight(ans2);
+    double clique_weight = G->get_clique_weight(ans2) - 1;
     std::cout << "Enumerating all cliques of weight " << clique_weight << std::endl;
     cmd::NWCliqueEnumerator en(clique_weight);
     u64 ct = 0;
@@ -96,10 +77,16 @@ int main()
         start_vertex = en.process_graph(*G);
         if (start_vertex >= G->n_vert) break;
         ans = G->get_max_clique(start_vertex);
-        ct++;
-        std::cout << "#" << ct << ": ";
-        for (auto x : ans) { std::cout << x << (x == start_vertex ? "!" : " "); }
-        std::cout << "\n\n";
+        if (G->get_clique_weight(ans) >= clique_weight)
+        {
+            ct++;
+            /*
+            std::cout << "#" << ct << ": " << ans.size() << "/"
+                      << G->get_clique_weight(ans) << " : ";
+            for (auto x : ans) { std::cout << x << (x == start_vertex ? "!" : " "); }
+            std::cout << "\n\n";
+            */
+        }
     }
     std::cout << ct << " cliques of weight " << clique_weight << std::endl;
     delete G;

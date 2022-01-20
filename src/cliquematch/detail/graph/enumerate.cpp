@@ -163,7 +163,7 @@ namespace detail
                 {
                     // now candidates_left may be nonzero, but only the clique size is
                     // necessary. Add 1 so as to count vert as part of the clique
-                    if (clique_size + 1 == this->REQUIRED_SIZE)
+                    if (clique_size + 1 >= this->REQUIRED_SIZE)
                     {
                         cur_state.res.set(j);
                         G.vertices[cur].bits.copy_data(cur_state.res);
