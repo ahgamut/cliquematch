@@ -1,4 +1,4 @@
-#include <pybind11/pybind11.h>
+#include <core/core.h>
 
 namespace cliquematch
 {
