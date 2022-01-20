@@ -1,4 +1,4 @@
-from cliquematch.core import Graph
+from cliquematch.core import Graph, NWGraph
 from .wrappers import *
 
-__version__ = "2.2.1"
+__version__ = "3.0.0"

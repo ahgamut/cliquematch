@@ -22,7 +22,7 @@ class get_pybind_include(object):
 
 def get_src_cpps(path):
     """
-    Go through src/cliquematch/cm_base recursively,
+    Go through src/cliquematch recursively,
     and return all cpp file paths
     """
     cpps = []
@@ -100,7 +100,7 @@ class BuildExt(_build_ext):
 
 setup(
     name="cliquematch",
-    version="2.2.1",
+    version="3.0.0",
     author="Gautham Venkatasubramanian",
     author_email="ahgamut@gmail.com",
     description="Finding correspondence via maximum cliques in large graphs",
