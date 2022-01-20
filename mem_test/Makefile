@@ -1,29 +1,36 @@
 CXXFLAGS = -I../src/cliquematch/ -std=c++11 -O3 -c -g3 -Wall -Wpedantic -Wextra -fno-omit-frame-pointer
 LINKFLAGS= -fno-omit-frame-pointer
 VALFLAGS = --tool=memcheck --leak-check=full --leak-resolution=high --show-leak-kinds=all --errors-for-leak-kinds=all
-SRC_DIR = ../src/cliquematch/detail/graph
-SRC_FILES = clique.cpp dfs_recurse.cpp dfs_stack.cpp gbits.cpp graph.cpp heuristic.cpp mmio.cpp vertex.cpp enumerate.cpp
-OBJS = $(patsubst %.cpp,build/%.o,$(SRC_FILES) main.cpp utils.cpp)
 
-all: build/cm_base
+UTILS_FILES = $(wildcard ../src/cliquematch/detail/*.cpp)
+BASE_FILES = $(wildcard ../src/cliquematch/detail/graph/*.cpp)
+WT_FILES = $(wildcard ../src/cliquematch/detail/nwgraph/*.cpp)
 
-build/main.o: main.cpp
+BASEOBJS = build/main.o $(patsubst ../%.cpp,build/%.o,$(BASE_FILES) $(UTILS_FILES))
+WTOBJS = build/nwmain.o $(patsubst ../%.cpp,build/%.o,$(WT_FILES) $(UTILS_FILES))
+
+all: build/cm_base build/cm_nw
+
+build/%.o: %.cpp
 	$(CXX) $^ $(CXXFLAGS) -o $@
 
-build/utils.o: ../src/cliquematch/detail/utils.cpp
+build/src/%.o: ../src/%.cpp
 	$(CXX) $^ $(CXXFLAGS) -o $@
 
-build/%.o: $(SRC_DIR)/%.cpp
-	$(CXX) $^ $(CXXFLAGS) -o $@
-
-build/cm_base: $(OBJS)
+build/cm_base: $(BASEOBJS)
 	$(CXX) $^ $(LINKFLAGS) -o $@
 
-test: build/cm_base cond-mat-2003.mtx
-	valgrind $(VALFLAGS) ./build/cm_base cond-mat-2003.mtx 0
+build/cm_nw: $(WTOBJS)
+	$(CXX) $^ $(LINKFLAGS) -o $@
 
-run: build/cm_base cond-mat-2003.mtx
+test: build/cm_base build/cm_nw cond-mat-2003.mtx
+	valgrind $(VALFLAGS) ./build/cm_base cond-mat-2003.mtx 0
+	valgrind $(VALFLAGS) ./build/cm_nw
+
+run: build/cm_base build/cm_nw cond-mat-2003.mtx
 	./build/cm_base cond-mat-2003.mtx 0
+	./build/cm_nw
 
 clean:
-	rm -f build/cm_base build/*.o
+	rm -f build/cm_base build/cm_nw
+	find ./build/ -name "*.o" -exec rm {} \;

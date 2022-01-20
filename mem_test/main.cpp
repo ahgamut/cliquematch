@@ -1,6 +1,6 @@
 #include <detail/graph/graph.h>
-#include <detail/graph/mmio.h>
 #include <detail/graph/dfs.h>
+#include <detail/mmio.h>
 #include <cstdlib>
 #include <chrono>
 #include <iostream>
@@ -15,8 +15,7 @@ int main(int argc, char* argv[])
         std::cout << "no file given!!\n";
         return 0;
     }
-    cmd::u64 no_of_vertices, no_of_edges, start_vertex = 0,
-                                                          clique_size = 0;
+    u64 no_of_vertices, no_of_edges, start_vertex = 0, clique_size = 0;
     double reading_time, loading_time, clique_time;
     std::cout << "Reading from file: " << argv[1] << "\n";
 
@@ -63,7 +62,7 @@ int main(int argc, char* argv[])
     clique_size = G->CUR_MAX_CLIQUE_SIZE - 1;
     std::cout << "Enumerating all cliques of size " << clique_size << std::endl;
     cmd::CliqueEnumerator en(clique_size);
-    cmd::u64 ct = 0;
+    u64 ct = 0;
     while (true)
     {
         start_vertex = en.process_graph(*G);
