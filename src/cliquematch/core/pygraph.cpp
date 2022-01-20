@@ -19,40 +19,19 @@ namespace core
         nedges = 0;
         current_vertex = 0;
         finished_all = false;
-        inited = false;
-        G = nullptr;
-    }
-    pygraph::~pygraph()
-    {
-        if (this->inited) delete this->G;
-        this->inited = false;
-        this->G = nullptr;
-    }
-    pygraph::pygraph(pygraph&& other)
-    {
-        this->nvert = other.nvert;
-        this->nedges = other.nedges;
-        this->current_vertex = other.current_vertex;
-        this->finished_all = other.finished_all;
-        this->inited = other.inited;
-        this->G = other.G;
-        other.inited = false;
     }
     void pygraph::load_graph(u64 n_vertices, u64 n_edges,
                              std::pair<std::vector<u64>, std::vector<u64>>&& edges)
     {
         this->nvert = n_vertices;
         this->nedges = n_edges;
-        if (this->inited) delete this->G;
-        this->G = new detail::graph(this->nvert, this->nedges, std::move(edges));
-        this->inited = true;
+        this->G = std::make_shared<detail::graph>(this->nvert, this->nedges, std::move(edges));
     }
     void pygraph::check_loaded() const
     {
-        if (!this->inited || this->nvert == 0)
+        if (this->G.get() == nullptr || this->nvert == 0)
             throw CM_ERROR("Graph is not initialized!!\n");
     }
-    void pygraphDeleter::operator()(pygraph* pg) { delete pg; }
 
     // Computation
     void pygraph::reset_search()

@@ -12,7 +12,7 @@ void init_pygraph(pybind11::module& m)
     using namespace pybind11;
     using cliquematch::core::pygraph;
 
-    class_<pygraph, std::unique_ptr<pygraph, cm_core::pygraphDeleter>>(m, "Graph")
+    class_<pygraph>(m, "Graph")
         .def(py::init<>())
         .def_readonly("search_done", &pygraph::finished_all,
                       "Whether the search has been completed (Readonly)")

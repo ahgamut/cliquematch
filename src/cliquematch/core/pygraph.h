@@ -1,26 +1,26 @@
 #ifndef PYGRAPH_H
 #define PYGRAPH_H
 
-#define CM_ERROR(x)                                                                   \
-    std::runtime_error((x) + std::string(__FILE__) + " " + std::to_string(__LINE__) + \
-                       "\n")
-
-#include <pybind11/pybind11.h>
 #include <set>
 #include <vector>
 #include <utility>
 #include <cstdint>
 #include <cmath>
+#include <memory>
+#include <pybind11/pybind11.h>
 // need to #include<cmath> before pybind11/numpy otherwise issues with ::hypot
 #include <pybind11/numpy.h>
+
+#include <detail/graph/graph.h>
+
+#define CM_ERROR(x)                                                                   \
+    std::runtime_error((x) + std::string(__FILE__) + " " + std::to_string(__LINE__) + \
+                       "\n")
+
 
 typedef uint64_t u64;
 namespace cliquematch
 {
-namespace detail
-{
-    class graph;
-}
 namespace core
 {
     template <typename dtype>
@@ -32,8 +32,7 @@ namespace core
     class pygraph
     {
        private:
-        bool inited;
-        detail::graph* G;
+        std::shared_ptr<detail::graph> G;
 
        public:
         bool finished_all;
@@ -41,10 +40,6 @@ namespace core
         u64 current_vertex;
 
         pygraph();
-        pygraph(pygraph&&);
-        pygraph(const pygraph&) = delete;
-        pygraph& operator=(pygraph&) = delete;
-        virtual ~pygraph();
         void load_graph(u64, u64, std::pair<std::vector<u64>, std::vector<u64>>&&);
         void check_loaded() const;
         std::vector<u64> get_max_clique(u64 lower_bound = 1, u64 upper_bound = 0xFFFF,
@@ -69,16 +64,10 @@ namespace core
         friend std::pair<std::vector<u64>, std::vector<u64>> iso_edges(u64&, u64&,
                                                                        const pygraph&,
                                                                        const pygraph&);
-        friend class pygraphDeleter;
         friend class CliqueIterator;
         friend class CorrespondenceIterator;
     };
 
-    class pygraphDeleter
-    {
-       public:
-        void operator()(pygraph* pg);
-    };
     pygraph from_adj_matrix(ndarray<bool> adjmat);
     pygraph from_edgelist(ndarray<u64> edge_list, u64 no_of_vertices);
     pygraph from_file(std::string filename);

@@ -11,7 +11,6 @@ namespace cliquematch
 namespace ext
 {
     using cliquematch::core::pygraph;
-    using cliquematch::core::pygraphDeleter;
     namespace py = pybind11;
 
     template <typename List, typename Delta>
