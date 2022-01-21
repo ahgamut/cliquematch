@@ -2,9 +2,8 @@
 ## Finding correspondence via maximum cliques in large graphs
 
 [![pyvers](https://img.shields.io/badge/python-3.5+-blue.svg)][3]
+[![ci](https://github.com/ahgamut/cliquematch/actions/workflows/wheels.yml/badge.svg)][6]
 [![license](https://img.shields.io/github/license/ahgamut/cliquematch)][4]
-[![travis build](https://travis-ci.com/ahgamut/cliquematch.svg?branch=master)][5]
-[![appveyor build](https://ci.appveyor.com/api/projects/status/27r2qy8mbog04bhg?svg=true)][6]
 [![DOI](https://zenodo.org/badge/196044254.svg)][7]
 
 The `cliquematch` package aims to do two specific things:
@@ -12,11 +11,15 @@ The `cliquematch` package aims to do two specific things:
 1.  Find [maximum cliques][wiki] in large sparse undirected graphs, as quickly and efficiently as possible.
 	(`cliquematch` uses C++ internally to implement a really fast maximum clique algorithm).
 
+    * Now `cliquematch` can also find (node-)weighted maximum cliques using the
+      `NWGraph` class.
+
 2.  Construct large sparse undirected graphs in-memory for the various applications of the maximum
 	clique/clique enumeration problem.
 
 Licensed under MIT License. View the documentation at https://cliquematch.readthedocs.io/  
-Note: this is `cliquematch v2`. If you're looking for `v1`, you can go to the [`v1` branch][v1] or
+
+Note: this is `cliquematch v3`. If you're looking for `v1`, you can go to the [`v1` branch][v1] or
 [documentation][v1docs].
 
 
@@ -24,10 +27,12 @@ Note: this is `cliquematch v2`. If you're looking for `v1`, you can go to the [`
 
 ### Installing from a wheel
 
-[PyPI][wheels] wheels are available for Linux and Windows. 
+`cliquematch` uses [cibuildwheel][5] to build wheels via [Github Actions][6].
+
+[PyPI][wheels] wheels are available for Linux, Windows, and MacOS. 
 
 ```bash
-pip install cliquematch>=2.1.0
+pip install cliquematch>=3.0.0
 ```
 
 ### Installing from source
@@ -53,8 +58,8 @@ pip3 install pybind11
 [2]: https://gitlab.com/libeigen/eigen/-/releases#3.3.7
 [3]: https://www.python.org/download/releases/3.5.0/
 [4]: https://github.com/ahgamut/cliquematch/blob/master/LICENSE
-[5]: https://travis-ci.com/ahgamut/cliquematch
-[6]: https://ci.appveyor.com/project/ahgamut/cliquematch
+[5]: https://github.com/pypa/cibuildwheel
+[6]: https://github.com/ahgamut/cliquematch/actions
 [7]: https://zenodo.org/badge/latestdoi/196044254
 [wiki]: https://en.wikipedia.org/wiki/Clique_(graph_theory)#Definitions
 [wheels]: https://pypi.org/project/cliquematch/

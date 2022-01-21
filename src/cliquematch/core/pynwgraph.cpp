@@ -36,7 +36,7 @@ namespace core
     // Computation
     void pynwgraph::reset_search()
     {
-        this->G->CUR_MAX_CLIQUE_SIZE = 1;
+        this->G->CUR_MAX_CLIQUE_SIZE = 0;
         this->finished_all = false;
         this->current_vertex = 0;
     }
@@ -56,7 +56,9 @@ namespace core
 
         auto ans = this->G->get_max_clique();
         if (lower_bound > this->G->get_clique_weight(ans))
-            throw CM_ERROR("Unable to find maximum clique with given bounds\n");
+            throw CM_ERROR("Unable to find maximum clique with given bounds (" +
+                           std::to_string(this->G->CUR_MAX_CLIQUE_SIZE) + ", " +
+                           std::to_string(this->G->CLIQUE_LIMIT) + "]\n");
         return ans;
     }
 

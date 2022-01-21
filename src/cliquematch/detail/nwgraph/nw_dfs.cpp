@@ -90,17 +90,15 @@ namespace detail
                 cur_state.cand.reset(j);
                 cur_state.start_at = cur_state.cand.next(j + 1);
                 cur_state.potential -= this->weights[j];
-                candidates_left -= 1;
+                candidates_left = cur_state.cand.count();
 
-                cand_potential = cur_state.potential;
-                clique_potential = cand_potential + clique_weight + this->weights[j];
-
+                cand_potential = 0;
                 vert = G.edge_list[G.vertices[cur].elo + j];
 
                 // ensure only the vertices found in the below loop are removed later
                 to_remove.clear();
                 for (k = cur_state.start_at;
-                     k < G.vertices[cur].N && clique_potential > G.CUR_MAX_CLIQUE_SIZE;
+                     k < G.vertices[cur].N && candidates_left != 0;
                      k = cur_state.cand.next(k + 1))
                 {
                     if (binary_find(&(G.edge_list[G.vertices[vert].elo +
@@ -109,12 +107,13 @@ namespace detail
                                     G.edge_list[G.vertices[cur].elo + k], ans) != FOUND)
                     {
                         to_remove.push_back(k);
-                        cand_potential -= this->weights[k];
                         candidates_left -= 1;
                     }
-                    clique_potential =
-                        cand_potential + clique_weight + this->weights[j];
+                    else
+                        cand_potential += this->weights[k];
                 }
+                clique_potential = cand_potential + clique_weight + this->weights[j];
+
 
                 // is the current maximum beatable?
                 if (clique_potential > G.CUR_MAX_CLIQUE_SIZE)

@@ -37,10 +37,10 @@ namespace detail
         for (j = 0; j < G.vertices[cur].spos; j++)
         {
             vert = G.edge_list[G.vertices[cur].elo + j];
-            if (G.vertices[vert].N <= G.vertices[cur].N) continue;
+            if (G.vertices[vert].degree <= G.vertices[cur].degree) continue;
             x.cand.set(j);
             weights[j] = G.vertices[vert].weight;
-            this->clique_potential += weights[j];
+            this->clique_potential += G.vertices[vert].weight;
         }
 
         // vertices with a greater label haven't been the root of a search tree
@@ -49,10 +49,10 @@ namespace detail
         for (j = G.vertices[cur].spos + 1; j < G.vertices[cur].N; j++)
         {
             vert = G.edge_list[G.vertices[cur].elo + j];
-            if (G.vertices[vert].N < G.vertices[cur].N) continue;
+            if (G.vertices[vert].degree < G.vertices[cur].degree) continue;
             x.cand.set(j);
             weights[j] = G.vertices[vert].weight;
-            this->clique_potential += weights[j];
+            this->clique_potential += G.vertices[vert].weight;
         }
 
         if (this->clique_potential + G.vertices[cur].weight < this->REQUIRED_WEIGHT)
@@ -110,8 +110,7 @@ namespace detail
                 if (!cur_state.cand[j]) continue;
                 cur_state.cand.reset(j);
                 cur_state.start_at = j + 1;
-                cur_state.potential -= this->weights[j];
-                candidates_left -= 1;
+                candidates_left = cur_state.cand.count();
 
                 cand_potential = cur_state.potential;
                 clique_potential = cand_potential + clique_weight + this->weights[j];

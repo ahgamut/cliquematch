@@ -25,7 +25,8 @@ namespace core
     {
         this->nvert = n_vertices;
         this->nedges = n_edges;
-        this->G = std::make_shared<detail::graph>(this->nvert, this->nedges, std::move(edges));
+        this->G = std::make_shared<detail::graph>(this->nvert, this->nedges,
+                                                  std::move(edges));
     }
     void pygraph::check_loaded() const
     {
@@ -60,7 +61,9 @@ namespace core
         finished_all = (current_vertex >= nvert);
         auto ans = this->G->get_max_clique();
         if (lower_bound > ans.size())
-            throw CM_ERROR("Unable to find maximum clique with given bounds\n");
+            throw CM_ERROR("Unable to find maximum clique with given bounds (" +
+                           std::to_string(this->G->CUR_MAX_CLIQUE_SIZE) + ", " +
+                           std::to_string(this->G->CLIQUE_LIMIT) + "]\n");
         return ans;
     }
 
