@@ -141,7 +141,7 @@ class TestNWGraph(object):
         with pytest.raises(AttributeError):
             G.n_edges = 31
 
-        assert G.get_vertex_weights() == [3.1] * 8
+        assert G._get_vertex_weights() == [3.1] * 8
 
     def test_dfs(self):
         edges = np.array(

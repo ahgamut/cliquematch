@@ -84,10 +84,10 @@ void init_pygraph(pybind11::module& m)
              "use_dfs"_a = true)
         .def("get_clique_weight", &pynwgraph::get_clique_weight,
              "calculate the weight of the given clique in this graph", "clique"_a)
-        .def("get_vertex_weights", &pynwgraph::get_all_weights,
-             "return the weights of all the vertices")
         .def("reset_search", &pynwgraph::reset_search,
              "Reset the clique search to try with different parameters")
+        .def("_get_vertex_weights", &pynwgraph::get_all_weights,
+             "return the weights of all the vertices")
         .def("_vertex_neighbors", &pynwgraph::get_vertex_data,
              "Return the neighbors of the given vertex", "v"_a)
         .def("_get_correspondence", &pynwgraph::get_correspondence, "len1"_a, "len2"_a,

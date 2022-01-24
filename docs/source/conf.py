@@ -21,11 +21,11 @@ sys.path.insert(0, os.path.abspath("../../src/"))
 # -- Project information -----------------------------------------------------
 
 project = "cliquematch"
-copyright = "2020, Gautham Venkatasubramanian"
+copyright = "2022, Gautham Venkatasubramanian"
 author = "Gautham Venkatasubramanian"
 
 # The full version, including alpha/beta/rc tags
-release = "2.2.0"
+release = "3.0.0"
 
 
 # -- General configuration ---------------------------------------------------

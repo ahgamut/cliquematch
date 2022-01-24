@@ -28,7 +28,7 @@ core-number, or the measure used in `cliquematch` all provide such a bound) and
 because bitsets are used for representing branches of the clique search. Thus
 `cliquematch` computes an upper bound for clique size (ie how deep a search can
 go), the maximum bitset space required for a vertex ( :math:`\lceil
-\frac{d_{max}}{32} \rceil` ) and allocates space accordingly. The allocated
+\frac{d_{max}}{64} \rceil` ) and allocates space accordingly. The allocated
 space is reused throughout the search, thus avoiding any heap allocations
 during the most used part of the program. 
 
