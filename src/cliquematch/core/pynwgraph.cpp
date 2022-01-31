@@ -57,8 +57,8 @@ namespace core
         auto ans = this->G->get_max_clique();
         if (lower_bound > this->G->get_clique_weight(ans))
             throw CM_ERROR("Unable to find maximum clique with given bounds (" +
-                           std::to_string(this->G->CUR_MAX_CLIQUE_SIZE) + ", " +
-                           std::to_string(this->G->CLIQUE_LIMIT) + "]\n");
+                           std::to_string(lower_bound) + ", " +
+                           std::to_string(upper_bound) + "]\n");
         return ans;
     }
 
