@@ -85,7 +85,16 @@ namespace detail
         {
             mcs = 0;
             depth = 0;
-            for (j = 0; j < this->vertices[cur].N; j++)
+            for (j = 0; j < this->vertices[cur].spos; j++)
+            {
+                vert = edge_list[vertices[cur].elo + j];
+                // degree of vert has to be > degree of cur
+                // to be considered while searching from cur
+                if (vertices[vert].degree > vertices[cur].degree)
+                    mcs += vertices[vert].weight;
+                if (vertices[vert].N > vertices[cur].N) depth += 1;
+            }
+            for (; j < this->vertices[cur].N; j++)
             {
                 vert = edge_list[vertices[cur].elo + j];
                 // degree of vert has to be >= degree of cur
