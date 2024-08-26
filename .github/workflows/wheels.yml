@@ -23,11 +23,11 @@ jobs:
           CIBW_PRERELEASE_PYTHONS: False
           CIBW_SKIP: "cp36* cp313-* pp*"
           CIBW_BUILD_FRONTEND: "pip"
-          CIBW_BEFORE_BUILD: "python -m pip install numpy>=1.14 pybind11>=2.2 --prefer-binary"
+          CIBW_BEFORE_BUILD: python -m pip install 'numpy>=1.14' 'pybind11>=2.2'
           CIBW_TEST_REQUIRES: "pytest"
           CIBW_TEST_COMMAND: "pytest -v {project}"
           CIBW_ARCHS_LINUX: "x86_64 aarch64"
-          CIBW_ARCHS_MACOS: "x86_64 ARM64"
+          CIBW_ARCHS_MACOS: "x86_64 arm64"
           CIBW_ARCHS_WINDOWS: "AMD64"
 
       - name: upload wheel artifacts temporarily
