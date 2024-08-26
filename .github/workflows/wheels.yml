@@ -9,28 +9,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-20.04, windows-2019, macos-10.15 ]
+        os: [ ubuntu-latest, windows-latest, macos-13, macos-14 ]
     runs-on: ${{ matrix.os }}
     name: build and test wheels on ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.1.3
+        uses: pypa/cibuildwheel@v2.20.0
         env:
-          CIBW_SKIP: "cp310-* pp*"
+          CIBW_PRERELEASE_PYTHONS: False
+          CIBW_SKIP: "cp36* cp313-* pp*"
           CIBW_BUILD_FRONTEND: "pip"
           CIBW_BEFORE_BUILD: "python -m pip install numpy>=1.14 pybind11>=2.2 --prefer-binary"
           CIBW_TEST_REQUIRES: "pytest"
           CIBW_TEST_COMMAND: "pytest -v {project}"
-          CIBW_ARCHS_LINUX: "x86_64"
-          CIBW_ARCHS_MACOS: "x86_64 arm64"
+          CIBW_ARCHS_LINUX: "x86_64 aarch64"
+          CIBW_ARCHS_MACOS: "x86_64 ARM64"
           CIBW_ARCHS_WINDOWS: "AMD64"
 
       - name: upload wheel artifacts temporarily
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: ./wheelhouse/*.whl
           retention-days: 1
