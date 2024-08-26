@@ -13,7 +13,7 @@ Installing from a wheel
 
 .. code:: bash
 
-    pip install cliquematch>=3.0.0
+    pip install cliquematch>=3.0.1
 
 Installing from source
 ----------------------
