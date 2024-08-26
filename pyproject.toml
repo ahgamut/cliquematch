@@ -19,6 +19,10 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = false
+
 [project.urls]
 Homepage = "https://github.com/ahgamut/cliquematch"
 Documentation = "https://cliquematch.rtfd.io"

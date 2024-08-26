@@ -28,7 +28,7 @@ jobs:
           CIBW_TEST_COMMAND: "pytest -v {project}"
           CIBW_ARCHS_LINUX: "x86_64 aarch64"
           CIBW_ARCHS_MACOS: "x86_64 arm64"
-          CIBW_ARCHS_WINDOWS: "AMD64 ARM64"
+          CIBW_ARCHS_WINDOWS: "AMD64"
 
       - name: upload wheel artifacts temporarily
         uses: actions/upload-artifact@v4
