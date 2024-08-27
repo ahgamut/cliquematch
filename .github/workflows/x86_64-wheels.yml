@@ -1,0 +1,38 @@
+name: Build and test all wheels
+on:
+  push:
+    branches:
+      master
+
+jobs:
+  build_wheels:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-13 ]
+    runs-on: ${{ matrix.os }}
+    name: build and test wheels on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.20.0
+        env:
+          CIBW_PRERELEASE_PYTHONS: False
+          CIBW_SKIP: "cp36* cp313-* pp* *musllinux*"
+          CIBW_BUILD_FRONTEND: "build"
+          CIBW_BEFORE_BUILD: pip install numpy>=1.14 pybind11>=2.2
+          CIBW_TEST_REQUIRES: "pytest"
+          CIBW_TEST_COMMAND: "pytest -v {project}"
+          CIBW_ARCHS_LINUX: "x86_64"
+          CIBW_ARCHS_MACOS: "x86_64"
+          CIBW_ARCHS_WINDOWS: "AMD64"
+
+      - name: upload wheel artifacts temporarily
+        uses: actions/upload-artifact@v4
+        with:
+          name: cliquematch-wheels-x86_64-${{ matrix.os }}
+          path: ./wheelhouse/*.whl
+          retention-days: 1
