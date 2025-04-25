@@ -19,11 +19,35 @@
 
 #include <detail/graph/clique.h>
 #include <detail/graph/searchstate.h>
+#include <thread>
+#include <mutex>
 
 namespace cliquematch
 {
 namespace detail
 {
+    struct DFSContext
+    {
+        std::vector<SearchState> states;  // used like a stack with push_back/pop_back
+        std::vector<u64> to_remove;       // vertices to remove from a candidate
+        u64 candidates_left, clique_size, clique_potential;
+        u64 cur;
+    };
+
+    class ParallelStackDFS : public CliqueOperator
+    {
+       private:
+        u64 current_vertex;
+        std::mutex vert_mutex;
+        std::mutex clq_mutex;
+
+       public:
+        void start_context(graph&);
+        void process_vertex(graph&, DFSContext&);
+        u64 process_graph(graph&);
+        ~ParallelStackDFS() = default;
+    };
+
     class StackDFS : public CliqueOperator
     {
        private:
@@ -51,7 +75,7 @@ namespace detail
         void process_vertex(graph&, u64);
         void search_vertex(graph&, u64, const graphBits&, graphBits&);
         u64 process_graph(graph&);
-        RecursionDFS(u64 v, double t) : start_vertex(v), TIME_LIMIT(t){};
+        RecursionDFS(u64 v, double t) : start_vertex(v), TIME_LIMIT(t) {};
         ~RecursionDFS() = default;
     };
 
@@ -68,7 +92,7 @@ namespace detail
         u64 process_graph(graph&);
         void process_vertex(graph&);
         bool load_vertex(graph&);
-        CliqueEnumerator(u64 size) : cur(1), REQUIRED_SIZE(size){};
+        CliqueEnumerator(u64 size) : cur(1), REQUIRED_SIZE(size) {};
         CliqueEnumerator() = delete;
         ~CliqueEnumerator() = default;
     };

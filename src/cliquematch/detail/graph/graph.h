@@ -134,6 +134,7 @@ namespace detail
         // clique search objects need access to internal data
         friend class RecursionDFS;
         friend class StackDFS;
+        friend class ParallelStackDFS;
         friend class DegreeHeuristic;
         friend class CliqueEnumerator;
     };

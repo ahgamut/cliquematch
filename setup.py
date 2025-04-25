@@ -48,6 +48,7 @@ ext_modules = [
             "src/cliquematch/",
             os.environ.get("EIGEN_DIR", "include/"),
         ],
+        extra_compile_args=["-DNUM_THREADS=8"],
         language="c++",
     )
 ]
@@ -94,13 +95,13 @@ class BuildExt(_build_ext):
             exit(1)
 
         for ext in self.extensions:
-            ext.extra_compile_args = opts
+            ext.extra_compile_args += opts
         _build_ext.build_extensions(self)
 
 
 setup(
     name="cliquematch",
-    version="3.0.1",
+    version="3.0.2",
     author="Gautham Venkatasubramanian",
     author_email="ahgamut@gmail.com",
     description="Finding correspondence via maximum cliques in large graphs",

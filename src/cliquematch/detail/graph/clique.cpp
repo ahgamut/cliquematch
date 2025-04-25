@@ -21,7 +21,11 @@ namespace detail
         if (use_heur) heur.process_graph((*this));
         if (time_limit <= 0)
         {
+#ifdef NUM_THREADS
+            ParallelStackDFS dfs;
+#else
             StackDFS dfs;
+#endif
             if (use_dfs) start_vert = dfs.process_graph((*this));
         }
         else

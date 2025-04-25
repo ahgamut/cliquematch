@@ -55,11 +55,11 @@ namespace detail
     class graphBits
     {
        private:
-        u64* data;      // simple pointer to external data
         u64 pad_cover;  // to ensure no stray bits after the end are counted
         u64 valid_len;  // number of bits used (useful for debug)
 
        public:
+        u64* data;      // simple pointer to external data
         graphBits& operator=(const graphBits&) = delete;
         graphBits() = default;
         graphBits(graphBits&& other)
