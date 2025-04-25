@@ -137,6 +137,9 @@ namespace detail
         friend class ParallelStackDFS;
         friend class DegreeHeuristic;
         friend class CliqueEnumerator;
+        // these are not defined within detail/graph
+        friend class CustomOperator;
+        friend class CustomEnumerator;
     };
 }  // namespace detail
 }  // namespace cliquematch
