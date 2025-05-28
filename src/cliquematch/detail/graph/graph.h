@@ -44,7 +44,7 @@ namespace detail
 
     class graph
     {
-       private:
+       public:
         std::vector<u64> edge_list;    // store raw list of edges
         std::vector<u64> edge_bits;    // store all clique bitsets (padded)
         std::vector<vertex> vertices;  // store all contextual vertex info
@@ -94,7 +94,6 @@ namespace detail
 
         void set_bounds();  // used by constructor to set bounds for search
 
-       public:
         u64 n_vert;  // number of vertices in the graph
         u64 max_degree;
 

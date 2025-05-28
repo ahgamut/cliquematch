@@ -2,6 +2,7 @@
 #define PYGRAPH_H
 
 #include <detail/graph/graph.h>
+#include <detail/graph/searchstate.h>
 #include <core/core.h>
 
 namespace cliquematch
@@ -13,10 +14,9 @@ namespace core
     class CorrespondenceIterator;
     class pygraph
     {
-       private:
+       public:
         std::shared_ptr<detail::graph> G;
 
-       public:
         bool finished_all;
         u64 nvert, nedges;
         u64 current_vertex;
@@ -48,6 +48,7 @@ namespace core
                                                                        const pygraph&);
         friend class CliqueIterator;
         friend class CorrespondenceIterator;
+        friend class CustomSearcher;
     };
 
     pygraph from_adj_matrix(ndarray<bool> adjmat);
