@@ -55,13 +55,16 @@ namespace detail
 
     void ParallelStackDFS::process_vertex(graph &G, DFSContext &ctx)
     {
-        u64 cur, j, k, vert, start, ans;
+        u64 j, k, vert, start, ans;
         //
-        cur = ctx.cur;
+        const u64 cur = ctx.cur;
         const u64 request_size =
             (G.vertices[cur].N % BITS_PER_U64 != 0) + G.vertices[cur].N / BITS_PER_U64;
         u64 *res = new u64[request_size];
         SearchState x(G.vertices[cur], res, new u64[request_size]);
+        x.res.clear();
+        x.cand.clear();
+        x.res.set(G.vertices[cur].spos);
         ctx.clique_potential = 1;
 
         // only search thru neighbors with greater degrees
