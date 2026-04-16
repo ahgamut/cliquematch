@@ -32,7 +32,7 @@ Note: this is `cliquematch v3`. If you're looking for `v1`, you can go to the [`
 [PyPI][wheels] wheels are available for Linux, Windows, and MacOS. 
 
 ```bash
-pip install cliquematch>=3.0.1
+pip install cliquematch>=3.0.2
 ```
 
 ### Installing from source
