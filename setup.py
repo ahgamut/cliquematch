@@ -58,7 +58,7 @@ class BuildExt(_build_ext):
 
     c_opts = {
         "msvc": ["/EHsc"],  # msvc has c++11 by default
-        "unix": ["-Wall", "-Wpedantic", "-Wno-unused-result", "-std=c++11"],
+        "unix": ["-Wall", "-Wpedantic", "-Wno-unused-result"],
     }
 
     if platform.system() == "Windows":
