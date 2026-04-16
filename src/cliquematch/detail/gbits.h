@@ -44,10 +44,10 @@ namespace detail
     inline u64 clz(const u64 n)
     {
 #ifdef _MSC_VER
-    #if defined(__x86_64__)
+    #if defined(_M_X64)
         /* MSVC docs for amd64 guarantee _lzcnt_u64 */
         return _lzcnt_u64(n);
-    #elif defined(__aarch64__)
+    #elif defined(_M_ARM64)
         return _CountLeadingZeros64(n);
     #else
         #error "unable to picking bitcount intrinsic."
