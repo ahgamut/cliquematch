@@ -29,8 +29,8 @@
 
 #ifdef _MSC_VER
 #include <intrin.h>
-#pragma intrinsic(_BitScanReverse64)
 #pragma intrinsic(_lzcnt_u64)
+#pragma intrinsic(_CountLeadingZeros64)
 #endif
 
 
@@ -44,8 +44,14 @@ namespace detail
     inline u64 clz(const u64 n)
     {
 #ifdef _MSC_VER
+    #if defined(__x86_64__)
         /* MSVC docs for amd64 guarantee _lzcnt_u64 */
         return _lzcnt_u64(n);
+    #elif defined(__aarch64__)
+        return _CountLeadingZeros64(n);
+    #else
+        #error "unable to picking bitcount intrinsic."
+    #endif
 #else
         /* minimum clang/gcc version? */
         return __builtin_clzll(n);
