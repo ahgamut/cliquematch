@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, windows-11-arm, macos-15-intel, macos-latest]
+        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-15-intel, macos-latest]
     runs-on: ${{ matrix.os }}
     name: build and test wheels on ${{ matrix.os }}
     steps:
@@ -17,7 +17,7 @@ jobs:
         with:
           submodules: true
 
-      - name: Build x86_64 wheels
+      - name: Build wheels
         uses: pypa/cibuildwheel@v3.4.1
         with:
           config-file: "pyproject.toml"
