@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "cliquematch"
 dependencies = ["numpy>=1.14", "pybind11>=2.2"]
 version = "3.0.2"
-license = "MIT"
+license = {file="LICENSE"}
 authors = [
   { name="Gautham Venkatasubramanian", email="ahgamut@gmail.com" },
 ]
