@@ -23,6 +23,15 @@ classifiers = [
 where = ["src"]
 namespaces = false
 
+[tool.cibuildwheel]
+skip = ["cp36*", "cp3??t-*", "*musllinux*"]
+before-build = ["pip install numpy>=1.14 pybind11>=2.2"]
+build-frontend = "build"
+enable = ["pypy", "graalpy"] # experimental
+test-requires = "pytest"
+test-command = "pytest -v {project}"
+
+
 [project.urls]
 Homepage = "https://github.com/ahgamut/cliquematch"
 Documentation = "https://cliquematch.rtfd.io"
