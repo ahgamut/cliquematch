@@ -101,9 +101,6 @@ class BuildExt(_build_ext):
 setup(
     name="cliquematch",
     version="3.0.1",
-    author="Gautham Venkatasubramanian",
-    author_email="ahgamut@gmail.com",
-    description="Finding correspondence via maximum cliques in large graphs",
     license="MIT",
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
@@ -111,9 +108,6 @@ setup(
     packages=find_packages("src"),
     package_dir={"": "src"},
     classifiers=[
-        "Intended Audience :: Science/Research",
-        "Programming Language :: C++",
-        "Programming Language :: Python :: 3",
     ],
     zip_safe=False,
     install_requires=["pybind11>=2.2", "numpy>=1.14"],

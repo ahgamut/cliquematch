@@ -6,17 +6,17 @@ build-backend = "setuptools.build_meta"
 name = "cliquematch"
 dependencies = ["numpy>=1.14", "pybind11>=2.2"]
 version = "3.0.1"
-license = {file = "LICENSE"}
+license = "MIT"
 authors = [
-  { name="Gautham" },
+  { name="Gautham Venkatasubramanian", email="ahgamut@gmail.com" },
 ]
 description="Finding correspondence via maximum cliques in large graphs"
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
+    "Intended Audience :: Science/Research",
+    "Programming Language :: C++",
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
 ]
 
 [tool.setuptools.packages.find]
