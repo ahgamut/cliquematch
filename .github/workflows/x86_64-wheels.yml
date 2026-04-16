@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-13 ]
+        os: [ ubuntu-latest, windows-latest, macos-intel-latest ]
     runs-on: ${{ matrix.os }}
     name: build and test wheels on ${{ matrix.os }}
     steps:
