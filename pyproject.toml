@@ -24,10 +24,10 @@ where = ["src"]
 namespaces = false
 
 [tool.cibuildwheel]
-skip = ["cp36*", "cp3??t-*", "*musllinux*", "*win32*", "*_242*"]
+skip = ["cp36*", "cp3??t-*", "*musllinux*", "*win32*"]
 before-build = ["pip install numpy>=1.14 pybind11>=2.2"]
 build-frontend = "build"
-enable = ["pypy", "graalpy"] # experimental
+enable = ["pypy"] # experimental
 test-requires = "pytest"
 test-command = "pytest -v {project}"
 
